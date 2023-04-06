@@ -53,8 +53,88 @@ func jsonAsInterface(unknownString string) interface{} {
 	return jsonString
 }
 
+func stringify(unknown interface{}) string {
+	// See https://pkg.go.dev/fmt for format strings.
+	var result string
+
+	switch value := unknown.(type) {
+	case nil:
+		result = "<nil>"
+	case string:
+		result = value
+	case int:
+		result = fmt.Sprintf("%d", value)
+	case float64:
+		result = fmt.Sprintf("%g", value)
+	case bool:
+		result = fmt.Sprintf("%t", value)
+	case error:
+		result = value.Error()
+	default:
+		// xType := reflect.TypeOf(unknown)
+		// xValue := reflect.ValueOf(unknown)
+		// result = fmt.Sprintf("(%s)%#v", xType, xValue)
+		result = fmt.Sprintf("%#v", unknown)
+	}
+	return result
+}
+
+func messageDetails(details ...interface{}) interface{} {
+
+	result := make(map[string]interface{})
+
+	// Process different types of details.
+
+	for index, value := range details {
+		switch typedValue := value.(type) {
+		case nil:
+			result[strconv.Itoa(index+1)] = "<nil>"
+
+		case int, float64:
+			result[strconv.Itoa(index+1)] = typedValue
+
+		case string:
+			if isJson(typedValue) {
+				result[strconv.Itoa(index+1)] = jsonAsInterface(typedValue)
+			} else {
+				result[strconv.Itoa(index+1)] = typedValue
+			}
+
+		case bool:
+			result[strconv.Itoa(index+1)] = fmt.Sprintf("%t", typedValue)
+
+		case error:
+			// do nothing.
+
+		case map[string]string:
+			for mapIndex, mapValue := range typedValue {
+				mapValueAsString := stringify(mapValue)
+				if isJson(mapValueAsString) {
+					result[mapIndex] = jsonAsInterface(mapValueAsString)
+				} else {
+					result[mapIndex] = mapValueAsString
+				}
+			}
+
+		default:
+			valueAsString := stringify(typedValue)
+			if isJson(valueAsString) {
+				result[strconv.Itoa(index+1)] = jsonAsInterface(valueAsString)
+			} else {
+				result[strconv.Itoa(index+1)] = valueAsString
+			}
+		}
+	}
+
+	if len(result) == 0 {
+		result = nil
+	}
+
+	return result
+}
+
 // ----------------------------------------------------------------------------
-// Private functions
+// Private methods
 // ----------------------------------------------------------------------------
 
 func (appMessage *AppMessageImpl) getLevel(messageNumber int) string {
@@ -186,10 +266,6 @@ func (appMessage *AppMessageImpl) New(messageNumber int, details ...interface{})
 		}
 	}
 
-	// if len(errorList) == 0 {
-	// 	errorList = nil
-	// }
-
 	// Calculate field - date & time.
 
 	date := fmt.Sprintf("%04d-%02d-%02d", now.UTC().Year(), now.UTC().Month(), now.UTC().Day())
@@ -216,8 +292,14 @@ func (appMessage *AppMessageImpl) New(messageNumber int, details ...interface{})
 		Status:   status,
 		Duration: duration,
 		Location: location,
-		Errors:   errorList,
-		Details:  filteredDetails,
+	}
+
+	if len(errorList) > 0 {
+		appMessageFormat.Errors = errorList
+	}
+
+	if len(filteredDetails) > 0 {
+		appMessageFormat.Details = messageDetails(filteredDetails)
 	}
 
 	// Convert to JSON.
