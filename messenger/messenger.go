@@ -331,7 +331,7 @@ Output
 */
 func (messenger *MessengerImpl) NewJson(messageNumber int, details ...interface{}) string {
 
-	appMessageFormat := messenger.populateStructure(messageNumber, details...)
+	messageFormat := messenger.populateStructure(messageNumber, details...)
 
 	// Convert to JSON.
 
@@ -345,7 +345,7 @@ func (messenger *MessengerImpl) NewJson(messageNumber int, details ...interface{
 	var resultBytes bytes.Buffer
 	enc := json.NewEncoder(&resultBytes)
 	enc.SetEscapeHTML(false)
-	err := enc.Encode(appMessageFormat)
+	err := enc.Encode(messageFormat)
 	if err != nil {
 		return err.Error()
 	}
@@ -364,7 +364,11 @@ Output
   - A slice of oscillating key-value pairs.
 */
 func (messenger *MessengerImpl) NewSlog(messageNumber int, details ...interface{}) (string, []interface{}) {
-	appMessageFormat := messenger.populateStructure(messageNumber, details...)
+	messageFormat := messenger.populateStructure(messageNumber, details...)
+	message := ""
+	if messageFormat.Text != nil {
+		message = messageFormat.Text.(string)
+	}
 	keys := []string{
 		"level",
 		"id",
@@ -374,8 +378,8 @@ func (messenger *MessengerImpl) NewSlog(messageNumber int, details ...interface{
 		"errors",
 		"details",
 	}
-	keyValuePairs := messenger.getKeyValuePairs(appMessageFormat, keys)
-	return appMessageFormat.Text.(string), keyValuePairs
+	keyValuePairs := messenger.getKeyValuePairs(messageFormat, keys)
+	return message, keyValuePairs
 }
 
 /*
@@ -391,7 +395,24 @@ Output
   - A slice of oscillating key-value pairs.
 */
 func (messenger *MessengerImpl) NewSlogLevel(messageNumber int, details ...interface{}) (string, slog.Level, []interface{}) {
-	appMessageFormat := messenger.populateStructure(messageNumber, details...)
+	messageFormat := messenger.populateStructure(messageNumber, details...)
+
+	// Create a text message.
+
+	message := ""
+	if messageFormat.Text != nil {
+		message = messageFormat.Text.(string)
+	}
+
+	// Create a slog.Level message level
+
+	slogLevel, ok := TextToLevelMap[messageFormat.Level]
+	if !ok {
+		slogLevel = LevelPanicSlog
+	}
+
+	// Create a slice of oscillating key-value pairs.
+
 	keys := []string{
 		"id",
 		"status",
@@ -400,15 +421,6 @@ func (messenger *MessengerImpl) NewSlogLevel(messageNumber int, details ...inter
 		"errors",
 		"details",
 	}
-
-	keyValuePairs := messenger.getKeyValuePairs(appMessageFormat, keys)
-
-	// Create a slog.Level
-
-	slogLevel, ok := TextToLevelMap[appMessageFormat.Level]
-	if !ok {
-		slogLevel = LevelPanicSlog
-	}
-
-	return appMessageFormat.Text.(string), slogLevel, keyValuePairs
+	keyValuePairs := messenger.getKeyValuePairs(messageFormat, keys)
+	return message, slogLevel, keyValuePairs
 }

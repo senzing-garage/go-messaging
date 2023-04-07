@@ -3,10 +3,13 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/senzing/go-messaging/messenger"
+	"golang.org/x/exp/slog"
 )
 
 var (
@@ -26,6 +29,7 @@ var idMessages = map[int]string{
 }
 
 func main() {
+	ctx := context.TODO()
 
 	// Create some fake errors.
 
@@ -43,7 +47,7 @@ func main() {
 		}
 	}`)
 
-	// appMessage, err := appmessage.New(productIdentifier, idMessages, idStatuses, callerSkip)
+	// messenger, err := messenger.New(productIdentifier, idMessages, idStatuses, callerSkip)
 
 	// Bare message generator.
 
@@ -70,14 +74,12 @@ func main() {
 
 	fmt.Printf("\n----- Logging -----------------------------------------------\n\n")
 
-	// ctx := context.TODO()
-
 	// Text logger - long form of construction.
 
 	// textHandler := slog.NewTextHandler(os.Stderr)
 	// textLogger := slog.New(textHandler)
 
-	// textOptions := appmessage.HandlerOptions(appmessage.LevelInfoSlog)
+	// textOptions := messenger.HandlerOptions(messenger.LevelInfoSlog)
 	// textHandler := textOptions.NewTextHandler(os.Stderr)
 	// textLogger := slog.New(textHandler)
 
@@ -86,13 +88,13 @@ func main() {
 	// jsonHandler := slog.NewJSONHandler(os.Stderr)
 	// jsonLogger := slog.New(jsonHandler)
 
-	// jsonLogger := slog.New(appmessage.HandlerOptions(appmessage.LevelInfoSlog).NewJSONHandler(os.Stderr))
+	jsonLogger := slog.New(messenger.HandlerOptions(messenger.LevelInfoSlog).NewJSONHandler(os.Stderr))
 
 	// Initialize message generator.
 
 	// Create a message and details.
 
-	// msg, details := appMessage.NewSlog(2001, "Bob", "Mary")
+	// msg, details := messenger.NewSlog(2001, "Bob", "Mary")
 
 	// Log the message.
 
@@ -101,30 +103,28 @@ func main() {
 
 	// Logging with auto-level generation.
 
-	// msg0, level0, details0 := appMessage.NewSlogLevel(0002, "Bob", "Mary")
-	// jsonLogger.Log(ctx, level0, msg0, details0...)
+	msg0, level0, details0 := messenger2.NewSlogLevel(0002, "Bob", "Mary")
+	jsonLogger.Log(ctx, level0, msg0, details0...)
 
-	// msg1, level1, details1 := appMessage.NewSlogLevel(1001, "Bob", "Mary")
-	// jsonLogger.Log(ctx, level1, msg1, details1...)
+	msg1, level1, details1 := messenger2.NewSlogLevel(1001, "Bob", "Mary")
+	jsonLogger.Log(ctx, level1, msg1, details1...)
 
-	// msg2, level2, details2 := appMessage.NewSlogLevel(2001, "Bob", "Mary")
-	// jsonLogger.Log(ctx, level2, msg2, details2...)
+	msg2, level2, details2 := messenger2.NewSlogLevel(2001, "Bob", "Mary")
+	jsonLogger.Log(ctx, level2, msg2, details2...)
 
-	// msg3, level3, details3 := appMessage.NewSlogLevel(3001, "Bob", "Mary")
-	// jsonLogger.Log(ctx, level3, msg3, details3...)
+	msg3, level3, details3 := messenger2.NewSlogLevel(3001, "Bob", "Mary")
+	jsonLogger.Log(ctx, level3, msg3, details3...)
 
-	// msg4, level4, details4 := appMessage.NewSlogLevel(4001, "Bob", "Mary")
-	// jsonLogger.Log(ctx, level4, msg4, details4...)
+	msg4, level4, details4 := messenger2.NewSlogLevel(4001, "Bob", "Mary")
+	jsonLogger.Log(ctx, level4, msg4, details4...)
 
-	// msg5, level5, details5 := appMessage.NewSlogLevel(5001, "Bob", "Mary")
-	// jsonLogger.Log(ctx, level5, msg5, details5...)
+	msg5, level5, details5 := messenger2.NewSlogLevel(5001, "Bob", "Mary")
+	jsonLogger.Log(ctx, level5, msg5, details5...)
 
-	// msg6, level6, details6 := appMessage.NewSlogLevel(6001, "Bob", "Mary")
-	// jsonLogger.Log(ctx, level6, msg6, details6...)
+	msg6, level6, details6 := messenger2.NewSlogLevel(6001, "Bob", "Mary")
+	jsonLogger.Log(ctx, level6, msg6, details6...)
 
-	// msg7, level7, details7 := appMessage.NewSlogLevel(7001, "Bob", "Mary")
-	// jsonLogger.Log(ctx, level7, msg7, details7...)
-
-	// Shouldn't appear because we're not in TRACE level.
+	msg7, level7, details7 := messenger2.NewSlogLevel(7001, "Bob", "Mary")
+	jsonLogger.Log(ctx, level7, msg7, details7...)
 
 }
