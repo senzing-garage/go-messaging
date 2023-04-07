@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"time"
+
+	"golang.org/x/exp/slog"
 )
 
 // ----------------------------------------------------------------------------
@@ -14,6 +16,7 @@ import (
 type AppMessageInterface interface {
 	NewJson(messageNumber int, details ...interface{}) string
 	NewSlog(messageNumber int, details ...interface{}) (string, []interface{})
+	NewSlogLevel(messageNumber int, details ...interface{}) (string, slog.Level, []interface{})
 }
 
 // ----------------------------------------------------------------------------
@@ -138,6 +141,8 @@ func New(productIdentifier int, idMessages map[int]string, idStatuses map[int]st
 		messageIdTemplate: fmt.Sprintf("senzing-%04d", productIdentifier) + "%04d",
 		callerSkip:        callerSkip,
 	}
+
+	fmt.Printf("AppMessageImpl: %v", result)
 
 	return result, err
 }

@@ -11,6 +11,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"golang.org/x/exp/slog"
 )
 
 // ----------------------------------------------------------------------------
@@ -28,6 +30,62 @@ type AppMessageImpl struct {
 
 type messageErrorsSenzing struct {
 	Text interface{} `json:"text,omitempty"` // Text returned by error.Error().
+}
+
+// ----------------------------------------------------------------------------
+// Constants
+// ----------------------------------------------------------------------------
+
+const (
+	LevelTraceInt int = -8
+	LevelDebugInt int = -4
+	LevelInfoInt  int = 0
+	LevelWarnInt  int = 4
+	LevelErrorInt int = 8
+	LevelFatalInt int = 12
+	LevelPanicInt int = 16
+)
+
+const (
+	LevelDebugSlog = slog.LevelDebug
+	LevelErrorSlog = slog.LevelError
+	LevelFatalSlog = slog.Level(LevelFatalInt)
+	LevelInfoSlog  = slog.LevelInfo
+	LevelPanicSlog = slog.Level(LevelPanicInt)
+	LevelTraceSlog = slog.Level(LevelTraceInt)
+	LevelWarnSlog  = slog.LevelWarn
+)
+
+// Strings representing the supported logging levels.
+const (
+	LevelDebugName = "DEBUG"
+	LevelErrorName = "ERROR"
+	LevelFatalName = "FATAL"
+	LevelInfoName  = "INFO"
+	LevelPanicName = "PANIC"
+	LevelTraceName = "TRACE"
+	LevelWarnName  = "WARN"
+)
+
+// Map from string representation to Log level as typed integer.
+var TextToLevelMap = map[string]slog.Level{
+	LevelDebugName: LevelDebugSlog,
+	LevelErrorName: LevelErrorSlog,
+	LevelFatalName: LevelFatalSlog,
+	LevelInfoName:  LevelInfoSlog,
+	LevelPanicName: LevelPanicSlog,
+	LevelTraceName: LevelTraceSlog,
+	LevelWarnName:  LevelWarnSlog,
+}
+
+var LevelToTextMap = map[slog.Level]string{
+	LevelDebugSlog: LevelDebugName,
+	LevelErrorSlog: LevelErrorName,
+	LevelFatalSlog: LevelFatalName,
+	LevelInfoSlog:  LevelInfoName,
+	LevelPanicSlog: LevelPanicName,
+	LevelTraceSlog: LevelTraceName,
+	LevelWarnSlog:  LevelWarnName,
 }
 
 // ----------------------------------------------------------------------------
@@ -136,6 +194,66 @@ func messageDetails(details ...interface{}) interface{} {
 // ----------------------------------------------------------------------------
 // Private methods
 // ----------------------------------------------------------------------------
+
+func (appMessage *AppMessageImpl) getKeyValuePairs(appMessageFormat *AppMessageFormat, keys []string) []interface{} {
+	var result []interface{} = nil
+	keyValueMap := map[string]interface{}{
+		"date":     appMessageFormat.Date,
+		"time":     appMessageFormat.Time,
+		"level":    appMessageFormat.Level,
+		"id":       appMessageFormat.Id,
+		"status":   appMessageFormat.Status,
+		"duration": appMessageFormat.Duration,
+		"location": appMessageFormat.Location,
+		"errors":   appMessageFormat.Errors,
+		"details":  appMessageFormat.Details,
+	}
+
+	// In key order, append values to result.
+
+	for _, key := range keys {
+		value, ok := keyValueMap[key]
+		if !ok {
+			continue
+		}
+		switch typedValue := value.(type) {
+		case string:
+			if typedValue != "" {
+				result = append(result, key, value)
+			}
+		case int64:
+			if typedValue != 0 {
+				result = append(result, key, value)
+			}
+		default:
+			if typedValue != nil {
+				result = append(result, key, value)
+			}
+		}
+	}
+	return result
+}
+
+func (appMessage *AppMessageImpl) getLevel(messageNumber int) string {
+	sortedMessageLevelKeys := appMessage.getSortedIdLevelRanges(IdLevelRangesAsString)
+	for _, messageLevelKey := range sortedMessageLevelKeys {
+		if messageNumber >= messageLevelKey {
+			return IdLevelRangesAsString[messageLevelKey]
+		}
+	}
+	return "UNKNOWN"
+}
+
+func (appMessage *AppMessageImpl) getSortedIdLevelRanges(idLevelRanges map[int]string) []int {
+	if appMessage.sortedIdLevelRanges == nil {
+		appMessage.sortedIdLevelRanges = make([]int, 0, len(idLevelRanges))
+		for key := range idLevelRanges {
+			appMessage.sortedIdLevelRanges = append(appMessage.sortedIdLevelRanges, key)
+		}
+		sort.Sort(sort.Reverse(sort.IntSlice(appMessage.sortedIdLevelRanges)))
+	}
+	return appMessage.sortedIdLevelRanges
+}
 
 func (appMessage *AppMessageImpl) populateStructure(messageNumber int, details ...interface{}) *AppMessageFormat {
 	now := time.Now()
@@ -271,31 +389,6 @@ func (appMessage *AppMessageImpl) populateStructure(messageNumber int, details .
 }
 
 // ----------------------------------------------------------------------------
-// Private methods
-// ----------------------------------------------------------------------------
-
-func (appMessage *AppMessageImpl) getLevel(messageNumber int) string {
-	sortedMessageLevelKeys := appMessage.getSortedIdLevelRanges(IdLevelRangesAsString)
-	for _, messageLevelKey := range sortedMessageLevelKeys {
-		if messageNumber >= messageLevelKey {
-			return IdLevelRangesAsString[messageLevelKey]
-		}
-	}
-	return "UNKNOWN"
-}
-
-func (appMessage *AppMessageImpl) getSortedIdLevelRanges(idLevelRanges map[int]string) []int {
-	if appMessage.sortedIdLevelRanges == nil {
-		appMessage.sortedIdLevelRanges = make([]int, 0, len(idLevelRanges))
-		for key := range idLevelRanges {
-			appMessage.sortedIdLevelRanges = append(appMessage.sortedIdLevelRanges, key)
-		}
-		sort.Sort(sort.Reverse(sort.IntSlice(appMessage.sortedIdLevelRanges)))
-	}
-	return appMessage.sortedIdLevelRanges
-}
-
-// ----------------------------------------------------------------------------
 // Interface methods
 // ----------------------------------------------------------------------------
 
@@ -333,48 +426,62 @@ func (appMessage *AppMessageImpl) NewJson(messageNumber int, details ...interfac
 }
 
 /*
-The NewKV method return a list of Key-Value pairs string with the elements of the message.
+The NewSlog method returns a message and list of Key-Value pairs string with the elements of the message.
 
 Input
   - messageNumber: A message identifier which indexes into "idMessages".
   - details: Variadic arguments of any type to be added to the message.
 
 Output
+  - A text message
   - A slice of oscillating key-value pairs.
 */
 func (appMessage *AppMessageImpl) NewSlog(messageNumber int, details ...interface{}) (string, []interface{}) {
-	var result []interface{} = nil
-
 	appMessageFormat := appMessage.populateStructure(messageNumber, details...)
+	keys := []string{
+		"level",
+		"id",
+		"status",
+		"duration",
+		"location",
+		"errors",
+		"details",
+	}
+	keyValuePairs := appMessage.getKeyValuePairs(appMessageFormat, keys)
+	return appMessageFormat.Text.(string), keyValuePairs
+}
 
-	worklist := map[string]interface{}{
-		"date":     appMessageFormat.Date,
-		"time":     appMessageFormat.Time,
-		"level":    appMessageFormat.Level,
-		"id":       appMessageFormat.Id,
-		"status":   appMessageFormat.Status,
-		"duration": appMessageFormat.Duration,
-		"location": appMessageFormat.Location,
-		"errors":   appMessageFormat.Errors,
-		"details":  appMessageFormat.Details,
+/*
+The NewSlogLevel method returns a message. an slog level, and a list of Key-Value pairs string with the elements of the message.
+
+Input
+  - messageNumber: A message identifier which indexes into "idMessages".
+  - details: Variadic arguments of any type to be added to the message.
+
+Output
+  - A text message
+  - A message level
+  - A slice of oscillating key-value pairs.
+*/
+func (appMessage *AppMessageImpl) NewSlogLevel(messageNumber int, details ...interface{}) (string, slog.Level, []interface{}) {
+	appMessageFormat := appMessage.populateStructure(messageNumber, details...)
+	keys := []string{
+		"id",
+		"status",
+		"duration",
+		"location",
+		"errors",
+		"details",
 	}
 
-	for key, value := range worklist {
-		switch typedValue := value.(type) {
-		case string:
-			if typedValue != "" {
-				result = append(result, key, value)
-			}
-		case int64:
-			if typedValue != 0 {
-				result = append(result, key, value)
-			}
-		default:
-			if typedValue != nil {
-				result = append(result, key, value)
-			}
-		}
+	keyValuePairs := appMessage.getKeyValuePairs(appMessageFormat, keys)
+
+	// Create a slog.Level
+
+	slogLevel, ok := TextToLevelMap[appMessageFormat.Level]
+	if !ok {
+		slogLevel = LevelPanicSlog
 	}
 
-	return appMessageFormat.Text.(string), result
+	return appMessageFormat.Text.(string), slogLevel, keyValuePairs
 }
