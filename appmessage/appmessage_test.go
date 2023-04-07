@@ -94,7 +94,7 @@ func getTimestamp() *AppMessageTimestamp {
 // -- Test New() method ---------------------------------------------------------
 
 func TestAppMessageImpl_NewJson(test *testing.T) {
-	callerSkip := &AppMessageCallerSkip{Value: 1}
+	callerSkip := &AppMessageOptionCallerSkip{Value: 1}
 	for _, testCase := range testCasesForMessage {
 		if len(testCase.expectedMessage) > 0 {
 			test.Run(testCase.name+"-NewJson", func(test *testing.T) {
@@ -108,7 +108,7 @@ func TestAppMessageImpl_NewJson(test *testing.T) {
 }
 
 func TestAppMessageImpl_NewSlog(test *testing.T) {
-	callerSkip := &AppMessageCallerSkip{Value: 1}
+	callerSkip := &AppMessageOptionCallerSkip{Value: 1}
 	for _, testCase := range testCasesForMessage {
 		if len(testCase.expectedMessage) > 0 {
 			test.Run(testCase.name+"-NewSlog", func(test *testing.T) {

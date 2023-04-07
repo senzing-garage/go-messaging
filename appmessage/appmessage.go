@@ -29,63 +29,7 @@ type AppMessageImpl struct {
 }
 
 type messageErrorsSenzing struct {
-	Text interface{} `json:"text,omitempty"` // Text returned by error.Error().
-}
-
-// ----------------------------------------------------------------------------
-// Constants
-// ----------------------------------------------------------------------------
-
-const (
-	LevelTraceInt int = -8
-	LevelDebugInt int = -4
-	LevelInfoInt  int = 0
-	LevelWarnInt  int = 4
-	LevelErrorInt int = 8
-	LevelFatalInt int = 12
-	LevelPanicInt int = 16
-)
-
-const (
-	LevelDebugSlog = slog.LevelDebug
-	LevelErrorSlog = slog.LevelError
-	LevelFatalSlog = slog.Level(LevelFatalInt)
-	LevelInfoSlog  = slog.LevelInfo
-	LevelPanicSlog = slog.Level(LevelPanicInt)
-	LevelTraceSlog = slog.Level(LevelTraceInt)
-	LevelWarnSlog  = slog.LevelWarn
-)
-
-// Strings representing the supported logging levels.
-const (
-	LevelDebugName = "DEBUG"
-	LevelErrorName = "ERROR"
-	LevelFatalName = "FATAL"
-	LevelInfoName  = "INFO"
-	LevelPanicName = "PANIC"
-	LevelTraceName = "TRACE"
-	LevelWarnName  = "WARN"
-)
-
-// Map from string representation to Log level as typed integer.
-var TextToLevelMap = map[string]slog.Level{
-	LevelDebugName: LevelDebugSlog,
-	LevelErrorName: LevelErrorSlog,
-	LevelFatalName: LevelFatalSlog,
-	LevelInfoName:  LevelInfoSlog,
-	LevelPanicName: LevelPanicSlog,
-	LevelTraceName: LevelTraceSlog,
-	LevelWarnName:  LevelWarnSlog,
-}
-
-var LevelToTextMap = map[slog.Level]string{
-	LevelDebugSlog: LevelDebugName,
-	LevelErrorSlog: LevelErrorName,
-	LevelFatalSlog: LevelFatalName,
-	LevelInfoSlog:  LevelInfoName,
-	LevelPanicSlog: LevelPanicName,
-	LevelTraceSlog: LevelTraceName,
-	LevelWarnSlog:  LevelWarnName,
+	ErrorMessage interface{} `json:"errorMessage,omitempty"` // Text returned by error.Error().
 }
 
 // ----------------------------------------------------------------------------
@@ -198,7 +142,6 @@ func messageDetails(details ...interface{}) interface{} {
 func (appMessage *AppMessageImpl) getKeyValuePairs(appMessageFormat *AppMessageFormat, keys []string) []interface{} {
 	var result []interface{} = nil
 	keyValueMap := map[string]interface{}{
-		"date":     appMessageFormat.Date,
 		"time":     appMessageFormat.Time,
 		"level":    appMessageFormat.Level,
 		"id":       appMessageFormat.Id,
@@ -256,7 +199,6 @@ func (appMessage *AppMessageImpl) getSortedIdLevelRanges(idLevelRanges map[int]s
 }
 
 func (appMessage *AppMessageImpl) populateStructure(messageNumber int, details ...interface{}) *AppMessageFormat {
-	now := time.Now()
 
 	var (
 		callerSkip int           = 0
@@ -267,6 +209,10 @@ func (appMessage *AppMessageImpl) populateStructure(messageNumber int, details .
 		status     string        = ""
 		text       interface{}   = nil
 	)
+
+	// Calculate field - date & time.
+
+	timeNow := time.Now().UTC().String()
 
 	// Calculate - callerskip
 
@@ -302,11 +248,11 @@ func (appMessage *AppMessageImpl) populateStructure(messageNumber int, details .
 
 	// Process overrides found in details and filter them out of details.
 
-	var filteredDetails []interface{}
+	// filteredDetails := make(map[string]interface{})
+	filteredDetails := []interface{}{}
+	// detailCount := 0
 	for _, value := range details {
 		switch typedValue := value.(type) {
-		case *AppMessageCallerSkip:
-			callerSkip = typedValue.Value
 		case *AppMessageDuration:
 			duration = typedValue.Value
 		case *AppMessageId:
@@ -315,22 +261,24 @@ func (appMessage *AppMessageImpl) populateStructure(messageNumber int, details .
 			level = typedValue.Value
 		case *AppMessageLocation:
 			location = typedValue.Value
+		case *AppMessageOptionCallerSkip:
+			callerSkip = typedValue.Value
 		case *AppMessageStatus:
 			status = typedValue.Value
 		case *AppMessageText:
 			text = typedValue.Value
 		case *AppMessageTimestamp:
-			now = typedValue.Value
+			timeNow = typedValue.Value.String()
 		case error:
 			errorMessage := typedValue.Error()
 			var priorError interface{}
 			if isJson(errorMessage) {
 				priorError = &messageErrorsSenzing{
-					Text: jsonAsInterface(errorMessage),
+					ErrorMessage: jsonAsInterface(errorMessage),
 				}
 			} else {
 				priorError = &messageErrorsSenzing{
-					Text: errorMessage,
+					ErrorMessage: errorMessage,
 				}
 			}
 			errorList = append(errorList, priorError)
@@ -341,18 +289,12 @@ func (appMessage *AppMessageImpl) populateStructure(messageNumber int, details .
 			// 		errorMessageList = append(errorMessageList, value)
 			// 	}
 			// }
-			filteredDetails = append(filteredDetails, value)
 		case time.Duration:
 			duration = typedValue.Nanoseconds()
 		default:
-			filteredDetails = append(filteredDetails, value)
+			filteredDetails = append(filteredDetails, typedValue)
 		}
 	}
-
-	// Calculate field - date & time.
-
-	date := fmt.Sprintf("%04d-%02d-%02d", now.UTC().Year(), now.UTC().Month(), now.UTC().Day())
-	time := fmt.Sprintf("%02d:%02d:%02d.%09d", now.UTC().Hour(), now.UTC().Minute(), now.Second(), now.Nanosecond())
 
 	// Calculate field - location.
 	// See https://pkg.go.dev/runtime#Caller
@@ -367,8 +309,7 @@ func (appMessage *AppMessageImpl) populateStructure(messageNumber int, details .
 	}
 
 	result := &AppMessageFormat{
-		Date:     date,
-		Time:     time,
+		Time:     timeNow,
 		Level:    level,
 		Id:       id,
 		Text:     text,
@@ -382,7 +323,7 @@ func (appMessage *AppMessageImpl) populateStructure(messageNumber int, details .
 	}
 
 	if len(filteredDetails) > 0 {
-		result.Details = messageDetails(filteredDetails)
+		result.Details = messageDetails(filteredDetails...)
 	}
 
 	return result

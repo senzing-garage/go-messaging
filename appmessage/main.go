@@ -23,7 +23,7 @@ type AppMessageInterface interface {
 // Types - struct
 // ----------------------------------------------------------------------------
 
-type AppMessageCallerSkip struct {
+type AppMessageOptionCallerSkip struct {
 	Value int
 }
 
@@ -39,7 +39,6 @@ type AppMessageDuration struct {
 // Order is important.
 // It should be date, time, level, id, status, text, duration, location, errors, details.
 type AppMessageFormat struct {
-	Date     string      `json:"date,omitempty"`     // Date of message in UTC.
 	Time     string      `json:"time,omitempty"`     // Time of message in UTC.
 	Level    string      `json:"level,omitempty"`    // Level:  TRACE, DEBUG, INFO, WARN, ERROR, FATAL, PANIC.
 	Id       string      `json:"id,omitempty"`       // Message identifier.
@@ -79,8 +78,57 @@ type AppMessageTimestamp struct {
 // Constants
 // ----------------------------------------------------------------------------
 
-// An example constant.
-const ExampleConstant = 1
+const (
+	LevelTraceInt int = -8
+	LevelDebugInt int = -4
+	LevelInfoInt  int = 0
+	LevelWarnInt  int = 4
+	LevelErrorInt int = 8
+	LevelFatalInt int = 12
+	LevelPanicInt int = 16
+)
+
+const (
+	LevelDebugSlog = slog.LevelDebug
+	LevelErrorSlog = slog.LevelError
+	LevelFatalSlog = slog.Level(LevelFatalInt)
+	LevelInfoSlog  = slog.LevelInfo
+	LevelPanicSlog = slog.Level(LevelPanicInt)
+	LevelTraceSlog = slog.Level(LevelTraceInt)
+	LevelWarnSlog  = slog.LevelWarn
+)
+
+// Strings representing the supported logging levels.
+const (
+	LevelDebugName = "DEBUG"
+	LevelErrorName = "ERROR"
+	LevelFatalName = "FATAL"
+	LevelInfoName  = "INFO"
+	LevelPanicName = "PANIC"
+	LevelTraceName = "TRACE"
+	LevelWarnName  = "WARN"
+)
+
+// Map from string representation to Log level as typed integer.
+var TextToLevelMap = map[string]slog.Level{
+	LevelDebugName: LevelDebugSlog,
+	LevelErrorName: LevelErrorSlog,
+	LevelFatalName: LevelFatalSlog,
+	LevelInfoName:  LevelInfoSlog,
+	LevelPanicName: LevelPanicSlog,
+	LevelTraceName: LevelTraceSlog,
+	LevelWarnName:  LevelWarnSlog,
+}
+
+var LevelToTextMap = map[slog.Level]string{
+	LevelDebugSlog: LevelDebugName,
+	LevelErrorSlog: LevelErrorName,
+	LevelFatalSlog: LevelFatalName,
+	LevelInfoSlog:  LevelInfoName,
+	LevelPanicSlog: LevelPanicName,
+	LevelTraceSlog: LevelTraceName,
+	LevelWarnSlog:  LevelWarnName,
+}
 
 // ----------------------------------------------------------------------------
 // Variables
@@ -126,14 +174,17 @@ func New(productIdentifier int, idMessages map[int]string, idStatuses map[int]st
 		return result, err
 	}
 
-	var callerSkip int = 0
+	// Process options
 
+	var callerSkip int = 0
 	for _, value := range options {
 		switch typedValue := value.(type) {
-		case *AppMessageCallerSkip:
+		case *AppMessageOptionCallerSkip:
 			callerSkip = typedValue.Value
 		}
 	}
+
+	// Create AppMessage
 
 	result = &AppMessageImpl{
 		idMessages:        idMessages,
@@ -142,7 +193,42 @@ func New(productIdentifier int, idMessages map[int]string, idStatuses map[int]st
 		callerSkip:        callerSkip,
 	}
 
-	fmt.Printf("AppMessageImpl: %v", result)
-
 	return result, err
+}
+
+/*
+The HandlerOptions function returns a slog handler that includes TRACE, FATAL, and PANIC.
+See: https://go.googlesource.com/exp/+/refs/heads/master/slog/example_custom_levels_test.go
+*/
+func HandlerOptions(leveler slog.Leveler) *slog.HandlerOptions {
+	if leveler == nil {
+		leveler = LevelInfoSlog
+	}
+	handlerOptions := &slog.HandlerOptions{
+		Level: leveler,
+		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
+			if a.Key == slog.MessageKey {
+				a.Key = "text"
+			}
+			if a.Key == slog.LevelKey {
+				level := ""
+				switch typedValue := a.Value.Any().(type) {
+				case string:
+					level = typedValue
+				case slog.Level:
+					level = typedValue.String()
+				}
+				switch {
+				case level == "DEBUG-4":
+					a.Value = slog.StringValue("TRACE")
+				case level == "ERROR+4":
+					a.Value = slog.StringValue("FATAL")
+				case level == "ERROR+8":
+					a.Value = slog.StringValue("PANIC")
+				}
+			}
+			return a
+		},
+	}
+	return handlerOptions
 }
