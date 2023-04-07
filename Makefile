@@ -90,7 +90,7 @@ build-scratch:
 .PHONY: test
 test:
 #	@go test -v -p 1 ./...
-	@go test -v ./appmessage
+	@go test -v ./messenger
 
 
 # -----------------------------------------------------------------------------

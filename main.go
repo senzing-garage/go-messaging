@@ -6,12 +6,12 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/senzing/go-messaging/appmessage"
+	"github.com/senzing/go-messaging/messenger"
 )
 
 var (
-	productIdentifier int                                    = 9999
-	callerSkip        *appmessage.AppMessageOptionCallerSkip = &appmessage.AppMessageOptionCallerSkip{Value: 2}
+	productIdentifier int                         = 9999
+	callerSkip        *messenger.OptionCallerSkip = &messenger.OptionCallerSkip{Value: 2}
 )
 
 var idMessages = map[int]string{
@@ -25,16 +25,9 @@ var idMessages = map[int]string{
 	7001: "Xxxxx: %s knows %s",
 }
 
-var idStatuses = map[int]string{}
-
 func main() {
 
-	appMessage, err := appmessage.New(productIdentifier, idMessages, idStatuses, callerSkip)
-	if err != nil {
-		fmt.Printf("Error: %s", err.Error())
-	}
-
-	fmt.Println(appMessage.NewJson(0002, "Bob", "Mary"))
+	// Create some fake errors.
 
 	err1 := errors.New("error #1")
 	err2 := errors.New(`
@@ -42,7 +35,7 @@ func main() {
 		"time": "2023-04-07 19:10:21.970756517 +0000 UTC",
 		"level": "TRACE",
 		"id": "senzing-99990002",
-		"text": "Trace: Bob knows Mary",
+		"text": "A fake error",
 		"location": "In main() at main.go:36",
 		"details": {
 			"1": "Bob",
@@ -50,7 +43,30 @@ func main() {
 		}
 	}`)
 
-	fmt.Println(appMessage.NewJson(1001, "Bob", "Mary", err1, err2))
+	// appMessage, err := appmessage.New(productIdentifier, idMessages, idStatuses, callerSkip)
+
+	// Bare message generator.
+
+	messenger1, err := messenger.New()
+	if err != nil {
+		fmt.Printf("Error: %s", err.Error())
+	}
+	fmt.Println(messenger1.NewJson(0002, "Bob", "Mary"))
+	fmt.Println(messenger1.NewJson(1001, "Bob", "Mary", err1, err2))
+
+	// Configured message generator.
+
+	optionSenzingProductId := &messenger.OptionSenzingProductId{Value: 9998}
+	optionCallerSkip := &messenger.OptionCallerSkip{Value: 2}
+	optionIdMessages := &messenger.OptionIdMessages{Value: idMessages}
+
+	messenger2, err := messenger.New(optionSenzingProductId, optionCallerSkip, optionIdMessages)
+	if err != nil {
+		fmt.Printf("Error: %s", err.Error())
+	}
+
+	fmt.Println(messenger2.NewJson(0002, "Bob", "Mary"))
+	fmt.Println(messenger2.NewJson(1001, "Bob", "Mary", err1, err2))
 
 	fmt.Printf("\n----- Logging -----------------------------------------------\n\n")
 
