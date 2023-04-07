@@ -93,14 +93,29 @@ func getTimestamp() *AppMessageTimestamp {
 
 // -- Test New() method ---------------------------------------------------------
 
-func TestMessageLoggerNew(test *testing.T) {
+func TestAppMessageImpl_NewJson(test *testing.T) {
 	callerSkip := &AppMessageCallerSkip{Value: 1}
 	for _, testCase := range testCasesForMessage {
 		if len(testCase.expectedMessage) > 0 {
-			test.Run(testCase.name, func(test *testing.T) {
+			test.Run(testCase.name+"-NewJson", func(test *testing.T) {
 				testObject, err := New(testCase.productIdentifier, testCase.idMessages, testCase.idStatuses, callerSkip)
 				testError(test, testObject, err)
-				actual := testObject.New(testCase.messageNumber, testCase.details...)
+				actual := testObject.NewJson(testCase.messageNumber, testCase.details...)
+				assert.Equal(test, testCase.expectedMessage, actual, testCase.name)
+			})
+		}
+	}
+}
+
+func TestAppMessageImpl_NewSlog(test *testing.T) {
+	callerSkip := &AppMessageCallerSkip{Value: 1}
+	for _, testCase := range testCasesForMessage {
+		if len(testCase.expectedMessage) > 0 {
+			test.Run(testCase.name+"-NewSlog", func(test *testing.T) {
+				testObject, err := New(testCase.productIdentifier, testCase.idMessages, testCase.idStatuses, callerSkip)
+				testError(test, testObject, err)
+				message, actual := testObject.NewSlog(testCase.messageNumber, testCase.details...)
+				assert.Equal(test, testCase.expectedMessage, message, testCase.name)
 				assert.Equal(test, testCase.expectedMessage, actual, testCase.name)
 			})
 		}
@@ -111,12 +126,12 @@ func TestMessageLoggerNew(test *testing.T) {
 // Examples for godoc documentation
 // ----------------------------------------------------------------------------
 
-func ExampleAppMessageImpl_New() {
+func ExampleAppMessageImpl_NewJson() {
 	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/appmessages/appmessage_test.go
 	example := &AppMessageImpl{
 		idMessages: idMessages,
 	}
-	fmt.Print(example.New(2001, "Bob", "Jane"))
+	fmt.Print(example.NewJson(2001, "Bob", "Jane"))
 	//Output:
 	//examplePackage: I'm here
 }

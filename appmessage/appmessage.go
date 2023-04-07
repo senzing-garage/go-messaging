@@ -137,42 +137,7 @@ func messageDetails(details ...interface{}) interface{} {
 // Private methods
 // ----------------------------------------------------------------------------
 
-func (appMessage *AppMessageImpl) getLevel(messageNumber int) string {
-	sortedMessageLevelKeys := appMessage.getSortedIdLevelRanges(IdLevelRangesAsString)
-	for _, messageLevelKey := range sortedMessageLevelKeys {
-		if messageNumber >= messageLevelKey {
-			return IdLevelRangesAsString[messageLevelKey]
-		}
-	}
-	return "UNKNOWN"
-}
-
-func (appMessage *AppMessageImpl) getSortedIdLevelRanges(idLevelRanges map[int]string) []int {
-	if appMessage.sortedIdLevelRanges == nil {
-		appMessage.sortedIdLevelRanges = make([]int, 0, len(idLevelRanges))
-		for key := range idLevelRanges {
-			appMessage.sortedIdLevelRanges = append(appMessage.sortedIdLevelRanges, key)
-		}
-		sort.Sort(sort.Reverse(sort.IntSlice(appMessage.sortedIdLevelRanges)))
-	}
-	return appMessage.sortedIdLevelRanges
-}
-
-// ----------------------------------------------------------------------------
-// Interface methods
-// ----------------------------------------------------------------------------
-
-/*
-The SaySomething method simply prints the 'Something' value in the type-struct.
-
-Input
-  - ctx: A context to control lifecycle.
-
-Output
-  - Nothing is returned, except for an error.  However, something is printed.
-    See the example output.
-*/
-func (appMessage *AppMessageImpl) New(messageNumber int, details ...interface{}) string {
+func (appMessage *AppMessageImpl) populateStructure(messageNumber int, details ...interface{}) *AppMessageFormat {
 	now := time.Now()
 
 	var (
@@ -283,7 +248,7 @@ func (appMessage *AppMessageImpl) New(messageNumber int, details ...interface{})
 		location = fmt.Sprintf("In %s() at %s:%d", functionName, filename, line)
 	}
 
-	appMessageFormat := &AppMessageFormat{
+	result := &AppMessageFormat{
 		Date:     date,
 		Time:     time,
 		Level:    level,
@@ -295,12 +260,58 @@ func (appMessage *AppMessageImpl) New(messageNumber int, details ...interface{})
 	}
 
 	if len(errorList) > 0 {
-		appMessageFormat.Errors = errorList
+		result.Errors = errorList
 	}
 
 	if len(filteredDetails) > 0 {
-		appMessageFormat.Details = messageDetails(filteredDetails)
+		result.Details = messageDetails(filteredDetails)
 	}
+
+	return result
+}
+
+// ----------------------------------------------------------------------------
+// Private methods
+// ----------------------------------------------------------------------------
+
+func (appMessage *AppMessageImpl) getLevel(messageNumber int) string {
+	sortedMessageLevelKeys := appMessage.getSortedIdLevelRanges(IdLevelRangesAsString)
+	for _, messageLevelKey := range sortedMessageLevelKeys {
+		if messageNumber >= messageLevelKey {
+			return IdLevelRangesAsString[messageLevelKey]
+		}
+	}
+	return "UNKNOWN"
+}
+
+func (appMessage *AppMessageImpl) getSortedIdLevelRanges(idLevelRanges map[int]string) []int {
+	if appMessage.sortedIdLevelRanges == nil {
+		appMessage.sortedIdLevelRanges = make([]int, 0, len(idLevelRanges))
+		for key := range idLevelRanges {
+			appMessage.sortedIdLevelRanges = append(appMessage.sortedIdLevelRanges, key)
+		}
+		sort.Sort(sort.Reverse(sort.IntSlice(appMessage.sortedIdLevelRanges)))
+	}
+	return appMessage.sortedIdLevelRanges
+}
+
+// ----------------------------------------------------------------------------
+// Interface methods
+// ----------------------------------------------------------------------------
+
+/*
+The NewJson method return a JSON string with the elements of the message.
+
+Input
+  - messageNumber: A message identifier which indexes into "idMessages".
+  - details: Variadic arguments of any type to be added to the message.
+
+Output
+  - A JSON string representing the details formatted by the template identified by the messageNumber.
+*/
+func (appMessage *AppMessageImpl) NewJson(messageNumber int, details ...interface{}) string {
+
+	appMessageFormat := appMessage.populateStructure(messageNumber, details...)
 
 	// Convert to JSON.
 
@@ -319,4 +330,51 @@ func (appMessage *AppMessageImpl) New(messageNumber int, details ...interface{})
 		return err.Error()
 	}
 	return strings.TrimSpace(resultBytes.String())
+}
+
+/*
+The NewKV method return a list of Key-Value pairs string with the elements of the message.
+
+Input
+  - messageNumber: A message identifier which indexes into "idMessages".
+  - details: Variadic arguments of any type to be added to the message.
+
+Output
+  - A slice of oscillating key-value pairs.
+*/
+func (appMessage *AppMessageImpl) NewSlog(messageNumber int, details ...interface{}) (string, []interface{}) {
+	var result []interface{} = nil
+
+	appMessageFormat := appMessage.populateStructure(messageNumber, details...)
+
+	worklist := map[string]interface{}{
+		"date":     appMessageFormat.Date,
+		"time":     appMessageFormat.Time,
+		"level":    appMessageFormat.Level,
+		"id":       appMessageFormat.Id,
+		"status":   appMessageFormat.Status,
+		"duration": appMessageFormat.Duration,
+		"location": appMessageFormat.Location,
+		"errors":   appMessageFormat.Errors,
+		"details":  appMessageFormat.Details,
+	}
+
+	for key, value := range worklist {
+		switch typedValue := value.(type) {
+		case string:
+			if typedValue != "" {
+				result = append(result, key, value)
+			}
+		case int64:
+			if typedValue != 0 {
+				result = append(result, key, value)
+			}
+		default:
+			if typedValue != nil {
+				result = append(result, key, value)
+			}
+		}
+	}
+
+	return appMessageFormat.Text.(string), result
 }

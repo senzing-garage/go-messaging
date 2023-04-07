@@ -12,7 +12,8 @@ import (
 
 // The AppMessageInterface interface is...
 type AppMessageInterface interface {
-	New(messageNumber int, details ...interface{}) string
+	NewJson(messageNumber int, details ...interface{}) string
+	NewSlog(messageNumber int, details ...interface{}) (string, []interface{})
 }
 
 // ----------------------------------------------------------------------------
