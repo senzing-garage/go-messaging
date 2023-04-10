@@ -43,7 +43,7 @@ func main() {
 	}`)
 
 	// ------------------------------------------------------------------------
-	// --- Use bare messge generator
+	// --- Using a bare messge generator
 	// ------------------------------------------------------------------------
 
 	// Create a bare message generator.
@@ -59,7 +59,7 @@ func main() {
 	fmt.Println(messenger1.NewJson(1001, "Bob", "Mary", err1, err2))
 
 	// ------------------------------------------------------------------------
-	// --- Use configured messge generator
+	// --- Using a configured messge generator
 	// ------------------------------------------------------------------------
 
 	// Create a configured message generator.
@@ -80,7 +80,7 @@ func main() {
 	fmt.Println(messenger2.NewJson(1001, "Bob", "Mary", err1, err2))
 
 	// ------------------------------------------------------------------------
-	// --- Use message generator with golang.org/x/exp/slog
+	// --- Using a message generator with golang.org/x/exp/slog
 	// ------------------------------------------------------------------------
 
 	fmt.Printf("\n----- Logging -----------------------------------------------\n\n")
