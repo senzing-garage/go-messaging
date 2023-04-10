@@ -217,7 +217,9 @@ func (messenger *MessengerImpl) populateStructure(messageNumber int, details ...
 
 	// Calculate fields.
 
+	// timeNow := time.Now().UTC().Format(time.RFC3339Nano)
 	timeNow := time.Now().Format(time.RFC3339Nano)
+
 	callerSkip = messenger.callerSkip
 	level = messenger.getLevel(messageNumber)
 	id := fmt.Sprintf(messenger.messageIdTemplate, messageNumber)
@@ -283,13 +285,15 @@ func (messenger *MessengerImpl) populateStructure(messageNumber int, details ...
 	// Calculate field - location.
 	// See https://pkg.go.dev/runtime#Caller
 
-	pc, file, line, ok := runtime.Caller(callerSkip)
-	if ok {
-		callingFunction := runtime.FuncForPC(pc)
-		runtimeFunc := regexp.MustCompile(`^.*\.(.*)$`)
-		functionName := runtimeFunc.ReplaceAllString(callingFunction.Name(), "$1")
-		filename := filepath.Base(file)
-		location = fmt.Sprintf("In %s() at %s:%d", functionName, filename, line)
+	if callerSkip > 0 {
+		pc, file, line, ok := runtime.Caller(callerSkip)
+		if ok {
+			callingFunction := runtime.FuncForPC(pc)
+			runtimeFunc := regexp.MustCompile(`^.*\.(.*)$`)
+			functionName := runtimeFunc.ReplaceAllString(callingFunction.Name(), "$1")
+			filename := filepath.Base(file)
+			location = fmt.Sprintf("In %s() at %s:%d", functionName, filename, line)
+		}
 	}
 
 	// Compose result.

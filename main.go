@@ -31,7 +31,7 @@ func main() {
 	err1 := errors.New("error #1")
 	err2 := errors.New(`
 	{
-		"time": "2023-04-07 19:10:21.970756517 +0000 UTC",
+		"time": "2023-04-10T11:00:20.623748617-04:00",
 		"level": "TRACE",
 		"id": "senzing-99990002",
 		"text": "A fake error",
@@ -65,7 +65,7 @@ func main() {
 	// Create a configured message generator.
 
 	optionSenzingProductId := &messenger.OptionSenzingProductId{Value: 9998}
-	optionCallerSkip := &messenger.OptionCallerSkip{Value: 0001}
+	optionCallerSkip := &messenger.OptionCallerSkip{Value: 2}
 	optionIdMessages := &messenger.OptionIdMessages{Value: idMessages}
 
 	messenger2, err := messenger.New(optionSenzingProductId, optionCallerSkip, optionIdMessages)
