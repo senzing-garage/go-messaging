@@ -30,7 +30,7 @@ var testCasesForMessage = []struct {
 		options:             []interface{}{getOptionIdMessages(), getOptionCallerSkip()},
 		details:             []interface{}{"A", 1, getTimestamp()},
 		expectedMessageJson: `{"time":"2000-01-01 00:00:00 +0000 UTC","level":"TRACE","id":"senzing-99990001","location":"In func1() at messenger_test.go:113","details":{"1":"A","2":1}}`,
-		expectedMessageSlog: []interface{}([]interface{}{"level", "TRACE", "id", "senzing-99990001", "location", "In func1() at messenger_test.go:126", "details", map[string]interface{}{"1": "A", "2": 1}}),
+		expectedMessageSlog: []interface{}{"id", "senzing-99990001", "location", "In NewSlog() at messenger.go:367", "details", map[string]interface{}{"1": "A", "2": 1}},
 	},
 	{
 		name:                "messenger-2",
@@ -38,7 +38,7 @@ var testCasesForMessage = []struct {
 		options:             []interface{}{getOptionIdMessages(), getOptionCallerSkip()},
 		details:             []interface{}{"Bob", "Jane", getTimestamp()},
 		expectedMessageJson: `{"time":"2000-01-01 00:00:00 +0000 UTC","level":"TRACE","id":"senzing-99990002","text":"Bob does not know Jane","location":"In func1() at messenger_test.go:113","details":{"1":"Bob","2":"Jane"}}`,
-		expectedMessageSlog: []interface{}{"level", "TRACE", "id", "senzing-99990002", "location", "In func1() at messenger_test.go:126", "details", map[string]interface{}{"1": "Bob", "2": "Jane"}},
+		expectedMessageSlog: []interface{}{"id", "senzing-99990002", "location", "In NewSlog() at messenger.go:367", "details", map[string]interface{}{"1": "Bob", "2": "Jane"}},
 	},
 }
 
@@ -92,8 +92,8 @@ func getOptionCallerSkip() *OptionCallerSkip {
 	}
 }
 
-func getTimestamp() *MessageTimestamp {
-	return &MessageTimestamp{
+func getTimestamp() *MessageTime {
+	return &MessageTime{
 		Value: time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC),
 	}
 }
@@ -137,7 +137,10 @@ func TestMessengerImpl_NewSlog(test *testing.T) {
 
 func ExampleMessengerImpl_NewJson() {
 	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/messenger/messenger_test.go
-	example := New()
-	fmt.Print(example.NewJson(2001, "Bob", "Jane", getTimestamp()))
-	//Output: {"time":"2023-04-07 22:18:31.418931866 +0000 UTC","level":"INFO","id":"%!(EXTRA int=2001)","text":"Bob knows Jane","location":"In populateStructure() at messenger.go:286","details":{"1":"Bob","2":"Jane"}}
+	example, err := New()
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Print(example.NewJson(2001, "Bob", "Jane", getTimestamp(), getOptionCallerSkip()))
+	//Output: {"time":"2000-01-01 00:00:00 +0000 UTC","level":"INFO","id":"senzing-99992001","location":"In ExampleMessengerImpl_NewJson() at messenger_test.go:144","details":{"1":"Bob","2":"Jane"}}
 }

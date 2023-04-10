@@ -19,7 +19,7 @@ import (
 // Types
 // ----------------------------------------------------------------------------
 
-// MessengerImpl is an example type-struct.
+// MessengerImpl is an type-struct for an implementation of the MessengerInterface.
 type MessengerImpl struct {
 	idMessages          map[int]string // Map message numbers to text format strings
 	idStatuses          map[int]string
@@ -42,7 +42,7 @@ func isJson(unknownString string) bool {
 	return json.Unmarshal([]byte(unknownStringUnescaped), &jsonString) == nil
 }
 
-// Make JSON string into an interface{}.
+// Cast JSON string into an interface{}.
 func jsonAsInterface(unknownString string) interface{} {
 	unknownStringUnescaped, err := strconv.Unquote(unknownString)
 	if err != nil {
@@ -53,7 +53,7 @@ func jsonAsInterface(unknownString string) interface{} {
 	return jsonString
 }
 
-// Make an interface{} into a string.
+// Cast an interface{} into a string.
 func interfaceAsString(unknown interface{}) string {
 	// See https://pkg.go.dev/fmt for format strings.
 	var result string
@@ -253,7 +253,7 @@ func (messenger *MessengerImpl) populateStructure(messageNumber int, details ...
 			status = typedValue.Value
 		case *MessageText:
 			text = typedValue.Value
-		case *MessageTimestamp:
+		case *MessageTime:
 			timeNow = typedValue.Value.String()
 		case *OptionCallerSkip:
 			callerSkip = typedValue.Value
@@ -330,10 +330,9 @@ Output
   - A JSON string representing the details formatted by the template identified by the messageNumber.
 */
 func (messenger *MessengerImpl) NewJson(messageNumber int, details ...interface{}) string {
-
 	messageFormat := messenger.populateStructure(messageNumber, details...)
 
-	// Convert to JSON.
+	// Construct return value.
 
 	// Would love to do it this way, but HTML escaping happens.
 	// Reported in https://github.com/golang/go/issues/56630
@@ -354,6 +353,7 @@ func (messenger *MessengerImpl) NewJson(messageNumber int, details ...interface{
 
 /*
 The NewSlog method returns a message and list of Key-Value pairs string with the elements of the message.
+A convenience method for NewSlogLevel(), but without slog.Level returned.
 
 Input
   - messageNumber: A message identifier which indexes into "idMessages".
@@ -364,21 +364,7 @@ Output
   - A slice of oscillating key-value pairs.
 */
 func (messenger *MessengerImpl) NewSlog(messageNumber int, details ...interface{}) (string, []interface{}) {
-	messageFormat := messenger.populateStructure(messageNumber, details...)
-	message := ""
-	if messageFormat.Text != nil {
-		message = messageFormat.Text.(string)
-	}
-	keys := []string{
-		"level",
-		"id",
-		"status",
-		"duration",
-		"location",
-		"errors",
-		"details",
-	}
-	keyValuePairs := messenger.getKeyValuePairs(messageFormat, keys)
+	message, _, keyValuePairs := messenger.NewSlogLevel(messageNumber, details...)
 	return message, keyValuePairs
 }
 

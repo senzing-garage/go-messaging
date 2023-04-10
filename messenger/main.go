@@ -23,17 +23,9 @@ type MessengerInterface interface {
 // Types - struct
 // ----------------------------------------------------------------------------
 
-type MessageDetails struct {
-	Value interface{}
-}
-
-type MessageDuration struct {
-	Value int64
-}
-
 // Fields in the formatted message.
 // Order is important.
-// It should be date, time, level, id, status, text, duration, location, errors, details.
+// It should be time, level, id, text, status, duration, location, errors, details.
 type MessageFormat struct {
 	Time     string      `json:"time,omitempty"`     // Time of message in UTC.
 	Level    string      `json:"level,omitempty"`    // Level:  TRACE, DEBUG, INFO, WARN, ERROR, FATAL, PANIC.
@@ -44,6 +36,16 @@ type MessageFormat struct {
 	Location string      `json:"location,omitempty"` // Location in the code issuing message.
 	Errors   interface{} `json:"errors,omitempty"`   // List of errors.
 	Details  interface{} `json:"details,omitempty"`  // All instances passed into the message.
+}
+
+// --- Override values when creating messages ---------------------------------
+
+type MessageDetails struct {
+	Value interface{}
+}
+
+type MessageDuration struct {
+	Value int64
 }
 
 type MessageId struct {
@@ -66,7 +68,7 @@ type MessageText struct {
 	Value interface{}
 }
 
-type MessageTimestamp struct {
+type MessageTime struct {
 	Value time.Time
 }
 
@@ -96,6 +98,8 @@ type OptionMessageIdTemplate struct {
 // Constants
 // ----------------------------------------------------------------------------
 
+// Log levels as integers.
+// Compatible with golang.org/x/exp/slog.
 const (
 	LevelTraceInt int = -8
 	LevelDebugInt int = -4
@@ -104,16 +108,6 @@ const (
 	LevelErrorInt int = 8
 	LevelFatalInt int = 12
 	LevelPanicInt int = 16
-)
-
-const (
-	LevelDebugSlog = slog.LevelDebug
-	LevelErrorSlog = slog.LevelError
-	LevelFatalSlog = slog.Level(LevelFatalInt)
-	LevelInfoSlog  = slog.LevelInfo
-	LevelPanicSlog = slog.Level(LevelPanicInt)
-	LevelTraceSlog = slog.Level(LevelTraceInt)
-	LevelWarnSlog  = slog.LevelWarn
 )
 
 // Strings representing the supported logging levels.
@@ -127,6 +121,44 @@ const (
 	LevelWarnName  = "WARN"
 )
 
+// Existing and new log levels used with slog.Level.
+const (
+	LevelDebugSlog = slog.LevelDebug
+	LevelErrorSlog = slog.LevelError
+	LevelFatalSlog = slog.Level(LevelFatalInt)
+	LevelInfoSlog  = slog.LevelInfo
+	LevelPanicSlog = slog.Level(LevelPanicInt)
+	LevelTraceSlog = slog.Level(LevelTraceInt)
+	LevelWarnSlog  = slog.LevelWarn
+)
+
+// ----------------------------------------------------------------------------
+// Variables
+// ----------------------------------------------------------------------------
+
+// Message ID Low-bound for message levels
+// i.e. a message in range 0 - 999 is a TRACE message.
+var IdLevelRangesAsString = map[int]string{
+	0000: LevelTraceName,
+	1000: LevelDebugName,
+	2000: LevelInfoName,
+	3000: LevelWarnName,
+	4000: LevelErrorName,
+	5000: LevelFatalName,
+	6000: LevelPanicName,
+}
+
+// Map from slog.Level to string representation.
+var LevelToTextMap = map[slog.Level]string{
+	LevelDebugSlog: LevelDebugName,
+	LevelErrorSlog: LevelErrorName,
+	LevelFatalSlog: LevelFatalName,
+	LevelInfoSlog:  LevelInfoName,
+	LevelPanicSlog: LevelPanicName,
+	LevelTraceSlog: LevelTraceName,
+	LevelWarnSlog:  LevelWarnName,
+}
+
 // Map from string representation to Log level as typed integer.
 var TextToLevelMap = map[string]slog.Level{
 	LevelDebugName: LevelDebugSlog,
@@ -138,38 +170,13 @@ var TextToLevelMap = map[string]slog.Level{
 	LevelWarnName:  LevelWarnSlog,
 }
 
-var LevelToTextMap = map[slog.Level]string{
-	LevelDebugSlog: LevelDebugName,
-	LevelErrorSlog: LevelErrorName,
-	LevelFatalSlog: LevelFatalName,
-	LevelInfoSlog:  LevelInfoName,
-	LevelPanicSlog: LevelPanicName,
-	LevelTraceSlog: LevelTraceName,
-	LevelWarnSlog:  LevelWarnName,
-}
-
-// ----------------------------------------------------------------------------
-// Variables
-// ----------------------------------------------------------------------------
-
-var IdLevelRangesAsString = map[int]string{
-	0000: "TRACE",
-	1000: "DEBUG",
-	2000: "INFO",
-	3000: "WARN",
-	4000: "ERROR",
-	5000: "FATAL",
-	6000: "PANIC",
-}
-
 // ----------------------------------------------------------------------------
 // Public functions
 // ----------------------------------------------------------------------------
 
 /*
-The NewSenzingLogger function creates a new instance of MessageLoggerInterface
-that is tailored to Senzing applications.
-Like New(), adding parameters can be used to modify subcomponents.
+The New function creates a new instance of MessengerInterface.
+Adding options can be used to modify subcomponents.
 */
 func New(options ...interface{}) (MessengerInterface, error) {
 	var err error = nil
@@ -203,7 +210,7 @@ func New(options ...interface{}) (MessengerInterface, error) {
 		}
 	}
 
-	// Detect incorrect parameter values.
+	// Detect incorrect option values.
 
 	if productIdentifier <= 0 || productIdentifier >= 10000 {
 		err := errors.New("productIdentifier must be in range 1..9999. See https://github.com/Senzing/knowledge-base/blob/main/lists/senzing-product-ids.md")
