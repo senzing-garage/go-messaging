@@ -13,7 +13,7 @@ import (
 )
 
 var idMessages = map[int]string{
-	2:    "TRACE: %s works with %s",
+	0001: "TRACE: %s works with %s",
 	1001: "DEBUG: %s works with %s",
 	2001: "INFO: %s works with %s",
 	3001: "WARN: %s works with %s",
@@ -55,7 +55,7 @@ func main() {
 
 	// Print some messages.
 
-	fmt.Println(messenger1.NewJson(0002, "Bob", "Mary"))
+	fmt.Println(messenger1.NewJson(0001, "Bob", "Mary"))
 	fmt.Println(messenger1.NewJson(1001, "Bob", "Mary", err1, err2))
 
 	// ------------------------------------------------------------------------
@@ -65,7 +65,7 @@ func main() {
 	// Create a configured message generator.
 
 	optionSenzingProductId := &messenger.OptionSenzingProductId{Value: 9998}
-	optionCallerSkip := &messenger.OptionCallerSkip{Value: 2}
+	optionCallerSkip := &messenger.OptionCallerSkip{Value: 0001}
 	optionIdMessages := &messenger.OptionIdMessages{Value: idMessages}
 
 	messenger2, err := messenger.New(optionSenzingProductId, optionCallerSkip, optionIdMessages)
@@ -76,7 +76,7 @@ func main() {
 
 	// Print some messages.
 
-	fmt.Println(messenger2.NewJson(0002, "Bob", "Mary"))
+	fmt.Println(messenger2.NewJson(0001, "Bob", "Mary"))
 	fmt.Println(messenger2.NewJson(1001, "Bob", "Mary", err1, err2))
 
 	// ------------------------------------------------------------------------
@@ -89,7 +89,7 @@ func main() {
 
 	// Logging with auto-level generation.
 
-	msg0, level0, details0 := messenger2.NewSlogLevel(0002, "Bob", "Mary")
+	msg0, level0, details0 := messenger2.NewSlogLevel(0001, "Bob", "Mary")
 	jsonLogger.Log(ctx, level0, msg0, details0...)
 
 	msg1, level1, details1 := messenger2.NewSlogLevel(1001, "Bob", "Mary")

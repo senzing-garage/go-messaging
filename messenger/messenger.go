@@ -217,7 +217,7 @@ func (messenger *MessengerImpl) populateStructure(messageNumber int, details ...
 
 	// Calculate fields.
 
-	timeNow := time.Now().UTC().String()
+	timeNow := time.Now().Format(time.RFC3339Nano)
 	callerSkip = messenger.callerSkip
 	level = messenger.getLevel(messageNumber)
 	id := fmt.Sprintf(messenger.messageIdTemplate, messageNumber)
