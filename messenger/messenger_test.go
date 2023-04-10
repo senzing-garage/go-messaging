@@ -10,10 +10,13 @@ import (
 )
 
 var idMessages = map[int]string{
-	2001: "%s knows %s",
-	3001: "%s knows %s",
-	4001: "%s knows %s",
-	2:    "%s does not know %s",
+	0001: "TRACE: %s knows %s",
+	1001: "DEBUG: %s knows %s",
+	2001: "INFO: %s knows %s",
+	3001: "WARN: %s knows %s",
+	4001: "ERROR: %s knows %s",
+	5001: "FATAL: %s knows %s",
+	6001: "PANIC: %s knows %s",
 }
 
 var testCasesForMessage = []struct {
@@ -23,22 +26,70 @@ var testCasesForMessage = []struct {
 	details             []interface{}
 	expectedMessageJson string
 	expectedMessageSlog []interface{}
+	expectedText        string
 }{
 	{
-		name:                "messenger-1",
+		name:                "messenger-0001",
 		messageNumber:       1,
 		options:             []interface{}{getOptionIdMessages(), getOptionCallerSkip()},
-		details:             []interface{}{"A", 1, getTimestamp()},
-		expectedMessageJson: `{"time":"2000-01-01 00:00:00 +0000 UTC","level":"TRACE","id":"senzing-99990001","location":"In func1() at messenger_test.go:113","details":{"1":"A","2":1}}`,
-		expectedMessageSlog: []interface{}{"id", "senzing-99990001", "location", "In NewSlog() at messenger.go:367", "details", map[string]interface{}{"1": "A", "2": 1}},
+		details:             []interface{}{"Bob", "Jane", getTimestamp()},
+		expectedMessageJson: `{"time":"2000-01-01 00:00:00 +0000 UTC","level":"TRACE","id":"senzing-99990001","text":"TRACE: Bob knows Jane","location":"In func1() at messenger_test.go:164","details":{"1":"Bob","2":"Jane"}}`,
+		expectedMessageSlog: []interface{}{"id", "senzing-99990001", "location", "In func1() at messenger_test.go:177", "details", map[string]interface{}{"1": "Bob", "2": "Jane"}},
+		expectedText:        "TRACE: Bob knows Jane",
 	},
 	{
-		name:                "messenger-2",
-		messageNumber:       2,
+		name:                "messenger-1001",
+		messageNumber:       1001,
 		options:             []interface{}{getOptionIdMessages(), getOptionCallerSkip()},
 		details:             []interface{}{"Bob", "Jane", getTimestamp()},
-		expectedMessageJson: `{"time":"2000-01-01 00:00:00 +0000 UTC","level":"TRACE","id":"senzing-99990002","text":"Bob does not know Jane","location":"In func1() at messenger_test.go:113","details":{"1":"Bob","2":"Jane"}}`,
-		expectedMessageSlog: []interface{}{"id", "senzing-99990002", "location", "In NewSlog() at messenger.go:367", "details", map[string]interface{}{"1": "Bob", "2": "Jane"}},
+		expectedMessageJson: `{"time":"2000-01-01 00:00:00 +0000 UTC","level":"DEBUG","id":"senzing-99991001","text":"DEBUG: Bob knows Jane","location":"In func1() at messenger_test.go:164","details":{"1":"Bob","2":"Jane"}}`,
+		expectedMessageSlog: []interface{}{"id", "senzing-99991001", "location", "In func1() at messenger_test.go:177", "details", map[string]interface{}{"1": "Bob", "2": "Jane"}},
+		expectedText:        "DEBUG: Bob knows Jane",
+	},
+	{
+		name:                "messenger-2001",
+		messageNumber:       2001,
+		options:             []interface{}{getOptionIdMessages(), getOptionCallerSkip()},
+		details:             []interface{}{"Bob", "Jane", getTimestamp()},
+		expectedMessageJson: `{"time":"2000-01-01 00:00:00 +0000 UTC","level":"INFO","id":"senzing-99992001","text":"INFO: Bob knows Jane","location":"In func1() at messenger_test.go:164","details":{"1":"Bob","2":"Jane"}}`,
+		expectedMessageSlog: []interface{}{"id", "senzing-99992001", "location", "In func1() at messenger_test.go:177", "details", map[string]interface{}{"1": "Bob", "2": "Jane"}},
+		expectedText:        "INFO: Bob knows Jane",
+	},
+	{
+		name:                "messenger-3001",
+		messageNumber:       3001,
+		options:             []interface{}{getOptionIdMessages(), getOptionCallerSkip()},
+		details:             []interface{}{"Bob", "Jane", getTimestamp()},
+		expectedMessageJson: `{"time":"2000-01-01 00:00:00 +0000 UTC","level":"WARN","id":"senzing-99993001","text":"WARN: Bob knows Jane","location":"In func1() at messenger_test.go:164","details":{"1":"Bob","2":"Jane"}}`,
+		expectedMessageSlog: []interface{}{"id", "senzing-99993001", "location", "In func1() at messenger_test.go:177", "details", map[string]interface{}{"1": "Bob", "2": "Jane"}},
+		expectedText:        "WARN: Bob knows Jane",
+	},
+	{
+		name:                "messenger-4001",
+		messageNumber:       4001,
+		options:             []interface{}{getOptionIdMessages(), getOptionCallerSkip()},
+		details:             []interface{}{"Bob", "Jane", getTimestamp()},
+		expectedMessageJson: `{"time":"2000-01-01 00:00:00 +0000 UTC","level":"ERROR","id":"senzing-99994001","text":"ERROR: Bob knows Jane","location":"In func1() at messenger_test.go:164","details":{"1":"Bob","2":"Jane"}}`,
+		expectedMessageSlog: []interface{}{"id", "senzing-99994001", "location", "In func1() at messenger_test.go:177", "details", map[string]interface{}{"1": "Bob", "2": "Jane"}},
+		expectedText:        "ERROR: Bob knows Jane",
+	},
+	{
+		name:                "messenger-5001",
+		messageNumber:       5001,
+		options:             []interface{}{getOptionIdMessages(), getOptionCallerSkip()},
+		details:             []interface{}{"Bob", "Jane", getTimestamp()},
+		expectedMessageJson: `{"time":"2000-01-01 00:00:00 +0000 UTC","level":"FATAL","id":"senzing-99995001","text":"FATAL: Bob knows Jane","location":"In func1() at messenger_test.go:164","details":{"1":"Bob","2":"Jane"}}`,
+		expectedMessageSlog: []interface{}{"id", "senzing-99995001", "location", "In func1() at messenger_test.go:177", "details", map[string]interface{}{"1": "Bob", "2": "Jane"}},
+		expectedText:        "FATAL: Bob knows Jane",
+	},
+	{
+		name:                "messenger-6001",
+		messageNumber:       6001,
+		options:             []interface{}{getOptionIdMessages(), getOptionCallerSkip()},
+		details:             []interface{}{"Bob", "Jane", getTimestamp()},
+		expectedMessageJson: `{"time":"2000-01-01 00:00:00 +0000 UTC","level":"PANIC","id":"senzing-99996001","text":"PANIC: Bob knows Jane","location":"In func1() at messenger_test.go:164","details":{"1":"Bob","2":"Jane"}}`,
+		expectedMessageSlog: []interface{}{"id", "senzing-99996001", "location", "In func1() at messenger_test.go:177", "details", map[string]interface{}{"1": "Bob", "2": "Jane"}},
+		expectedText:        "PANIC: Bob knows Jane",
 	},
 }
 
@@ -123,9 +174,9 @@ func TestMessengerImpl_NewSlog(test *testing.T) {
 			test.Run(testCase.name+"-NewSlog", func(test *testing.T) {
 				testObject, err := New(testCase.options...)
 				testError(test, testObject, err)
-				_, actual := testObject.NewSlog(testCase.messageNumber, testCase.details...)
+				message, _, actual := testObject.NewSlogLevel(testCase.messageNumber, testCase.details...)
 				assert.Equal(test, testCase.expectedMessageSlog, actual, testCase.name)
-				// assert.Equal(test, testCase.expectedMessage, actual, testCase.name)
+				assert.Equal(test, testCase.expectedText, message, testCase.name)
 			})
 		}
 	}
@@ -142,5 +193,5 @@ func ExampleMessengerImpl_NewJson() {
 		fmt.Println(err)
 	}
 	fmt.Print(example.NewJson(2001, "Bob", "Jane", getTimestamp(), getOptionCallerSkip()))
-	//Output: {"time":"2000-01-01 00:00:00 +0000 UTC","level":"INFO","id":"senzing-99992001","location":"In ExampleMessengerImpl_NewJson() at messenger_test.go:144","details":{"1":"Bob","2":"Jane"}}
+	//Output: {"time":"2000-01-01 00:00:00 +0000 UTC","level":"INFO","id":"senzing-99992001","location":"In ExampleMessengerImpl_NewJson() at messenger_test.go:195","details":{"1":"Bob","2":"Jane"}}
 }
