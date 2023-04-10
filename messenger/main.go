@@ -12,7 +12,8 @@ import (
 // Types - interface
 // ----------------------------------------------------------------------------
 
-// The MessengerInterface interface is...
+// The MessengerInterface interface has methods for creating different
+// representations of a message.
 type MessengerInterface interface {
 	NewJson(messageNumber int, details ...interface{}) string
 	NewSlog(messageNumber int, details ...interface{}) (string, []interface{})
@@ -239,11 +240,11 @@ func New(options ...interface{}) (MessengerInterface, error) {
 }
 
 /*
-The HandlerOptions function returns a slog handler that includes TRACE, FATAL, and PANIC.
+The SlogHandlerOptions function returns a slog handler that includes TRACE, FATAL, and PANIC.
 TODO: Move to Senzing/go-logging.
 See: https://go.googlesource.com/exp/+/refs/heads/master/slog/example_custom_levels_test.go
 */
-func HandlerOptions(leveler slog.Leveler) *slog.HandlerOptions {
+func SlogHandlerOptions(leveler slog.Leveler) *slog.HandlerOptions {
 	if leveler == nil {
 		leveler = LevelInfoSlog
 	}

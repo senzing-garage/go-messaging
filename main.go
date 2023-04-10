@@ -43,7 +43,7 @@ func main() {
 	}`)
 
 	// ------------------------------------------------------------------------
-	// --- Using a bare messge generator
+	// --- Using a bare message generator
 	// ------------------------------------------------------------------------
 
 	// Create a bare message generator.
@@ -59,7 +59,7 @@ func main() {
 	fmt.Println(messenger1.NewJson(1001, "Bob", "Mary", err1, err2))
 
 	// ------------------------------------------------------------------------
-	// --- Using a configured messge generator
+	// --- Using a configured message generator
 	// ------------------------------------------------------------------------
 
 	// Create a configured message generator.
@@ -85,7 +85,7 @@ func main() {
 
 	fmt.Printf("\n----- Logging -----------------------------------------------\n\n")
 
-	jsonLogger := slog.New(messenger.HandlerOptions(messenger.LevelInfoSlog).NewJSONHandler(os.Stderr))
+	jsonLogger := slog.New(messenger.SlogHandlerOptions(messenger.LevelInfoSlog).NewJSONHandler(os.Stderr))
 
 	// Logging with auto-level generation.
 
