@@ -207,7 +207,7 @@ func New(options ...interface{}) (MessengerInterface, error) {
 			productIdentifier = typedValue.Value
 			messageIdTemplate = fmt.Sprintf("senzing-%04d", productIdentifier) + "%04d"
 		case *OptionMessageIdTemplate:
-			messageIdTemplate = typedValue.Value + "%04d"
+			messageIdTemplate = typedValue.Value
 		}
 	}
 
