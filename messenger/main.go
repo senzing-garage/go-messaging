@@ -87,7 +87,7 @@ type OptionIdStatuses struct {
 	Value map[int]string
 }
 
-type OptionSenzingProductId struct {
+type OptionSenzingComponentId struct {
 	Value int
 }
 
@@ -186,11 +186,11 @@ func New(options ...interface{}) (MessengerInterface, error) {
 	// Default values.
 
 	var (
-		callerSkip        int            = 0
-		idMessages        map[int]string = map[int]string{}
-		idStatuses        map[int]string = map[int]string{}
-		productIdentifier int            = 9999
-		messageIdTemplate string         = fmt.Sprintf("senzing-%04d", productIdentifier) + "%04d"
+		callerSkip          int            = 0
+		idMessages          map[int]string = map[int]string{}
+		idStatuses          map[int]string = map[int]string{}
+		componentIdentifier int            = 9999
+		messageIdTemplate   string         = fmt.Sprintf("senzing-%04d", componentIdentifier) + "%04d"
 	)
 
 	// Process options.
@@ -203,9 +203,9 @@ func New(options ...interface{}) (MessengerInterface, error) {
 			idMessages = typedValue.Value
 		case *OptionIdStatuses:
 			idStatuses = typedValue.Value
-		case *OptionSenzingProductId:
-			productIdentifier = typedValue.Value
-			messageIdTemplate = fmt.Sprintf("senzing-%04d", productIdentifier) + "%04d"
+		case *OptionSenzingComponentId:
+			componentIdentifier = typedValue.Value
+			messageIdTemplate = fmt.Sprintf("senzing-%04d", componentIdentifier) + "%04d"
 		case *OptionMessageIdTemplate:
 			messageIdTemplate = typedValue.Value
 		}
@@ -213,8 +213,8 @@ func New(options ...interface{}) (MessengerInterface, error) {
 
 	// Detect incorrect option values.
 
-	if productIdentifier <= 0 || productIdentifier >= 10000 {
-		err := errors.New("productIdentifier must be in range 1..9999. See https://github.com/Senzing/knowledge-base/blob/main/lists/senzing-product-ids.md")
+	if componentIdentifier <= 0 || componentIdentifier >= 10000 {
+		err := errors.New("componentIdentifier must be in range 1..9999. See https://github.com/Senzing/knowledge-base/blob/main/lists/senzing-product-ids.md")
 		return result, err
 	}
 

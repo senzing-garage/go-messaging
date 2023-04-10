@@ -64,11 +64,11 @@ func main() {
 
 	// Create a configured message generator.
 
-	optionSenzingProductId := &messenger.OptionSenzingProductId{Value: 9998}
+	optionSenzingComponentId := &messenger.OptionSenzingComponentId{Value: 9998}
 	optionCallerSkip := &messenger.OptionCallerSkip{Value: 2}
 	optionIdMessages := &messenger.OptionIdMessages{Value: idMessages}
 
-	messenger2, err := messenger.New(optionSenzingProductId, optionCallerSkip, optionIdMessages)
+	messenger2, err := messenger.New(optionSenzingComponentId, optionCallerSkip, optionIdMessages)
 
 	if err != nil {
 		fmt.Printf("Error: %s", err.Error())
