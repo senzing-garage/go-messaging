@@ -12,20 +12,15 @@ import (
 	"golang.org/x/exp/slog"
 )
 
-var (
-	productIdentifier int                         = 9999
-	callerSkip        *messenger.OptionCallerSkip = &messenger.OptionCallerSkip{Value: 2}
-)
-
 var idMessages = map[int]string{
-	2:    "Trace: %s knows %s",
-	1001: "Debug: %s knows %s",
-	2001: "Info: %s knows %s",
-	3001: "Warn: %s knows %s",
-	4001: "Error: %s knows %s",
-	5001: "Fatal: %s knows %s",
-	6001: "Panic: %s knows %s",
-	7001: "Xxxxx: %s knows %s",
+	2:    "TRACE: %s works with %s",
+	1001: "DEBUG: %s works with %s",
+	2001: "INFO: %s works with %s",
+	3001: "WARN: %s works with %s",
+	4001: "ERROR: %s works with %s",
+	5001: "FATAL: %s works with %s",
+	6001: "PANIC: %s works with %s",
+	7001: "Xxxxx: %s works with %s",
 }
 
 func main() {
@@ -47,59 +42,50 @@ func main() {
 		}
 	}`)
 
-	// messenger, err := messenger.New(productIdentifier, idMessages, idStatuses, callerSkip)
+	// ------------------------------------------------------------------------
+	// --- Use bare messge generator
+	// ------------------------------------------------------------------------
 
-	// Bare message generator.
+	// Create a bare message generator.
 
 	messenger1, err := messenger.New()
 	if err != nil {
 		fmt.Printf("Error: %s", err.Error())
 	}
+
+	// Print some messages.
+
 	fmt.Println(messenger1.NewJson(0002, "Bob", "Mary"))
 	fmt.Println(messenger1.NewJson(1001, "Bob", "Mary", err1, err2))
 
-	// Configured message generator.
+	// ------------------------------------------------------------------------
+	// --- Use configured messge generator
+	// ------------------------------------------------------------------------
+
+	// Create a configured message generator.
 
 	optionSenzingProductId := &messenger.OptionSenzingProductId{Value: 9998}
 	optionCallerSkip := &messenger.OptionCallerSkip{Value: 2}
 	optionIdMessages := &messenger.OptionIdMessages{Value: idMessages}
 
 	messenger2, err := messenger.New(optionSenzingProductId, optionCallerSkip, optionIdMessages)
+
 	if err != nil {
 		fmt.Printf("Error: %s", err.Error())
 	}
 
+	// Print some messages.
+
 	fmt.Println(messenger2.NewJson(0002, "Bob", "Mary"))
 	fmt.Println(messenger2.NewJson(1001, "Bob", "Mary", err1, err2))
 
+	// ------------------------------------------------------------------------
+	// --- Use message generator with golang.org/x/exp/slog
+	// ------------------------------------------------------------------------
+
 	fmt.Printf("\n----- Logging -----------------------------------------------\n\n")
 
-	// Text logger - long form of construction.
-
-	// textHandler := slog.NewTextHandler(os.Stderr)
-	// textLogger := slog.New(textHandler)
-
-	// textOptions := messenger.HandlerOptions(messenger.LevelInfoSlog)
-	// textHandler := textOptions.NewTextHandler(os.Stderr)
-	// textLogger := slog.New(textHandler)
-
-	// JSON logger - short form of construction.
-
-	// jsonHandler := slog.NewJSONHandler(os.Stderr)
-	// jsonLogger := slog.New(jsonHandler)
-
 	jsonLogger := slog.New(messenger.HandlerOptions(messenger.LevelInfoSlog).NewJSONHandler(os.Stderr))
-
-	// Initialize message generator.
-
-	// Create a message and details.
-
-	// msg, details := messenger.NewSlog(2001, "Bob", "Mary")
-
-	// Log the message.
-
-	// textLogger.Info(msg, details...)
-	// jsonLogger.Info(msg, details...)
 
 	// Logging with auto-level generation.
 
