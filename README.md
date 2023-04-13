@@ -31,12 +31,15 @@ fmt.Println(aMessenger.NewJson(0001, "Bob", "Mary"))
 fmt.Println(aMessenger.NewSlog(0001, "Bob", "Mary"))
 ```
 
-Output
+Output:
 
 ```console
 {"time":"YYYY-MM-DDThh:mm:ss.nnnnnnnnn-00:00","level":"TRACE","id":"senzing-99990001","details":{"1":"Bob","2":"Mary"}}
 [id senzing-99990001 details map[1:Bob 2:Mary]]
 ```
+
+For more examples, see
+[main.go](main.go)
 
 ## References
 

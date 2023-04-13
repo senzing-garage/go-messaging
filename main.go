@@ -46,6 +46,8 @@ func main() {
 	// --- Using a bare message generator
 	// ------------------------------------------------------------------------
 
+	// Example from README.md
+
 	aMessenger, _ := messenger.New()
 	fmt.Println(aMessenger.NewJson(0001, "Bob", "Mary"))
 	fmt.Println(aMessenger.NewSlog(0001, "Bob", "Mary"))
