@@ -10,20 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -
 
-## [0.2.0] - 2023-03-31
-
-### Changed in 0.2.0
-
-- Added `cmd` directory for cobra/viper integration
-
-## [0.1.1] - 2023-02-27
-
-### Changed in 0.1.1
-
-- Improved documentation
-
-## [0.1.0] - 2023-02-22
+## [0.1.0] - 2023-04-13
 
 ### Added to 0.1.0
 
-- Initial artifacts
+- Initial functionality
