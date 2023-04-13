@@ -17,11 +17,26 @@ The Senzing `go-messaging` packages are used to create structured messages.
 
 ## Overview
 
-(TODO:)
+`go-messaging` generates structured messages in multiple formats.
+Currently, the JSON format and an
+[slog](https://pkg.go.dev/golang.org/x/exp/slog)-friendly format are supported.
 
 ## Use
 
-(TODO:)
+```go
+import "github.com/senzing/go-messaging/messenger"
+
+aMessenger, _ := messenger.New()
+fmt.Println(aMessenger.NewJson(0001, "Bob", "Mary"))
+fmt.Println(aMessenger.NewSlog(0001, "Bob", "Mary"))
+```
+
+Output
+
+```console
+{"time":"YYYY-MM-DDThh:mm:ss.nnnnnnnnn-00:00","level":"TRACE","id":"senzing-99990001","details":{"1":"Bob","2":"Mary"}}
+[id senzing-99990001 details map[1:Bob 2:Mary]]
+```
 
 ## References
 

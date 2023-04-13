@@ -46,6 +46,10 @@ func main() {
 	// --- Using a bare message generator
 	// ------------------------------------------------------------------------
 
+	aMessenger, _ := messenger.New()
+	fmt.Println(aMessenger.NewJson(0001, "Bob", "Mary"))
+	fmt.Println(aMessenger.NewSlog(0001, "Bob", "Mary"))
+
 	// Create a bare message generator.
 
 	messenger1, err := messenger.New()
