@@ -25,6 +25,7 @@ The Senzing `go-messaging` packages are used to create structured messages.
 
 ## References
 
+- [API documentation](https://pkg.go.dev/github.com/senzing/go-messaging)
 - [Development](docs/development.md)
 - [Errors](docs/errors.md)
 - [Examples](docs/examples.md)
