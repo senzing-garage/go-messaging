@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -
 
+## [0.1.1] - 2023-04-19
+
+### Added to 0.1.1
+
+- Changed to UTC timestamps
+
 ## [0.1.0] - 2023-04-13
 
 ### Added to 0.1.0
