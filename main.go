@@ -3,13 +3,10 @@
 package main
 
 import (
-	"context"
 	"errors"
 	"fmt"
-	"os"
 
 	"github.com/senzing/go-messaging/messenger"
-	"golang.org/x/exp/slog"
 )
 
 var idMessages = map[int]string{
@@ -24,7 +21,7 @@ var idMessages = map[int]string{
 }
 
 func main() {
-	ctx := context.TODO()
+	// ctx := context.TODO()
 
 	// Create some fake errors.
 
@@ -84,39 +81,5 @@ func main() {
 
 	fmt.Println(messenger2.NewJson(0001, "Bob", "Mary"))
 	fmt.Println(messenger2.NewJson(1001, "Bob", "Mary", err1, err2))
-
-	// ------------------------------------------------------------------------
-	// --- Using a message generator with golang.org/x/exp/slog
-	// ------------------------------------------------------------------------
-
-	fmt.Printf("\n----- Logging -----------------------------------------------\n\n")
-
-	jsonLogger := slog.New(messenger.SlogHandlerOptions(messenger.LevelInfoSlog).NewJSONHandler(os.Stderr))
-
-	// Logging with auto-level generation.
-
-	msg0, level0, details0 := messenger2.NewSlogLevel(0001, "Bob", "Mary")
-	jsonLogger.Log(ctx, level0, msg0, details0...)
-
-	msg1, level1, details1 := messenger2.NewSlogLevel(1001, "Bob", "Mary")
-	jsonLogger.Log(ctx, level1, msg1, details1...)
-
-	msg2, level2, details2 := messenger2.NewSlogLevel(2001, "Bob", "Mary")
-	jsonLogger.Log(ctx, level2, msg2, details2...)
-
-	msg3, level3, details3 := messenger2.NewSlogLevel(3001, "Bob", "Mary")
-	jsonLogger.Log(ctx, level3, msg3, details3...)
-
-	msg4, level4, details4 := messenger2.NewSlogLevel(4001, "Bob", "Mary")
-	jsonLogger.Log(ctx, level4, msg4, details4...)
-
-	msg5, level5, details5 := messenger2.NewSlogLevel(5001, "Bob", "Mary")
-	jsonLogger.Log(ctx, level5, msg5, details5...)
-
-	msg6, level6, details6 := messenger2.NewSlogLevel(6001, "Bob", "Mary")
-	jsonLogger.Log(ctx, level6, msg6, details6...)
-
-	msg7, level7, details7 := messenger2.NewSlogLevel(7001, "Bob", "Mary")
-	jsonLogger.Log(ctx, level7, msg7, details7...)
 
 }
