@@ -15,7 +15,9 @@ import (
 
 // ParserImpl is an type-struct for an implementation of the ParserInterface.
 type ParserImpl struct {
+	isJson        bool
 	message       string
+	parseError    error
 	parsedMessage messenger.MessageFormat
 }
 
@@ -38,10 +40,16 @@ func isJson(unknownString string) bool {
 // ----------------------------------------------------------------------------
 
 func (parser *ParserImpl) initialize() error {
-	if !isJson(parser.message) {
-		return fmt.Errorf("string is not JSON")
+	var err error = nil
+	if isJson(parser.message) {
+		err = json.Unmarshal([]byte(parser.message), &parser.parsedMessage)
+	} else {
+		err = fmt.Errorf("string is not JSON")
 	}
-	err := json.Unmarshal([]byte(parser.message), &parser.parsedMessage)
+	if err == nil {
+		parser.isJson = true
+	}
+	parser.parseError = err
 	return err
 }
 
@@ -140,6 +148,32 @@ The GetXxxxxx method returns...
 
 Output
 */
+func (parser *ParserImpl) GetMessage() string {
+	return parser.message
+}
+
+/*
+The GetXxxxxx method returns...
+
+# Input
+
+Output
+*/
+func (parser *ParserImpl) GetMessageText() string {
+	text := parser.GetText()
+	if text != "" {
+		return text
+	}
+	return parser.message
+}
+
+/*
+The GetXxxxxx method returns...
+
+# Input
+
+Output
+*/
 func (parser *ParserImpl) GetStatus() string {
 	return parser.parsedMessage.Status
 }
@@ -152,7 +186,11 @@ The GetXxxxxx method returns...
 Output
 */
 func (parser *ParserImpl) GetText() string {
-	return fmt.Sprint(parser.parsedMessage.Text)
+	result := ""
+	if parser.parsedMessage.Text != nil {
+		result = fmt.Sprint(parser.parsedMessage.Text)
+	}
+	return result
 }
 
 /*
@@ -163,10 +201,25 @@ The GetXxxxxx method returns...
 Output
 */
 func (parser *ParserImpl) GetTime() time.Time {
+	result := time.Time{}
+	if parser.parsedMessage.Time == "" {
+		return result
+	}
 	result, err := time.Parse(time.RFC3339Nano, parser.parsedMessage.Time)
 	if err != nil {
 		fmt.Println(err.Error())
 		result = time.Time{}
 	}
 	return result
+}
+
+/*
+The GetXxxxxx method returns...
+
+# Input
+
+Output
+*/
+func (parser *ParserImpl) IsJson() bool {
+	return parser.isJson
 }

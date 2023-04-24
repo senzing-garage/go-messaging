@@ -17,9 +17,12 @@ type ParserInterface interface {
 	GetId() string
 	GetLevel() string
 	GetLocation() string
+	GetMessage() string
+	GetMessageText() string
 	GetStatus() string
 	GetText() string
 	GetTime() time.Time
+	IsJson() bool
 }
 
 // ----------------------------------------------------------------------------
@@ -29,7 +32,15 @@ type ParserInterface interface {
 /*
 The Parse function creates a new instance of ParserInterface.
 */
-func Parse(message string) (ParserInterface, error) {
+func Parse(message string) ParserInterface {
+	result, _ := ParseWithError(message)
+	return result
+}
+
+/*
+The ParseWithError function creates a new instance of ParserInterface and an error.
+*/
+func ParseWithError(message string) (ParserInterface, error) {
 	var result = &ParserImpl{
 		message: message,
 	}
