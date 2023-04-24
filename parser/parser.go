@@ -100,26 +100,6 @@ func (parser *ParserImpl) GetErrors() []string {
 	return result
 }
 
-// var ok bool
-// result := []string{}
-// if parser.parsedMessage.Errors != nil {
-// result = make([]string, len(parser.parsedMessage.Errors))
-
-// for index, value := range parser.parsedMessage.Errors {
-// 	result[index] = fmt.Sprint(value)
-// }
-
-// fmt.Printf(">>>>>> errors: %v\n", parser.parsedMessage.Errors)
-// fmt.Printf(">>>>>>   type: %v\n", reflect.TypeOf(parser.parsedMessage.Errors))
-
-// result, ok = parser.parsedMessage.Errors.([]string)
-// if !ok {
-// 	fmt.Printf(">>>>>> OK: %v\n", ok)
-// }
-// }
-// return result
-// }
-
 /*
 The GetXxxxxx method returns...
 
