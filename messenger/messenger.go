@@ -57,7 +57,6 @@ func jsonAsInterface(unknownString string) interface{} {
 func interfaceAsString(unknown interface{}) string {
 	// See https://pkg.go.dev/fmt for format strings.
 	var result string
-
 	switch value := unknown.(type) {
 	case nil:
 		result = "<nil>"
@@ -72,9 +71,6 @@ func interfaceAsString(unknown interface{}) string {
 	case error:
 		result = value.Error()
 	default:
-		// xType := reflect.TypeOf(unknown)
-		// xValue := reflect.ValueOf(unknown)
-		// result = fmt.Sprintf("(%s)%#v", xType, xValue)
 		result = fmt.Sprintf("%#v", unknown)
 	}
 	return result
@@ -91,23 +87,18 @@ func messageDetails(details ...interface{}) interface{} {
 		switch typedValue := value.(type) {
 		case nil:
 			result[strconv.Itoa(index+1)] = "<nil>"
-
 		case int, float64:
 			result[strconv.Itoa(index+1)] = typedValue
-
 		case string:
 			if isJson(typedValue) {
 				result[strconv.Itoa(index+1)] = jsonAsInterface(typedValue)
 			} else {
 				result[strconv.Itoa(index+1)] = typedValue
 			}
-
 		case bool:
 			result[strconv.Itoa(index+1)] = fmt.Sprintf("%t", typedValue)
-
 		case error:
 			// do nothing.
-
 		case map[string]string:
 			for mapIndex, mapValue := range typedValue {
 				mapValueAsString := interfaceAsString(mapValue)
@@ -117,7 +108,6 @@ func messageDetails(details ...interface{}) interface{} {
 					result[mapIndex] = mapValueAsString
 				}
 			}
-
 		default:
 			valueAsString := interfaceAsString(typedValue)
 			if isJson(valueAsString) {
@@ -206,29 +196,26 @@ func (messenger *MessengerImpl) getSortedIdLevelRanges(idLevelRanges map[int]str
 func (messenger *MessengerImpl) populateStructure(messageNumber int, details ...interface{}) *MessageFormat {
 
 	var (
-		callerSkip int           = 0
-		duration   int64         = 0
-		errorList  []interface{} = nil
-		level      string        = ""
-		location   string        = ""
-		status     string        = ""
-		text       interface{}   = nil
+		callerSkip int
+		duration   int64
+		errorList  []interface{}
+		level      string
+		location   string
+		status     string
+		text       interface{}
 	)
 
 	// Calculate fields.
 
 	timeNow := time.Now().UTC().Format(time.RFC3339Nano)
-
 	callerSkip = messenger.callerSkip
 	level = messenger.getLevel(messageNumber)
 	id := fmt.Sprintf(messenger.messageIdTemplate, messageNumber)
-
 	textTemplate, ok := messenger.idMessages[messageNumber]
 	if ok {
 		textRaw := fmt.Sprintf(textTemplate, details...)
 		text = strings.Split(textRaw, "%!(")[0]
 	}
-
 	statusCandidate, ok := messenger.idStatuses[messageNumber]
 	if ok {
 		status = statusCandidate
@@ -306,15 +293,12 @@ func (messenger *MessengerImpl) populateStructure(messageNumber int, details ...
 		Duration: duration,
 		Location: location,
 	}
-
 	if len(errorList) > 0 {
 		result.Errors = errorList
 	}
-
 	if len(filteredDetails) > 0 {
 		result.Details = messageDetails(filteredDetails...)
 	}
-
 	return result
 }
 

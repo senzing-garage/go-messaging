@@ -205,3 +205,23 @@ func ExampleMessengerImpl_NewJson() {
 	fmt.Print(example.NewJson(2001, "Bob", "Jane", getTimestamp(), getOptionCallerSkip()))
 	//Output: {"time":"2000-01-01 00:00:00 +0000 UTC","level":"INFO","id":"senzing-99992001","location":"In ExampleMessengerImpl_NewJson() at messenger_test.go:205","details":{"1":"Bob","2":"Jane"}}
 }
+
+func ExampleMessengerImpl_NewSlog() {
+	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/messenger/messenger_test.go
+	example, err := New()
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Print(example.NewSlog(2001, "Bob", "Jane", getTimestamp(), getOptionCallerSkip()))
+	//Output: [id senzing-99992001 location In NewSlog() at messenger.go:354 details map[1:Bob 2:Jane]]
+}
+
+func ExampleMessengerImpl_NewSlogLevel() {
+	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/messenger/messenger_test.go
+	example, err := New()
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Print(example.NewSlogLevel(2001, "Bob", "Jane", getTimestamp(), getOptionCallerSkip()))
+	//Output: INFO [id senzing-99992001 location In ExampleMessengerImpl_NewSlogLevel() at messenger_test.go:225 details map[1:Bob 2:Jane]]
+}

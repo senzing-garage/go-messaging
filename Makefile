@@ -80,6 +80,7 @@ build-scratch:
 test:
 	@go test -v -p 1 ./...
 #	@go test -v ./messenger
+#	@go test -v ./parser
 
 # -----------------------------------------------------------------------------
 # Run
