@@ -56,8 +56,17 @@ The GetXxxxxx method returns...
 
 Output
 */
-func (parser *ParserImpl) GetDetails() map[string]interface{} {
-	return parser.parsedMessage.Details.(map[string]interface{})
+func (parser *ParserImpl) GetDetails() map[string]string {
+	result := map[string]string{}
+	if parser.parsedMessage.Details != nil {
+		parsedDetails, ok := parser.parsedMessage.Details.(map[string]interface{})
+		if ok {
+			for key, value := range parsedDetails {
+				result[key] = fmt.Sprint(value)
+			}
+		}
+	}
+	return result
 }
 
 /*
@@ -78,9 +87,38 @@ The GetXxxxxx method returns...
 
 Output
 */
-func (parser *ParserImpl) GetErrors() interface{} {
-	return parser.parsedMessage.Errors
+func (parser *ParserImpl) GetErrors() []string {
+	result := []string{}
+	if parser.parsedMessage.Errors != nil {
+		parsedDetails, ok := parser.parsedMessage.Errors.([]interface{})
+		if ok {
+			for _, value := range parsedDetails {
+				result = append(result, fmt.Sprint(value))
+			}
+		}
+	}
+	return result
 }
+
+// var ok bool
+// result := []string{}
+// if parser.parsedMessage.Errors != nil {
+// result = make([]string, len(parser.parsedMessage.Errors))
+
+// for index, value := range parser.parsedMessage.Errors {
+// 	result[index] = fmt.Sprint(value)
+// }
+
+// fmt.Printf(">>>>>> errors: %v\n", parser.parsedMessage.Errors)
+// fmt.Printf(">>>>>>   type: %v\n", reflect.TypeOf(parser.parsedMessage.Errors))
+
+// result, ok = parser.parsedMessage.Errors.([]string)
+// if !ok {
+// 	fmt.Printf(">>>>>> OK: %v\n", ok)
+// }
+// }
+// return result
+// }
 
 /*
 The GetXxxxxx method returns...
@@ -133,8 +171,8 @@ The GetXxxxxx method returns...
 
 Output
 */
-func (parser *ParserImpl) GetText() interface{} {
-	return parser.parsedMessage.Text
+func (parser *ParserImpl) GetText() string {
+	return fmt.Sprint(parser.parsedMessage.Text)
 }
 
 /*

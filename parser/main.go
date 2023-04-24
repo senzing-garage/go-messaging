@@ -11,14 +11,14 @@ import (
 // The MessengerInterface interface has methods for creating different
 // representations of a message.
 type ParserInterface interface {
-	GetDetails() map[string]interface{}
+	GetDetails() map[string]string
 	GetDuration() int64
-	GetErrors() interface{}
+	GetErrors() []string
 	GetId() string
 	GetLevel() string
 	GetLocation() string
 	GetStatus() string
-	GetText() interface{}
+	GetText() string
 	GetTime() time.Time
 }
 
