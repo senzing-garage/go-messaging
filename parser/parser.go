@@ -174,6 +174,17 @@ The GetXxxxxx method returns...
 
 Output
 */
+func (parser *ParserImpl) GetParseError() error {
+	return parser.parseError
+}
+
+/*
+The GetXxxxxx method returns...
+
+# Input
+
+Output
+*/
 func (parser *ParserImpl) GetStatus() string {
 	return parser.parsedMessage.Status
 }

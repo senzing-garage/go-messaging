@@ -19,6 +19,7 @@ type ParserInterface interface {
 	GetLocation() string
 	GetMessage() string
 	GetMessageText() string
+	GetParseError() error
 	GetStatus() string
 	GetText() string
 	GetTime() time.Time

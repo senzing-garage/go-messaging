@@ -2,7 +2,6 @@ package parser
 
 import (
 	"fmt"
-	"os"
 	"testing"
 	"time"
 
@@ -23,16 +22,18 @@ var testCasesForMessage = []struct {
 	expectedLocation      string
 	expectedMessage       string
 	expectedMessageText   string
+	expectedParseError    error
 	expectedStatus        string
 	expectedText          string
 	expectedTime          time.Time
 }{
 	{
-		name:            "parser-0001",
-		message:         "",
-		expectedDetails: map[string]string{},
-		expectedErrors:  []string{},
-		expectedTime:    time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
+		name:               "parser-0001",
+		message:            "",
+		expectedDetails:    map[string]string{},
+		expectedErrors:     []string{},
+		expectedParseError: fmt.Errorf("string is not JSON"),
+		expectedTime:       time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
 	},
 	{
 		name:                "parser-0002",
@@ -51,6 +52,7 @@ var testCasesForMessage = []struct {
 		expectedErrors:      []string{},
 		expectedMessage:     "{Not really JSON}",
 		expectedMessageText: "{Not really JSON}",
+		expectedParseError:  fmt.Errorf("string is not JSON"),
 		expectedTime:        time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
 	},
 	{
@@ -60,6 +62,7 @@ var testCasesForMessage = []struct {
 		expectedErrors:      []string{},
 		expectedMessage:     `{"text":"Bob works with Jane", But not really JSON}`,
 		expectedMessageText: `{"text":"Bob works with Jane", But not really JSON}`,
+		expectedParseError:  fmt.Errorf("string is not JSON"),
 		expectedTime:        time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
 	},
 	{
@@ -83,44 +86,6 @@ var testCasesForMessage = []struct {
 }
 
 // ----------------------------------------------------------------------------
-// Test harness
-// ----------------------------------------------------------------------------
-
-func TestMain(m *testing.M) {
-	err := setup()
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(1)
-	}
-	code := m.Run()
-	err = teardown()
-	if err != nil {
-		fmt.Print(err)
-	}
-	os.Exit(code)
-}
-
-func setup() error {
-	var err error = nil
-	return err
-}
-
-func teardown() error {
-	var err error = nil
-	return err
-}
-
-// ----------------------------------------------------------------------------
-// Internal functions - names begin with lowercase letter
-// ----------------------------------------------------------------------------
-
-func testError(test *testing.T, testObject ParserInterface, err error) {
-	if err != nil {
-		assert.Fail(test, err.Error())
-	}
-}
-
-// ----------------------------------------------------------------------------
 // Test interface functions
 // ----------------------------------------------------------------------------
 
@@ -141,6 +106,7 @@ func TestParserImpl_Parse(test *testing.T) {
 			assert.Equal(test, testCase.expectedLocation, testObject.GetLocation(), testCase.name+"-GetLocation()")
 			assert.Equal(test, testCase.expectedMessage, testObject.GetMessage(), testCase.name+"-GetMessage()")
 			assert.Equal(test, testCase.expectedMessageText, testObject.GetMessageText(), testCase.name+"-GetMessageText()")
+			assert.Equal(test, testCase.expectedParseError, testObject.GetParseError(), testCase.name+"-GetParseError()")
 			assert.Equal(test, testCase.expectedStatus, testObject.GetStatus(), testCase.name+"-GetStatus()")
 			assert.Equal(test, testCase.expectedText, testObject.GetText(), testCase.name+"-GetText()")
 			assert.Equal(test, testCase.expectedTime, testObject.GetTime(), testCase.name+"-GetTime()")
@@ -194,6 +160,20 @@ func ExampleParserImpl_GetLocation() {
 	//Output: In func1() at messenger_test.go:173
 }
 
+func ExampleParserImpl_GetMessage() {
+	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
+	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
+	fmt.Print(Parse(exampleMesssage).GetMessage())
+	//Output: {"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}
+}
+
+func ExampleParserImpl_GetMessageText() {
+	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
+	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
+	fmt.Print(Parse(exampleMesssage).GetMessageText())
+	//Output: Bob works with Jane
+}
+
 func ExampleParserImpl_GetStatus() {
 	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
 	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
@@ -213,4 +193,11 @@ func ExampleParserImpl_GetTime() {
 	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
 	fmt.Print(Parse(exampleMesssage).GetTime().Format(time.RFC3339))
 	//Output: 2000-01-01T00:00:00Z
+}
+
+func ExampleParserImpl_IsJson() {
+	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
+	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
+	fmt.Print(Parse(exampleMesssage).IsJson())
+	//Output: true
 }
