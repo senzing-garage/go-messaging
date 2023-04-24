@@ -56,8 +56,8 @@ The GetXxxxxx method returns...
 
 Output
 */
-func (parser *ParserImpl) GetDetails() interface{} {
-	return nil
+func (parser *ParserImpl) GetDetails() map[string]interface{} {
+	return parser.parsedMessage.Details.(map[string]interface{})
 }
 
 /*
@@ -68,7 +68,7 @@ The GetXxxxxx method returns...
 Output
 */
 func (parser *ParserImpl) GetDuration() int64 {
-	return 0
+	return parser.parsedMessage.Duration
 }
 
 /*
@@ -79,7 +79,7 @@ The GetXxxxxx method returns...
 Output
 */
 func (parser *ParserImpl) GetErrors() interface{} {
-	return nil
+	return parser.parsedMessage.Errors
 }
 
 /*
@@ -90,7 +90,7 @@ The GetXxxxxx method returns...
 Output
 */
 func (parser *ParserImpl) GetId() string {
-	return parser.GetId()
+	return parser.parsedMessage.Id
 }
 
 /*
@@ -101,7 +101,7 @@ The GetXxxxxx method returns...
 Output
 */
 func (parser *ParserImpl) GetLevel() string {
-	return ""
+	return parser.parsedMessage.Level
 }
 
 /*
@@ -112,7 +112,7 @@ The GetXxxxxx method returns...
 Output
 */
 func (parser *ParserImpl) GetLocation() string {
-	return ""
+	return parser.parsedMessage.Location
 }
 
 /*
@@ -123,7 +123,7 @@ The GetXxxxxx method returns...
 Output
 */
 func (parser *ParserImpl) GetStatus() string {
-	return ""
+	return parser.parsedMessage.Status
 }
 
 /*
@@ -134,7 +134,7 @@ The GetXxxxxx method returns...
 Output
 */
 func (parser *ParserImpl) GetText() interface{} {
-	return nil
+	return parser.parsedMessage.Text
 }
 
 /*
@@ -145,5 +145,10 @@ The GetXxxxxx method returns...
 Output
 */
 func (parser *ParserImpl) GetTime() time.Time {
-	return time.Now()
+	result, err := time.Parse(time.RFC3339Nano, parser.parsedMessage.Time)
+	if err != nil {
+		fmt.Println(err.Error())
+		result = time.Time{}
+	}
+	return result
 }

@@ -4,29 +4,35 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
 
-var idMessages = map[int]string{
-	0001: "TRACE: %s works with %s",
-	1001: "DEBUG: %s works with %s",
-	2001: "INFO: %s works with %s",
-	3001: "WARN: %s works with %s",
-	4001: "ERROR: %s works with %s",
-	5001: "FATAL: %s works with %s",
-	6001: "PANIC: %s works with %s",
-}
-
 var testCasesForMessage = []struct {
-	name       string
-	message    string
-	expectedId string
+	name             string
+	message          string
+	expectedDetails  map[string]interface{}
+	expectedDuration int64
+	expectedErrors   string
+	expectedId       string
+	expectedLevel    string
+	expectedLocation string
+	expectedStatus   string
+	expectedText     string
+	expectedTime     time.Time
 }{
 	{
-		name:       "parser-0001",
-		message:    `{"id", "senzing-99990001", "location", "In func1() at messenger_test.go:186", "details", map[string]interface{}{"1": "Bob", "2": "Jane"}}`,
-		expectedId: "senzing-99990001",
+		name:             "parser-0001",
+		message:          `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"TRACE: Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"none","duration":1234,"details":{"1":"Bob","2":"Jane"}}`,
+		expectedDetails:  map[string]interface{}{"1": "Bob", "2": "Jane"},
+		expectedDuration: int64(1234),
+		expectedId:       "senzing-99990001",
+		expectedLevel:    "TRACE",
+		expectedLocation: "In func1() at messenger_test.go:173",
+		expectedStatus:   "none",
+		expectedText:     "TRACE: Bob works with Jane",
+		expectedTime:     time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC),
 	},
 }
 
@@ -79,7 +85,33 @@ func TestMessengerImpl_NewJson(test *testing.T) {
 		test.Run(testCase.name, func(test *testing.T) {
 			testObject, err := Parse(testCase.message)
 			testError(test, testObject, err)
-			assert.Equal(test, testCase.expectedId, testObject.GetId(), testCase.name)
+			if testCase.expectedDetails != nil {
+				assert.Equal(test, testCase.expectedDetails, testObject.GetDetails(), testCase.name)
+			}
+			if testCase.expectedDuration > 0 {
+				assert.Equal(test, testCase.expectedDuration, testObject.GetDuration(), testCase.name)
+			}
+			if testCase.expectedErrors != "" {
+				assert.Equal(test, testCase.expectedErrors, testObject.GetErrors(), testCase.name)
+			}
+			if testCase.expectedId != "" {
+				assert.Equal(test, testCase.expectedId, testObject.GetId(), testCase.name)
+			}
+			if testCase.expectedLevel != "" {
+				assert.Equal(test, testCase.expectedLevel, testObject.GetLevel(), testCase.name)
+			}
+			if testCase.expectedLocation != "" {
+				assert.Equal(test, testCase.expectedLocation, testObject.GetLocation(), testCase.name)
+			}
+			if testCase.expectedStatus != "" {
+				assert.Equal(test, testCase.expectedStatus, testObject.GetStatus(), testCase.name)
+			}
+			if testCase.expectedText != "" {
+				assert.Equal(test, testCase.expectedText, testObject.GetText(), testCase.name)
+			}
+			if !testCase.expectedTime.IsZero() {
+				assert.Equal(test, testCase.expectedTime, testObject.GetTime(), testCase.name)
+			}
 		})
 	}
 }
@@ -88,12 +120,13 @@ func TestMessengerImpl_NewJson(test *testing.T) {
 // Examples for godoc documentation
 // ----------------------------------------------------------------------------
 
-// func ExampleMessengerImpl_NewJson() {
-// 	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/messenger/messenger_test.go
-// 	example, err := New()
-// 	if err != nil {
-// 		fmt.Println(err)
-// 	}
-// 	fmt.Print(example.NewJson(2001, "Bob", "Jane", getTimestamp(), getOptionCallerSkip()))
-// 	//Output: {"time":"2000-01-01 00:00:00 +0000 UTC","level":"INFO","id":"senzing-99992001","location":"In ExampleMessengerImpl_NewJson() at messenger_test.go:205","details":{"1":"Bob","2":"Jane"}}
-// }
+func ExampleParserImpl_GetId() {
+	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
+	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"TRACE: Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"none","duration":1234,"details":{"1":"Bob","2":"Jane"}}`
+	parsedMessage, err := Parse(exampleMesssage)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Print(parsedMessage.GetId())
+	//Output: senzing-99990001
+}

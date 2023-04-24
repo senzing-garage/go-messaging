@@ -11,7 +11,7 @@ import (
 // The MessengerInterface interface has methods for creating different
 // representations of a message.
 type ParserInterface interface {
-	GetDetails() interface{}
+	GetDetails() map[string]interface{}
 	GetDuration() int64
 	GetErrors() interface{}
 	GetId() string
