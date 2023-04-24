@@ -22,7 +22,6 @@ var idMessages = map[int]string{
 }
 
 func main() {
-	// ctx := context.TODO()
 
 	// Create some fake errors.
 

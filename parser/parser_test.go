@@ -56,7 +56,7 @@ var testCasesForMessage = []struct {
 		expectedTime:        time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
 	},
 	{
-		name:                "parser-0003",
+		name:                "parser-0004",
 		message:             `{"text":"Bob works with Jane", But not really JSON}`,
 		expectedDetails:     map[string]string{},
 		expectedErrors:      []string{},

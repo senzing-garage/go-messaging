@@ -41,58 +41,72 @@ type MessageFormat struct {
 
 // --- Override values when creating messages ---------------------------------
 
+// Value of the "details" field.
 type MessageDetails struct {
-	Value interface{}
+	Value interface{} // All instances passed into the message.
 }
 
+// Value of the "duration" field.
 type MessageDuration struct {
-	Value int64
+	Value int64 // Duration in nanoseconds
 }
 
+// Value of the "id" field.
 type MessageId struct {
-	Value string
+	Value string // Message identifier.
 }
 
+// Value of the "level" field.
 type MessageLevel struct {
-	Value string
+	Value string // Level:  TRACE, DEBUG, INFO, WARN, ERROR, FATAL, PANIC.
 }
 
+// Value of the "location" field.
 type MessageLocation struct {
-	Value string
+	Value string // Location in the code issuing message.
 }
 
+// Value of the "status" field.
 type MessageStatus struct {
-	Value string
+	Value string // Status information.
 }
 
+// Value of the "text" field.
 type MessageText struct {
-	Value interface{}
+	Value interface{} // Message text.
 }
 
+// Value of the "time" field.
 type MessageTime struct {
-	Value time.Time
+	Value time.Time // Time of message in UTC.
 }
 
 // --- Options for New() ------------------------------------------------------
 
+// Number of callers to skip when determining location.
 type OptionCallerSkip struct {
-	Value int
+	Value int // Number of callers to skip in the stack trace when determining the location.
 }
 
+// Map of message number to message templates.
 type OptionIdMessages struct {
-	Value map[int]string
+	Value map[int]string // Message number to message template map.
 }
 
+// Map of message number to status values.
 type OptionIdStatuses struct {
-	Value map[int]string
+	Value map[int]string // Message number to status map
 }
 
+// The component identifier.
+// See https://github.com/Senzing/knowledge-base/blob/main/lists/senzing-product-ids.md
 type OptionSenzingComponentId struct {
-	Value int
+	Value int // Component issuing message.
 }
 
+// Format of the unique id.
 type OptionMessageIdTemplate struct {
-	Value string
+	Value string // Format string.
 }
 
 // ----------------------------------------------------------------------------
