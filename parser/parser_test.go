@@ -118,6 +118,25 @@ func TestParserImpl_Parse(test *testing.T) {
 // Examples for godoc documentation
 // ----------------------------------------------------------------------------
 
+func ExampleParse() {
+	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
+	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
+	parser := Parse(exampleMesssage)
+	fmt.Println(parser.GetParseError())
+	//Output: <nil>
+}
+
+func ExampleParseWithError() {
+	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
+	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
+	parser, err := ParseWithError(exampleMesssage)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(parser.GetParseError())
+	//Output: <nil>
+}
+
 func ExampleParserImpl_GetDetails() {
 	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
 	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
