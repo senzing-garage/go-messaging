@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -
 
+## [0.2.1] - 2023-05-11
+
+### Added to 0.2.1
+
+- Update dependencies
+  - golang.org/x/exp v0.0.0-20230510235704-dd950f8aeaea
+
 ## [0.2.0] - 2023-04-24
 
 ### Added to 0.2.0
