@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -
 
+## [0.2.2] - 2023-06-16
+
+### Added to 0.2.2
+
+- Update dependencies
+  -  github.com/stretchr/testify v1.8.4
+
 ## [0.2.1] - 2023-05-11
 
 ### Added to 0.2.1
