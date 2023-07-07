@@ -33,15 +33,76 @@ LD_LIBRARY_PATH ?= /opt/senzing/g2/lib
 default: help
 
 # -----------------------------------------------------------------------------
-# Build
+# Generate code
 # -----------------------------------------------------------------------------
 
-.PHONY: dependencies
-dependencies:
-	@go get -u ./...
-	@go get -t -u ./...
-	@go mod tidy
+.PHONY: generate-code
+generate-code: generate-csharp generate-go generate-java generate-python generate-ruby generate-rust generate-typescript
 
+
+.PHONY: generate-csharp
+generate-csharp:
+	jtd-codegen \
+		--csharp-system-text-namespace Senzing \
+		--csharp-system-text-out ./csharp \
+		--root-name senzingapi \
+		message-RFC8927.json
+
+
+.PHONY: generate-go
+generate-go:
+	jtd-codegen \
+		--go-out ./go/typedef \
+		--go-package typedef \
+		--root-name senzingapi \
+		message-RFC8927.json
+
+
+.PHONY: generate-java
+generate-java:
+	jtd-codegen \
+		--java-jackson-out ./java \
+		--java-jackson-package com.senzing.schema \
+		--root-name senzingapi \
+		message-RFC8927.json
+
+
+.PHONY: generate-python
+generate-python:
+	jtd-codegen \
+		--python-out ./python/typedef \
+		--root-name senzingapi \
+		message-RFC8927.json
+
+
+.PHONY: generate-ruby
+generate-ruby:
+	jtd-codegen \
+		--root-name senzingapi \
+		--ruby-module SenzingTypeDef \
+		--ruby-out ./ruby \
+		--ruby-sig-module SenzingSig \
+		message-RFC8927.json
+
+
+.PHONY: generate-rust
+generate-rust:
+	jtd-codegen \
+		--root-name senzingapi \
+		--rust-out ./rust \
+		message-RFC8927.json
+
+
+.PHONY: generate-typescript
+generate-typescript:
+	jtd-codegen \
+		--root-name senzingapi \
+		--typescript-out ./typescript \
+		message-RFC8927.json
+
+# -----------------------------------------------------------------------------
+# Build
+# -----------------------------------------------------------------------------
 
 .PHONY: build
 build: build-linux build-scratch
@@ -89,6 +150,16 @@ test:
 .PHONY: run
 run:
 	@go run main.go
+
+# -----------------------------------------------------------------------------
+# Misc
+# -----------------------------------------------------------------------------
+
+.PHONY: dependencies
+dependencies:
+	@go get -u ./...
+	@go get -t -u ./...
+	@go mod tidy
 
 # -----------------------------------------------------------------------------
 # Utility targets

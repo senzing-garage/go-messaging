@@ -1,0 +1,25 @@
+{
+    "definitions": {
+        "details": {},
+        "duration": {
+            "type": "int32"
+        },
+        "errors": {},
+        "id": {
+            "type": "string"
+        },
+        "level": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "status": {
+            "type": "string"
+        },
+        "text": {},
+        "time": {
+            "type": "string"
+        }
+    }
+}
