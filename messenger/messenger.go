@@ -28,6 +28,21 @@ type MessengerImpl struct {
 	sortedIdLevelRanges []int  // The keys of IdLevelRanges in sorted order.
 }
 
+type DetailElement struct {
+	Positions           map[int]string // Map message numbers to text format strings
+	idStatuses          map[int]string
+	messageIdTemplate   string // A string template for fmt.Sprinf()
+	callerSkip          int    // Levels of code nexting to skip when calculation location
+	sortedIdLevelRanges []int  // The keys of IdLevelRanges in sorted order.
+}
+
+type Detail struct {
+	Key           string      `json:"key"`
+	Position      int32       `json:"position"`
+	Value         interface{} `json:"value"`
+	ValueAsString string      `json:"valueAsString"`
+}
+
 // ----------------------------------------------------------------------------
 // Private functions
 // ----------------------------------------------------------------------------
@@ -73,48 +88,68 @@ func interfaceAsString(unknown interface{}) string {
 	default:
 		result = fmt.Sprintf("%#v", unknown)
 	}
+
+	fmt.Printf(">>>>> %s\n", result)
+
 	return result
 }
 
 // Walk through the details to improve their future JSON representation.
 func messageDetails(details ...interface{}) interface{} {
 
-	result := make(map[string]interface{})
+	result := []Detail{}
 
 	// Process different types of details.
 
 	for index, value := range details {
+		detail := Detail{}
+		detail.Position = int32(index + 1)
 		switch typedValue := value.(type) {
 		case nil:
-			result[strconv.Itoa(index+1)] = "<nil>"
+			detail.Value = "<nil>"
+			detail.ValueAsString = interfaceAsString("<nil>")
+			result = append(result, detail)
 		case int, float64:
-			result[strconv.Itoa(index+1)] = typedValue
+			detail.Value = typedValue
+			detail.ValueAsString = interfaceAsString(typedValue)
+			result = append(result, detail)
 		case string:
 			if isJson(typedValue) {
-				result[strconv.Itoa(index+1)] = jsonAsInterface(typedValue)
+				detail.Value = jsonAsInterface(typedValue)
 			} else {
-				result[strconv.Itoa(index+1)] = typedValue
+				detail.Value = typedValue
 			}
+			detail.ValueAsString = interfaceAsString(typedValue)
+			result = append(result, detail)
 		case bool:
-			result[strconv.Itoa(index+1)] = fmt.Sprintf("%t", typedValue)
+			detail.Value = typedValue
+			detail.ValueAsString = interfaceAsString(typedValue)
+			result = append(result, detail)
 		case error:
 			// do nothing.
 		case map[string]string:
 			for mapIndex, mapValue := range typedValue {
+				detail := Detail{}
+				detail.Position = int32(index + 1)
 				mapValueAsString := interfaceAsString(mapValue)
+				detail.Key = mapIndex
 				if isJson(mapValueAsString) {
-					result[mapIndex] = jsonAsInterface(mapValueAsString)
+					detail.Value = jsonAsInterface(mapValueAsString)
 				} else {
-					result[mapIndex] = mapValueAsString
+					detail.Value = mapValueAsString
 				}
+				detail.ValueAsString = mapValueAsString
+				result = append(result, detail)
 			}
 		default:
 			valueAsString := interfaceAsString(typedValue)
 			if isJson(valueAsString) {
-				result[strconv.Itoa(index+1)] = jsonAsInterface(valueAsString)
+				detail.Value = jsonAsInterface(valueAsString)
 			} else {
-				result[strconv.Itoa(index+1)] = valueAsString
+				detail.Value = valueAsString
 			}
+			detail.ValueAsString = valueAsString
+			result = append(result, detail)
 		}
 	}
 

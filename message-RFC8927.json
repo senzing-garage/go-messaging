@@ -1,17 +1,59 @@
 {
     "definitions": {
-        "details": {},
+        "detail": {
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "int32"
+                },
+                "value": {},
+                "valueAsString": {
+                    "type": "string"
+                }
+            }
+        },
+        "details": {
+            "elements": {
+                "ref": "detail"
+            }
+        },
+        "error": {
+            "type": "string"
+        },
+        "errors": {
+            "elements": {
+                "ref": "error"
+            }
+        }
+    },
+    "properties": {
+        "details": {
+            "ref": "details"
+        },
         "duration": {
             "type": "int32"
         },
-        "errors": {},
+        "errors": {
+            "ref": "errors"
+        },
         "id": {
+            "metadata": {
+                "description": "The unique identification of the message."
+            },
             "type": "string"
         },
         "level": {
+            "metadata": {
+                "description": "Log level.  Possible values: TRACE, DEBUG, INFO, WARN, ERROR, FATAL, or PANIC."
+            },
             "type": "string"
         },
         "location": {
+            "metadata": {
+                "description": "Location in the code."
+            },
             "type": "string"
         },
         "status": {
@@ -19,6 +61,9 @@
         },
         "text": {},
         "time": {
+            "metadata": {
+                "description": "Time message was generated in RFC3339 format."
+            },
             "type": "string"
         }
     }

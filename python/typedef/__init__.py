@@ -3,115 +3,118 @@
 import re
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-from typing import Any, Union, get_args, get_origin
+from typing import Any, Dict, List, Optional, Union, get_args, get_origin
 
 
 @dataclass
-class Senzingapi:
-    value: 'Any'
+class SenzingMessage:
+    details: 'Details'
+    duration: 'int'
+    errors: 'Errors'
+    id: 'str'
+    """
+    The unique identification of the message.
+    """
+
+    level: 'str'
+    """
+    Log level.  Possible values: TRACE, DEBUG, INFO, WARN, ERROR, FATAL, or
+    PANIC.
+    """
+
+    location: 'str'
+    """
+    Location in the code.
+    """
+
+    status: 'str'
+    text: 'Any'
+    time: 'str'
+    """
+    Time message was generated in RFC3339 format.
+    """
+
 
     @classmethod
-    def from_json_data(cls, data: Any) -> 'Senzingapi':
-        return cls(_from_json_data(Any, data))
+    def from_json_data(cls, data: Any) -> 'SenzingMessage':
+        return cls(
+            _from_json_data(Details, data.get("details")),
+            _from_json_data(int, data.get("duration")),
+            _from_json_data(Errors, data.get("errors")),
+            _from_json_data(str, data.get("id")),
+            _from_json_data(str, data.get("level")),
+            _from_json_data(str, data.get("location")),
+            _from_json_data(str, data.get("status")),
+            _from_json_data(Any, data.get("text")),
+            _from_json_data(str, data.get("time")),
+        )
 
     def to_json_data(self) -> Any:
-        return _to_json_data(self.value)
+        data: Dict[str, Any] = {}
+        data["details"] = _to_json_data(self.details)
+        data["duration"] = _to_json_data(self.duration)
+        data["errors"] = _to_json_data(self.errors)
+        data["id"] = _to_json_data(self.id)
+        data["level"] = _to_json_data(self.level)
+        data["location"] = _to_json_data(self.location)
+        data["status"] = _to_json_data(self.status)
+        data["text"] = _to_json_data(self.text)
+        data["time"] = _to_json_data(self.time)
+        return data
+
+@dataclass
+class Detail:
+    key: 'str'
+    position: 'int'
+    value: 'Any'
+    value_as_string: 'str'
+
+    @classmethod
+    def from_json_data(cls, data: Any) -> 'Detail':
+        return cls(
+            _from_json_data(str, data.get("key")),
+            _from_json_data(int, data.get("position")),
+            _from_json_data(Any, data.get("value")),
+            _from_json_data(str, data.get("valueAsString")),
+        )
+
+    def to_json_data(self) -> Any:
+        data: Dict[str, Any] = {}
+        data["key"] = _to_json_data(self.key)
+        data["position"] = _to_json_data(self.position)
+        data["value"] = _to_json_data(self.value)
+        data["valueAsString"] = _to_json_data(self.value_as_string)
+        return data
 
 @dataclass
 class Details:
-    value: 'Any'
+    value: 'List[Detail]'
 
     @classmethod
     def from_json_data(cls, data: Any) -> 'Details':
-        return cls(_from_json_data(Any, data))
+        return cls(_from_json_data(List[Detail], data))
 
     def to_json_data(self) -> Any:
         return _to_json_data(self.value)
 
 @dataclass
-class Duration:
-    value: 'int'
+class Error:
+    value: 'str'
 
     @classmethod
-    def from_json_data(cls, data: Any) -> 'Duration':
-        return cls(_from_json_data(int, data))
+    def from_json_data(cls, data: Any) -> 'Error':
+        return cls(_from_json_data(str, data))
 
     def to_json_data(self) -> Any:
         return _to_json_data(self.value)
 
 @dataclass
 class Errors:
-    value: 'Any'
+    value: 'List[Error]'
 
     @classmethod
     def from_json_data(cls, data: Any) -> 'Errors':
-        return cls(_from_json_data(Any, data))
-
-    def to_json_data(self) -> Any:
-        return _to_json_data(self.value)
-
-@dataclass
-class ID:
-    value: 'str'
-
-    @classmethod
-    def from_json_data(cls, data: Any) -> 'ID':
-        return cls(_from_json_data(str, data))
-
-    def to_json_data(self) -> Any:
-        return _to_json_data(self.value)
-
-@dataclass
-class Level:
-    value: 'str'
-
-    @classmethod
-    def from_json_data(cls, data: Any) -> 'Level':
-        return cls(_from_json_data(str, data))
-
-    def to_json_data(self) -> Any:
-        return _to_json_data(self.value)
-
-@dataclass
-class Location:
-    value: 'str'
-
-    @classmethod
-    def from_json_data(cls, data: Any) -> 'Location':
-        return cls(_from_json_data(str, data))
-
-    def to_json_data(self) -> Any:
-        return _to_json_data(self.value)
-
-@dataclass
-class Status:
-    value: 'str'
-
-    @classmethod
-    def from_json_data(cls, data: Any) -> 'Status':
-        return cls(_from_json_data(str, data))
-
-    def to_json_data(self) -> Any:
-        return _to_json_data(self.value)
-
-@dataclass
-class Text:
-    value: 'Any'
-
-    @classmethod
-    def from_json_data(cls, data: Any) -> 'Text':
-        return cls(_from_json_data(Any, data))
-
-    def to_json_data(self) -> Any:
-        return _to_json_data(self.value)
-
-@dataclass
-class Time:
-    value: 'str'
-
-    @classmethod
-    def from_json_data(cls, data: Any) -> 'Time':
-        return cls(_from_json_data(str, data))
+        return cls(_from_json_data(List[Error], data))
 
     def to_json_data(self) -> Any:
         return _to_json_data(self.value)

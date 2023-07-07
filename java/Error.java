@@ -5,15 +5,15 @@ package com.senzing.schema;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public class Id {
+public class Error {
     @JsonValue
     private String value;
 
-    public Id() {
+    public Error() {
     }
 
     @JsonCreator
-    public Id(String value) {
+    public Error(String value) {
         this.value = value;
     }
 

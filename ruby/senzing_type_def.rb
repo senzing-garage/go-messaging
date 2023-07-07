@@ -5,17 +5,77 @@ require 'time'
 
 module SenzingTypeDef
 
-  class Senzingapi
-    attr_accessor :value
+  class SenzingMessage
+    attr_accessor :details
+    attr_accessor :duration
+    attr_accessor :errors
+
+    # The unique identification of the message.
+    attr_accessor :id
+
+    # Log level.  Possible values: TRACE, DEBUG, INFO, WARN, ERROR, FATAL, or
+    # PANIC.
+    attr_accessor :level
+
+    # Location in the code.
+    attr_accessor :location
+    attr_accessor :status
+    attr_accessor :text
+
+    # Time message was generated in RFC3339 format.
+    attr_accessor :time
 
     def self.from_json_data(data)
-      out = Senzingapi.new
-      out.value = SenzingTypeDef.from_json_data(Object, data)
+      out = SenzingMessage.new
+      out.details = SenzingTypeDef::from_json_data(Details, data["details"])
+      out.duration = SenzingTypeDef::from_json_data(Integer, data["duration"])
+      out.errors = SenzingTypeDef::from_json_data(Errors, data["errors"])
+      out.id = SenzingTypeDef::from_json_data(String, data["id"])
+      out.level = SenzingTypeDef::from_json_data(String, data["level"])
+      out.location = SenzingTypeDef::from_json_data(String, data["location"])
+      out.status = SenzingTypeDef::from_json_data(String, data["status"])
+      out.text = SenzingTypeDef::from_json_data(Object, data["text"])
+      out.time = SenzingTypeDef::from_json_data(String, data["time"])
       out
     end
 
     def to_json_data
-      SenzingTypeDef.to_json_data(value)
+      data = {}
+      data["details"] = SenzingTypeDef::to_json_data(details)
+      data["duration"] = SenzingTypeDef::to_json_data(duration)
+      data["errors"] = SenzingTypeDef::to_json_data(errors)
+      data["id"] = SenzingTypeDef::to_json_data(id)
+      data["level"] = SenzingTypeDef::to_json_data(level)
+      data["location"] = SenzingTypeDef::to_json_data(location)
+      data["status"] = SenzingTypeDef::to_json_data(status)
+      data["text"] = SenzingTypeDef::to_json_data(text)
+      data["time"] = SenzingTypeDef::to_json_data(time)
+      data
+    end
+  end
+
+  class Detail
+    attr_accessor :key
+    attr_accessor :position
+    attr_accessor :value
+    attr_accessor :value_as_string
+
+    def self.from_json_data(data)
+      out = Detail.new
+      out.key = SenzingTypeDef::from_json_data(String, data["key"])
+      out.position = SenzingTypeDef::from_json_data(Integer, data["position"])
+      out.value = SenzingTypeDef::from_json_data(Object, data["value"])
+      out.value_as_string = SenzingTypeDef::from_json_data(String, data["valueAsString"])
+      out
+    end
+
+    def to_json_data
+      data = {}
+      data["key"] = SenzingTypeDef::to_json_data(key)
+      data["position"] = SenzingTypeDef::to_json_data(position)
+      data["value"] = SenzingTypeDef::to_json_data(value)
+      data["valueAsString"] = SenzingTypeDef::to_json_data(value_as_string)
+      data
     end
   end
 
@@ -24,7 +84,7 @@ module SenzingTypeDef
 
     def self.from_json_data(data)
       out = Details.new
-      out.value = SenzingTypeDef.from_json_data(Object, data)
+      out.value = SenzingTypeDef.from_json_data(Array[Detail], data)
       out
     end
 
@@ -33,12 +93,12 @@ module SenzingTypeDef
     end
   end
 
-  class Duration
+  class Error
     attr_accessor :value
 
     def self.from_json_data(data)
-      out = Duration.new
-      out.value = SenzingTypeDef.from_json_data(Integer, data)
+      out = Error.new
+      out.value = SenzingTypeDef.from_json_data(String, data)
       out
     end
 
@@ -52,91 +112,7 @@ module SenzingTypeDef
 
     def self.from_json_data(data)
       out = Errors.new
-      out.value = SenzingTypeDef.from_json_data(Object, data)
-      out
-    end
-
-    def to_json_data
-      SenzingTypeDef.to_json_data(value)
-    end
-  end
-
-  class ID
-    attr_accessor :value
-
-    def self.from_json_data(data)
-      out = ID.new
-      out.value = SenzingTypeDef.from_json_data(String, data)
-      out
-    end
-
-    def to_json_data
-      SenzingTypeDef.to_json_data(value)
-    end
-  end
-
-  class Level
-    attr_accessor :value
-
-    def self.from_json_data(data)
-      out = Level.new
-      out.value = SenzingTypeDef.from_json_data(String, data)
-      out
-    end
-
-    def to_json_data
-      SenzingTypeDef.to_json_data(value)
-    end
-  end
-
-  class Location
-    attr_accessor :value
-
-    def self.from_json_data(data)
-      out = Location.new
-      out.value = SenzingTypeDef.from_json_data(String, data)
-      out
-    end
-
-    def to_json_data
-      SenzingTypeDef.to_json_data(value)
-    end
-  end
-
-  class Status
-    attr_accessor :value
-
-    def self.from_json_data(data)
-      out = Status.new
-      out.value = SenzingTypeDef.from_json_data(String, data)
-      out
-    end
-
-    def to_json_data
-      SenzingTypeDef.to_json_data(value)
-    end
-  end
-
-  class Text
-    attr_accessor :value
-
-    def self.from_json_data(data)
-      out = Text.new
-      out.value = SenzingTypeDef.from_json_data(Object, data)
-      out
-    end
-
-    def to_json_data
-      SenzingTypeDef.to_json_data(value)
-    end
-  end
-
-  class Time
-    attr_accessor :value
-
-    def self.from_json_data(data)
-      out = Time.new
-      out.value = SenzingTypeDef.from_json_data(String, data)
+      out.value = SenzingTypeDef.from_json_data(Array[Error], data)
       out
     end
 

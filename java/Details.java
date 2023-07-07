@@ -4,24 +4,25 @@ package com.senzing.schema;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.List;
 
 public class Details {
     @JsonValue
-    private Object value;
+    private List<Detail> value;
 
     public Details() {
     }
 
     @JsonCreator
-    public Details(Object value) {
+    public Details(List<Detail> value) {
         this.value = value;
     }
 
-    public Object getValue() {
+    public List<Detail> getValue() {
         return value;
     }
 
-    public void setValue(Object value) {
+    public void setValue(List<Detail> value) {
         this.value = value;
     }
 }

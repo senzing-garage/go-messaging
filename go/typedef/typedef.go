@@ -2,22 +2,43 @@
 
 package typedef
 
-type Senzingapi = interface{}
+type SenzingMessage struct {
+	Details Details `json:"details"`
 
-type Details = interface{}
+	Duration int32 `json:"duration"`
 
-type Duration = int32
+	Errors Errors `json:"errors"`
 
-type Errors = interface{}
+	// The unique identification of the message.
+	ID string `json:"id"`
 
-type ID = string
+	// Log level.  Possible values: TRACE, DEBUG, INFO, WARN, ERROR, FATAL, or
+	// PANIC.
+	Level string `json:"level"`
 
-type Level = string
+	// Location in the code.
+	Location string `json:"location"`
 
-type Location = string
+	Status string `json:"status"`
 
-type Status = string
+	Text interface{} `json:"text"`
 
-type Text = interface{}
+	// Time message was generated in RFC3339 format.
+	Time string `json:"time"`
+}
 
-type Time = string
+type Detail struct {
+	Key string `json:"key"`
+
+	Position int32 `json:"position"`
+
+	Value interface{} `json:"value"`
+
+	ValueAsString string `json:"valueAsString"`
+}
+
+type Details = []Detail
+
+type Error = string
+
+type Errors = []Error

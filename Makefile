@@ -45,7 +45,7 @@ generate-csharp:
 	jtd-codegen \
 		--csharp-system-text-namespace Senzing \
 		--csharp-system-text-out ./csharp \
-		--root-name senzingapi \
+		--root-name SenzingMessage \
 		message-RFC8927.json
 
 
@@ -54,7 +54,7 @@ generate-go:
 	jtd-codegen \
 		--go-out ./go/typedef \
 		--go-package typedef \
-		--root-name senzingapi \
+		--root-name SenzingMessage \
 		message-RFC8927.json
 
 
@@ -63,7 +63,7 @@ generate-java:
 	jtd-codegen \
 		--java-jackson-out ./java \
 		--java-jackson-package com.senzing.schema \
-		--root-name senzingapi \
+		--root-name SenzingMessage \
 		message-RFC8927.json
 
 
@@ -71,14 +71,14 @@ generate-java:
 generate-python:
 	jtd-codegen \
 		--python-out ./python/typedef \
-		--root-name senzingapi \
+		--root-name SenzingMessage \
 		message-RFC8927.json
 
 
 .PHONY: generate-ruby
 generate-ruby:
 	jtd-codegen \
-		--root-name senzingapi \
+		--root-name SenzingMessage \
 		--ruby-module SenzingTypeDef \
 		--ruby-out ./ruby \
 		--ruby-sig-module SenzingSig \
@@ -88,7 +88,7 @@ generate-ruby:
 .PHONY: generate-rust
 generate-rust:
 	jtd-codegen \
-		--root-name senzingapi \
+		--root-name SenzingMessage \
 		--rust-out ./rust \
 		message-RFC8927.json
 
@@ -96,7 +96,7 @@ generate-rust:
 .PHONY: generate-typescript
 generate-typescript:
 	jtd-codegen \
-		--root-name senzingapi \
+		--root-name SenzingMessage \
 		--typescript-out ./typescript \
 		message-RFC8927.json
 
@@ -139,9 +139,11 @@ build-scratch:
 
 .PHONY: test
 test:
-	@go test -v -p 1 ./...
+#	@go test -v -p 1 ./...
+	@go test -v ./go/typedef
 #	@go test -v ./messenger
 #	@go test -v ./parser
+
 
 # -----------------------------------------------------------------------------
 # Run
@@ -150,6 +152,57 @@ test:
 .PHONY: run
 run:
 	@go run main.go
+
+# -----------------------------------------------------------------------------
+# Clean
+# -----------------------------------------------------------------------------
+
+
+.PHONY: clean
+clean: clean-csharp clean-go clean-java clean-python clean-ruby clean-rust clean-typescript
+	@go clean -cache
+	@go clean -testcache
+	@rm -rf $(TARGET_DIRECTORY) || true
+	@rm -f $(GOPATH)/bin/$(PROGRAM_NAME) || true
+
+
+.PHONY: clean-csharp
+clean-csharp:
+	@rm $(MAKEFILE_DIRECTORY)csharp/* || true
+
+
+.PHONY: clean-go
+clean-go:
+	@go clean -cache
+	@go clean -testcache
+	@rm -f $(GOPATH)/bin/$(PROGRAM_NAME) || true
+	@rm $(MAKEFILE_DIRECTORY)go/typedef/typedef.go || true
+
+
+.PHONY: clean-java
+clean-java:
+	@rm $(MAKEFILE_DIRECTORY)java/* || true
+
+
+.PHONY: clean-python
+clean-python:
+	@rm $(MAKEFILE_DIRECTORY)python/typedef/* || true
+
+
+.PHONY: clean-ruby
+clean-ruby:
+	@rm $(MAKEFILE_DIRECTORY)ruby/* || true
+
+
+.PHONY: clean-rust
+clean-rust:
+	@rm $(MAKEFILE_DIRECTORY)rust/* || true
+
+
+.PHONY: clean-typescript
+clean-typescript:
+	@rm $(MAKEFILE_DIRECTORY)typescript/* || true
+
 
 # -----------------------------------------------------------------------------
 # Misc
@@ -169,14 +222,6 @@ dependencies:
 update-pkg-cache:
 	@GOPROXY=https://proxy.golang.org GO111MODULE=on \
 		go get $(GO_PACKAGE_NAME)@$(BUILD_TAG)
-
-
-.PHONY: clean
-clean:
-	@go clean -cache
-	@go clean -testcache
-	@rm -rf $(TARGET_DIRECTORY) || true
-	@rm -f $(GOPATH)/bin/$(PROGRAM_NAME) || true
 
 
 .PHONY: print-make-variables

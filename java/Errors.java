@@ -4,24 +4,25 @@ package com.senzing.schema;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.List;
 
 public class Errors {
     @JsonValue
-    private Object value;
+    private List<Error> value;
 
     public Errors() {
     }
 
     @JsonCreator
-    public Errors(Object value) {
+    public Errors(List<Error> value) {
         this.value = value;
     }
 
-    public Object getValue() {
+    public List<Error> getValue() {
         return value;
     }
 
-    public void setValue(Object value) {
+    public void setValue(List<Error> value) {
         this.value = value;
     }
 }

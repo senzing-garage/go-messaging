@@ -98,15 +98,15 @@ type OptionIdStatuses struct {
 	Value map[int]string // Message number to status map
 }
 
+// Format of the unique id.
+type OptionMessageIdTemplate struct {
+	Value string // Format string.
+}
+
 // The component identifier.
 // See https://github.com/Senzing/knowledge-base/blob/main/lists/senzing-product-ids.md
 type OptionSenzingComponentId struct {
 	Value int // Component issuing message.
-}
-
-// Format of the unique id.
-type OptionMessageIdTemplate struct {
-	Value string // Format string.
 }
 
 // ----------------------------------------------------------------------------
