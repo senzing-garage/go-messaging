@@ -88,9 +88,6 @@ func interfaceAsString(unknown interface{}) string {
 	default:
 		result = fmt.Sprintf("%#v", unknown)
 	}
-
-	fmt.Printf(">>>>> %s\n", result)
-
 	return result
 }
 

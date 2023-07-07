@@ -76,7 +76,7 @@ func testError(test *testing.T, err error) {
 	}
 }
 func printRequest(test *testing.T, request string) {
-	if isDebug {
+	if false {
 		test.Log(request)
 	}
 }
@@ -97,9 +97,8 @@ func printResult(test *testing.T, result *SenzingMessage) {
 			for _, detail := range result.Details {
 				test.Logf("         Position: %d\n", detail.Position)
 				test.Logf("              Key: %s\n", detail.Key)
-				test.Logf("    ValueAsString: %s\n", detail.ValueAsString)
-				test.Logf("            Value: %s\n", detail.Value)
-
+				test.Logf("   ValueAsString: %s\n", detail.ValueAsString)
+				test.Logf("           Value: %s\n", detail.Value)
 			}
 		}
 
