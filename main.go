@@ -46,20 +46,21 @@ func main() {
 	// Example from README.md
 
 	aMessenger, _ := messenger.New()
-	fmt.Println(aMessenger.NewJson(0001, "Bob", "Mary"))
+	fmt.Printf("%s\n\n", aMessenger.NewJson(0001, "Bob", "Mary"))
 	fmt.Println(aMessenger.NewSlog(1001, "Bob", "Mary"))
+	fmt.Println()
 
 	// Create a bare message generator.
 
 	messenger1, err := messenger.New()
 	if err != nil {
-		fmt.Printf("Error: %s", err.Error())
+		fmt.Printf("Error: %s\n", err.Error())
 	}
 
 	// Print some messages.
 
-	fmt.Println(messenger1.NewJson(2001, "Bob", "Mary"))
-	fmt.Println(messenger1.NewJson(3001, "Bob", "Mary", err1, err2))
+	fmt.Printf("%s\n\n", messenger1.NewJson(2001, "Bob", "Mary"))
+	fmt.Printf("%s\n\n", messenger1.NewJson(3001, "Bob", "Mary", err1, err2))
 
 	// ------------------------------------------------------------------------
 	// --- Using a configured message generator
@@ -72,30 +73,35 @@ func main() {
 	optionIdMessages := &messenger.OptionIdMessages{Value: idMessages}
 	messenger2, err := messenger.New(optionSenzingComponentId, optionCallerSkip, optionIdMessages)
 	if err != nil {
-		fmt.Printf("Error: %s", err.Error())
+		fmt.Printf("Error: %s\n", err.Error())
 	}
 
 	// Print some messages.
 
-	fmt.Println(messenger2.NewJson(0001, "Bob", "Mary"))
-	fmt.Println(messenger2.NewJson(1001, "Bob", "Mary", err1, err2))
+	fmt.Printf("%s\n\n", messenger2.NewJson(0001, "Bob", "Mary"))
+	fmt.Printf("%s\n\n", messenger2.NewJson(1001, "Bob", "Mary", err1, err2))
 
 	// Parse some messages.
 
 	message1 := messenger2.NewJson(0001, "Bob", "Mary")
 	parsedMessage1, err := parser.Parse(message1)
 	if err != nil {
-		fmt.Printf("Error: %s", err.Error())
+		fmt.Printf("Error1: %s\n", err.Error())
 	}
-	fmt.Println(parsedMessage1.ID)
-	fmt.Println(parsedMessage1.Text)
+	fmt.Printf("Parse test 1:  ID: %s; Text: %s\n", parsedMessage1.ID, parsedMessage1.Text)
 
-	message2 := `{"time":"2023-04-24T21:32:46.077696362Z","level":"DEBUG","id":"senzing-99981001","text":"DEBUG: Bob works with Mary","location":"In main() at main.go:84","errors":["error #1",{"time":"2023-04-10T11:00:20.623748617-04:00","level":"TRACE","id":"senzing-99990002","text":"A fake error","location":"In main() at main.go:36","details":{"1":"Bob","2":"Mary"}}],"details":{"1":"Bob","2":"Mary"}}`
+	message2 := `{"time":"2023-07-11T21:05:51.918625982Z","level":"DEBUG","id":"senzing-99981001","text":"DEBUG: Bob works with Mary","location":"In main() at main.go:101","errors":["error #1","{\"time\": \"2023-04-10T11:00:20.623748617-04:00\",\"level\": \"TRACE\",\"id\": \"senzing-99990002\",\"text\": \"A fake error\",\"location\": \"In main() at main.go:36\",\"details\": {\"1\": \"Bob\",\"2\": \"Mary\"}}"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Mary"},{"position":3,"value":"error #1"},{"position":4,"value":"\n\t{\n\t\t\"time\": \"2023-04-10T11:00:20.623748617-04:00\",\n\t\t\"level\": \"TRACE\",\n\t\t\"id\": \"senzing-99990002\",\n\t\t\"text\": \"A fake error\",\n\t\t\"location\": \"In main() at main.go:36\",\"details\": {\"1\": \"Bob\",\"2\": \"Mary\"}}","valueRaw":{"time":"2023-04-10T11:00:20.623748617-04:00","level":"TRACE","id":"senzing-99990002","text":"A fake error","location":"In main() at main.go:36","details":{"1":"Bob","2":"Mary"}}}]}	`
 	parsedMessage2, err := parser.Parse(message2)
 	if err != nil {
-		fmt.Printf("Error: %s", err.Error())
+		fmt.Printf("Error2: %s\n", err.Error())
 	}
-	fmt.Println(parsedMessage2.ID)
-	fmt.Println(parsedMessage2.Text)
+	fmt.Printf("Parse test 2:  ID: %s; Text: %s\n", parsedMessage2.ID, parsedMessage2.Text)
+
+	message3 := messenger2.NewJson(2001, "Bob", "Mary", err1, err2)
+	parsedMessage3, err := parser.Parse(message3)
+	if err != nil {
+		fmt.Printf("Error3: %s\n", err.Error())
+	}
+	fmt.Printf("Parse test 3:  ID: %s; Text: %s\n", parsedMessage3.ID, parsedMessage3.Text)
 
 }

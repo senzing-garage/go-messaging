@@ -32,6 +32,13 @@ type MessengerImpl struct {
 // Private functions
 // ----------------------------------------------------------------------------
 
+// Strip whitespace out of a string of JSON.
+func cleanJson(unknownString string) string {
+	result := unknownString
+
+	return result
+}
+
 // Determine if string is syntactically JSON.
 func isJson(unknownString string) bool {
 	unknownStringUnescaped, err := strconv.Unquote(unknownString)
@@ -61,7 +68,11 @@ func interfaceAsString(unknown interface{}) string {
 	case nil:
 		result = "<nil>"
 	case string:
-		result = value
+		if isJson(value) {
+			result = cleanJson(value)
+		} else {
+			result = value
+		}
 	case int:
 		result = fmt.Sprintf("%d", value)
 	case float64:
@@ -104,7 +115,11 @@ func messageDetails(details ...interface{}) []Detail {
 			detail.ValueRaw = typedValue
 			result = append(result, detail)
 		case error:
-			// do nothing.
+			detail.Value = typedValue.Error()
+			if isJson(detail.Value) {
+				detail.ValueRaw = jsonAsInterface(detail.Value)
+			}
+			result = append(result, detail)
 		case map[string]string:
 			for mapIndex, mapValue := range typedValue {
 				detail := Detail{}
@@ -262,13 +277,8 @@ func (messenger *MessengerImpl) populateStructure(messageNumber int, details ...
 		case *OptionCallerSkip:
 			callerSkip = typedValue.Value
 		case error:
-			errorMessage := typedValue.Error()
-			// var priorError interface{}
-			if isJson(errorMessage) {
-				errorList = append(errorList, jsonAsInterface(errorMessage))
-			} else {
-				errorList = append(errorList, errorMessage)
-			}
+			errorList = append(errorList, typedValue.Error())
+			filteredDetails = append(filteredDetails, typedValue)
 
 			// TODO:
 			// messageSplits := strings.Split(errorMessage, "|")
