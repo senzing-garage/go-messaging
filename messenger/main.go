@@ -42,6 +42,7 @@ type MessageFormat struct {
 type Detail struct {
 	Key      string      `json:"key,omitempty"`
 	Position int32       `json:"position,omitempty"`
+	Type     string      `json:"type,omitempty"`
 	Value    string      `json:"value,omitempty"`
 	ValueRaw interface{} `json:"valueRaw,omitempty"`
 }

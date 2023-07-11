@@ -71,6 +71,9 @@ module SenzingTypeDef
     # The order in which the detail was given to the message generator.
     attr_accessor :position
 
+    # Datatype of the value.
+    attr_accessor :type
+
     # The value of the detail in string form.
     attr_accessor :value
 
@@ -81,6 +84,7 @@ module SenzingTypeDef
       out = Detail.new
       out.key = SenzingTypeDef::from_json_data(String, data["key"])
       out.position = SenzingTypeDef::from_json_data(Integer, data["position"])
+      out.type = SenzingTypeDef::from_json_data(String, data["type"])
       out.value = SenzingTypeDef::from_json_data(String, data["value"])
       out.value_raw = SenzingTypeDef::from_json_data(Object, data["valueRaw"])
       out
@@ -90,6 +94,7 @@ module SenzingTypeDef
       data = {}
       data["key"] = SenzingTypeDef::to_json_data(key)
       data["position"] = SenzingTypeDef::to_json_data(position)
+      data["type"] = SenzingTypeDef::to_json_data(type)
       data["value"] = SenzingTypeDef::to_json_data(value)
       data["valueRaw"] = SenzingTypeDef::to_json_data(value_raw)
       data

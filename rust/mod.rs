@@ -55,6 +55,10 @@ pub struct Detail {
     #[serde(rename = "position")]
     pub position: i32,
 
+    /// Datatype of the value.
+    #[serde(rename = "type")]
+    pub type_: String,
+
     /// The value of the detail in string form.
     #[serde(rename = "value")]
     pub value: String,

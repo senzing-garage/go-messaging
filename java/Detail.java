@@ -16,6 +16,9 @@ public class Detail {
     @JsonProperty("position")
     private Integer position;
 
+    @JsonProperty("type")
+    private String type;
+
     @JsonProperty("value")
     private String value;
 
@@ -55,6 +58,22 @@ public class Detail {
      */
     public void setPosition(Integer position) {
         this.position = position;
+    }
+
+    /**
+     * Getter for type.<p>
+     * Datatype of the value.
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Setter for type.<p>
+     * Datatype of the value.
+     */
+    public void setType(String type) {
+        this.type = type;
     }
 
     /**

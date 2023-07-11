@@ -17,6 +17,12 @@
                     },
                     "type": "int32"
                 },
+                "type": {
+                    "metadata": {
+                        "description": "Datatype of the value."
+                    },
+                    "type": "string"
+                },
                 "value": {
                     "metadata": {
                         "description": "The value of the detail in string form."

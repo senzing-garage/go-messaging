@@ -42,6 +42,9 @@ type Detail struct {
 	// The order in which the detail was given to the message generator.
 	Position int32 `json:"position"`
 
+	// Datatype of the value.
+	Type string `json:"type"`
+
 	// The value of the detail in string form.
 	Value string `json:"value"`
 

@@ -22,6 +22,12 @@ namespace Senzing
         public int Position { get; set; }
 
         /// <summary>
+        /// Datatype of the value.
+        /// </summary>
+        [JsonPropertyName("type")]
+        public string Type_ { get; set; }
+
+        /// <summary>
         /// The value of the detail in string form.
         /// </summary>
         [JsonPropertyName("value")]

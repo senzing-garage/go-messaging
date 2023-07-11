@@ -98,6 +98,11 @@ class Detail:
     The order in which the detail was given to the message generator.
     """
 
+    type: 'str'
+    """
+    Datatype of the value.
+    """
+
     value: 'str'
     """
     The value of the detail in string form.
@@ -114,6 +119,7 @@ class Detail:
         return cls(
             _from_json_data(str, data.get("key")),
             _from_json_data(int, data.get("position")),
+            _from_json_data(str, data.get("type")),
             _from_json_data(str, data.get("value")),
             _from_json_data(Any, data.get("valueRaw")),
         )
@@ -122,6 +128,7 @@ class Detail:
         data: Dict[str, Any] = {}
         data["key"] = _to_json_data(self.key)
         data["position"] = _to_json_data(self.position)
+        data["type"] = _to_json_data(self.type)
         data["value"] = _to_json_data(self.value)
         data["valueRaw"] = _to_json_data(self.value_raw)
         return data

@@ -63,6 +63,11 @@ export interface Detail {
   position: number;
 
   /**
+   * Datatype of the value.
+   */
+  type: string;
+
+  /**
    * The value of the detail in string form.
    */
   value: string;

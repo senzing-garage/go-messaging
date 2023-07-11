@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"runtime"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 
@@ -32,29 +32,28 @@ type MessengerImpl struct {
 // Private functions
 // ----------------------------------------------------------------------------
 
-// Strip whitespace out of a string of JSON.
-func cleanJson(unknownString string) string {
+// Strip \t and \n from string.
+func cleanTabsAndNewlines(unknownString string) string {
 	result := unknownString
-
+	result = strings.ReplaceAll(result, "\n", "")
+	result = strings.ReplaceAll(result, "\t", "")
 	return result
+}
+
+func cleanErrorString(xErr error) string {
+	return cleanTabsAndNewlines(xErr.Error())
 }
 
 // Determine if string is syntactically JSON.
 func isJson(unknownString string) bool {
-	unknownStringUnescaped, err := strconv.Unquote(unknownString)
-	if err != nil {
-		unknownStringUnescaped = unknownString
-	}
+	unknownStringUnescaped := cleanTabsAndNewlines(unknownString)
 	var jsonString json.RawMessage
 	return json.Unmarshal([]byte(unknownStringUnescaped), &jsonString) == nil
 }
 
 // Cast JSON string into an interface{}.
 func jsonAsInterface(unknownString string) interface{} {
-	unknownStringUnescaped, err := strconv.Unquote(unknownString)
-	if err != nil {
-		unknownStringUnescaped = unknownString
-	}
+	unknownStringUnescaped := cleanTabsAndNewlines(unknownString)
 	var jsonString json.RawMessage
 	json.Unmarshal([]byte(unknownStringUnescaped), &jsonString)
 	return jsonString
@@ -69,7 +68,7 @@ func interfaceAsString(unknown interface{}) string {
 		result = "<nil>"
 	case string:
 		if isJson(value) {
-			result = cleanJson(value)
+			result = cleanTabsAndNewlines(value)
 		} else {
 			result = value
 		}
@@ -80,7 +79,7 @@ func interfaceAsString(unknown interface{}) string {
 	case bool:
 		result = fmt.Sprintf("%t", value)
 	case error:
-		result = value.Error()
+		result = cleanErrorString(value)
 	default:
 		result = fmt.Sprintf("%#v", unknown)
 	}
@@ -98,24 +97,33 @@ func messageDetails(details ...interface{}) []Detail {
 		detail.Position = int32(index + 1)
 		switch typedValue := value.(type) {
 		case nil:
-			detail.Value = "<nil>"
+			detail.Type = "nil"
 			result = append(result, detail)
-		case int, float64:
+		case int:
+			detail.Type = "integer"
+			detail.Value = interfaceAsString(typedValue)
+			detail.ValueRaw = typedValue
+			result = append(result, detail)
+		case float64:
+			detail.Type = "float"
 			detail.Value = interfaceAsString(typedValue)
 			detail.ValueRaw = typedValue
 			result = append(result, detail)
 		case string:
+			detail.Type = "string"
 			detail.Value = typedValue
 			if isJson(typedValue) {
 				detail.ValueRaw = jsonAsInterface(typedValue)
 			}
 			result = append(result, detail)
 		case bool:
+			detail.Type = "boolean"
 			detail.Value = interfaceAsString(typedValue)
 			detail.ValueRaw = typedValue
 			result = append(result, detail)
 		case error:
-			detail.Value = typedValue.Error()
+			detail.Type = "error"
+			detail.Value = cleanErrorString(typedValue)
 			if isJson(detail.Value) {
 				detail.ValueRaw = jsonAsInterface(detail.Value)
 			}
@@ -125,6 +133,7 @@ func messageDetails(details ...interface{}) []Detail {
 				detail := Detail{}
 				detail.Position = int32(index + 1)
 				detail.Key = mapIndex
+				detail.Type = "map[string]string"
 				detail.Value = interfaceAsString(mapValue)
 				if isJson(detail.Value) {
 					detail.ValueRaw = jsonAsInterface(detail.Value)
@@ -132,7 +141,9 @@ func messageDetails(details ...interface{}) []Detail {
 				result = append(result, detail)
 			}
 		default:
+			detail.Type = reflect.TypeOf(value).Elem().Name()
 			detail.Value = interfaceAsString(typedValue)
+			detail.ValueRaw = typedValue
 			if isJson(detail.Value) {
 				detail.ValueRaw = jsonAsInterface(detail.Value)
 			}
@@ -277,7 +288,7 @@ func (messenger *MessengerImpl) populateStructure(messageNumber int, details ...
 		case *OptionCallerSkip:
 			callerSkip = typedValue.Value
 		case error:
-			errorList = append(errorList, typedValue.Error())
+			errorList = append(errorList, cleanErrorString(typedValue))
 			filteredDetails = append(filteredDetails, typedValue)
 
 			// TODO:
