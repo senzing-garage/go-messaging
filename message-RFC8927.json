@@ -1,28 +1,53 @@
 {
     "definitions": {
         "detail": {
+            "metadata": {
+                "description": "A detail published by the message generator."
+            },
             "properties": {
                 "key": {
+                    "metadata": {
+                        "description": "The unique identifier of the detail."
+                    },
                     "type": "string"
                 },
                 "position": {
+                    "metadata": {
+                        "description": "The order in which the detail was given to the message generator."
+                    },
                     "type": "int32"
                 },
-                "value": {},
-                "valueAsString": {
+                "value": {
+                    "metadata": {
+                        "description": "The value of the detail in string form."
+                    },
                     "type": "string"
+                },
+                "valueRaw": {
+                    "metadata": {
+                        "description": "The value of the detail if it differs from string form."
+                    }
                 }
             }
         },
         "details": {
+            "metadata": {
+                "description": "A list of details."
+            },
             "elements": {
                 "ref": "detail"
             }
         },
         "error": {
+            "metadata": {
+                "description": "The text representation of the error."
+            },
             "type": "string"
         },
         "errors": {
+            "metadata": {
+                "description": "A list of errors.  Usually a stack of errors."
+            },
             "elements": {
                 "ref": "error"
             }
@@ -30,12 +55,22 @@
     },
     "properties": {
         "details": {
+            "metadata": {
+                "description": "A list of objects sent to the message generator."
+            },
             "ref": "details"
         },
         "duration": {
+            "metadata": {
+                "description": "Time duration reported by the message.",
+                "goType": "int64"
+            },
             "type": "int32"
         },
         "errors": {
+            "metadata": {
+                "description": "A list of errors.  Usually a stack of errors."
+            },
             "ref": "errors"
         },
         "id": {
@@ -52,19 +87,27 @@
         },
         "location": {
             "metadata": {
-                "description": "Location in the code."
+                "description": "Location in the code identifying where the message was generated."
             },
             "type": "string"
         },
         "status": {
+            "metadata": {
+                "description": "User-defined status of message."
+            },
             "type": "string"
         },
-        "text": {},
+        "text": {
+            "metadata": {
+                "description": "Text representation of the message."
+            },
+            "type": "string"
+        },
         "time": {
             "metadata": {
                 "description": "Time message was generated in RFC3339 format."
             },
-            "type": "string"
+            "type": "timestamp"
         }
     }
 }

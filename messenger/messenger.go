@@ -28,21 +28,6 @@ type MessengerImpl struct {
 	sortedIdLevelRanges []int  // The keys of IdLevelRanges in sorted order.
 }
 
-type DetailElement struct {
-	Positions           map[int]string // Map message numbers to text format strings
-	idStatuses          map[int]string
-	messageIdTemplate   string // A string template for fmt.Sprinf()
-	callerSkip          int    // Levels of code nexting to skip when calculation location
-	sortedIdLevelRanges []int  // The keys of IdLevelRanges in sorted order.
-}
-
-type Detail struct {
-	Key           string      `json:"key"`
-	Position      int32       `json:"position"`
-	Value         interface{} `json:"value"`
-	ValueAsString string      `json:"valueAsString"`
-}
-
 // ----------------------------------------------------------------------------
 // Private functions
 // ----------------------------------------------------------------------------
@@ -92,8 +77,7 @@ func interfaceAsString(unknown interface{}) string {
 }
 
 // Walk through the details to improve their future JSON representation.
-func messageDetails(details ...interface{}) interface{} {
-
+func messageDetails(details ...interface{}) []Detail {
 	result := []Detail{}
 
 	// Process different types of details.
@@ -104,23 +88,20 @@ func messageDetails(details ...interface{}) interface{} {
 		switch typedValue := value.(type) {
 		case nil:
 			detail.Value = "<nil>"
-			detail.ValueAsString = interfaceAsString("<nil>")
 			result = append(result, detail)
 		case int, float64:
-			detail.Value = typedValue
-			detail.ValueAsString = interfaceAsString(typedValue)
+			detail.Value = interfaceAsString(typedValue)
+			detail.ValueRaw = typedValue
 			result = append(result, detail)
 		case string:
+			detail.Value = typedValue
 			if isJson(typedValue) {
-				detail.Value = jsonAsInterface(typedValue)
-			} else {
-				detail.Value = typedValue
+				detail.ValueRaw = jsonAsInterface(typedValue)
 			}
-			detail.ValueAsString = interfaceAsString(typedValue)
 			result = append(result, detail)
 		case bool:
-			detail.Value = typedValue
-			detail.ValueAsString = interfaceAsString(typedValue)
+			detail.Value = interfaceAsString(typedValue)
+			detail.ValueRaw = typedValue
 			result = append(result, detail)
 		case error:
 			// do nothing.
@@ -128,24 +109,18 @@ func messageDetails(details ...interface{}) interface{} {
 			for mapIndex, mapValue := range typedValue {
 				detail := Detail{}
 				detail.Position = int32(index + 1)
-				mapValueAsString := interfaceAsString(mapValue)
 				detail.Key = mapIndex
-				if isJson(mapValueAsString) {
-					detail.Value = jsonAsInterface(mapValueAsString)
-				} else {
-					detail.Value = mapValueAsString
+				detail.Value = interfaceAsString(mapValue)
+				if isJson(detail.Value) {
+					detail.ValueRaw = jsonAsInterface(detail.Value)
 				}
-				detail.ValueAsString = mapValueAsString
 				result = append(result, detail)
 			}
 		default:
-			valueAsString := interfaceAsString(typedValue)
-			if isJson(valueAsString) {
-				detail.Value = jsonAsInterface(valueAsString)
-			} else {
-				detail.Value = valueAsString
+			detail.Value = interfaceAsString(typedValue)
+			if isJson(detail.Value) {
+				detail.ValueRaw = jsonAsInterface(detail.Value)
 			}
-			detail.ValueAsString = valueAsString
 			result = append(result, detail)
 		}
 	}
@@ -234,7 +209,7 @@ func (messenger *MessengerImpl) populateStructure(messageNumber int, details ...
 		level      string
 		location   string
 		status     string
-		text       interface{}
+		text       string
 	)
 
 	// Calculate fields.
@@ -243,14 +218,23 @@ func (messenger *MessengerImpl) populateStructure(messageNumber int, details ...
 	callerSkip = messenger.callerSkip
 	level = messenger.getLevel(messageNumber)
 	id := fmt.Sprintf(messenger.messageIdTemplate, messageNumber)
+	statusCandidate, ok := messenger.idStatuses[messageNumber]
+	if ok {
+		status = statusCandidate
+	}
+
+	// Construct "text".
+
 	textTemplate, ok := messenger.idMessages[messageNumber]
 	if ok {
 		textRaw := fmt.Sprintf(textTemplate, details...)
 		text = strings.Split(textRaw, "%!(")[0]
-	}
-	statusCandidate, ok := messenger.idStatuses[messageNumber]
-	if ok {
-		status = statusCandidate
+		if isJson(text) {
+			textThing := map[string]string{
+				"text": fmt.Sprintf("%+v", text),
+			}
+			details = append(details, textThing)
+		}
 	}
 
 	// TODO: Find status in underlying error.
@@ -404,10 +388,7 @@ func (messenger *MessengerImpl) NewSlogLevel(messageNumber int, details ...inter
 
 	// Create a text message.
 
-	message := ""
-	if messageFormat.Text != nil {
-		message = messageFormat.Text.(string)
-	}
+	message := messageFormat.Text
 
 	// Create a slog.Level message level
 

@@ -186,11 +186,7 @@ Output
   - The string value for the "text" JSON key
 */
 func (parser *ParserImpl) GetText() string {
-	result := ""
-	if parser.parsedMessage.Text != nil {
-		result = fmt.Sprint(parser.parsedMessage.Text)
-	}
-	return result
+	return parser.parsedMessage.Text
 }
 
 /*

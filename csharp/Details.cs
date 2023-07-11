@@ -7,6 +7,9 @@ using System.Text.Json.Serialization;
 
 namespace Senzing
 {
+    /// <summary>
+    /// A list of details.
+    /// </summary>
     [JsonConverter(typeof(DetailsJsonConverter))]
     public class Details
     {

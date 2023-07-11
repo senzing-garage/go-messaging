@@ -7,6 +7,9 @@ using System.Text.Json.Serialization;
 
 namespace Senzing
 {
+    /// <summary>
+    /// A list of errors.  Usually a stack of errors.
+    /// </summary>
     [JsonConverter(typeof(ErrorsJsonConverter))]
     public class Errors
     {

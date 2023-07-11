@@ -4,6 +4,7 @@ package com.senzing.schema;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.time.OffsetDateTime;
 
 @JsonSerialize
 public class SenzingMessage {
@@ -29,16 +30,17 @@ public class SenzingMessage {
     private String status;
 
     @JsonProperty("text")
-    private Object text;
+    private String text;
 
     @JsonProperty("time")
-    private String time;
+    private OffsetDateTime time;
 
     public SenzingMessage() {
     }
 
     /**
      * Getter for details.<p>
+     * A list of objects sent to the message generator.
      */
     public Details getDetails() {
         return details;
@@ -46,6 +48,7 @@ public class SenzingMessage {
 
     /**
      * Setter for details.<p>
+     * A list of objects sent to the message generator.
      */
     public void setDetails(Details details) {
         this.details = details;
@@ -53,6 +56,7 @@ public class SenzingMessage {
 
     /**
      * Getter for duration.<p>
+     * Time duration reported by the message.
      */
     public Integer getDuration() {
         return duration;
@@ -60,6 +64,7 @@ public class SenzingMessage {
 
     /**
      * Setter for duration.<p>
+     * Time duration reported by the message.
      */
     public void setDuration(Integer duration) {
         this.duration = duration;
@@ -67,6 +72,7 @@ public class SenzingMessage {
 
     /**
      * Getter for errors.<p>
+     * A list of errors.  Usually a stack of errors.
      */
     public Errors getErrors() {
         return errors;
@@ -74,6 +80,7 @@ public class SenzingMessage {
 
     /**
      * Setter for errors.<p>
+     * A list of errors.  Usually a stack of errors.
      */
     public void setErrors(Errors errors) {
         this.errors = errors;
@@ -115,7 +122,7 @@ public class SenzingMessage {
 
     /**
      * Getter for location.<p>
-     * Location in the code.
+     * Location in the code identifying where the message was generated.
      */
     public String getLocation() {
         return location;
@@ -123,7 +130,7 @@ public class SenzingMessage {
 
     /**
      * Setter for location.<p>
-     * Location in the code.
+     * Location in the code identifying where the message was generated.
      */
     public void setLocation(String location) {
         this.location = location;
@@ -131,6 +138,7 @@ public class SenzingMessage {
 
     /**
      * Getter for status.<p>
+     * User-defined status of message.
      */
     public String getStatus() {
         return status;
@@ -138,6 +146,7 @@ public class SenzingMessage {
 
     /**
      * Setter for status.<p>
+     * User-defined status of message.
      */
     public void setStatus(String status) {
         this.status = status;
@@ -145,15 +154,17 @@ public class SenzingMessage {
 
     /**
      * Getter for text.<p>
+     * Text representation of the message.
      */
-    public Object getText() {
+    public String getText() {
         return text;
     }
 
     /**
      * Setter for text.<p>
+     * Text representation of the message.
      */
-    public void setText(Object text) {
+    public void setText(String text) {
         this.text = text;
     }
 
@@ -161,7 +172,7 @@ public class SenzingMessage {
      * Getter for time.<p>
      * Time message was generated in RFC3339 format.
      */
-    public String getTime() {
+    public OffsetDateTime getTime() {
         return time;
     }
 
@@ -169,7 +180,7 @@ public class SenzingMessage {
      * Setter for time.<p>
      * Time message was generated in RFC3339 format.
      */
-    public void setTime(String time) {
+    public void setTime(OffsetDateTime time) {
         this.time = time;
     }
 }

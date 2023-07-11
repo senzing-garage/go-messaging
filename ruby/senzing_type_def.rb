@@ -6,8 +6,13 @@ require 'time'
 module SenzingTypeDef
 
   class SenzingMessage
+    # A list of objects sent to the message generator.
     attr_accessor :details
+
+    # Time duration reported by the message.
     attr_accessor :duration
+
+    # A list of errors.  Usually a stack of errors.
     attr_accessor :errors
 
     # The unique identification of the message.
@@ -17,9 +22,13 @@ module SenzingTypeDef
     # PANIC.
     attr_accessor :level
 
-    # Location in the code.
+    # Location in the code identifying where the message was generated.
     attr_accessor :location
+
+    # User-defined status of message.
     attr_accessor :status
+
+    # Text representation of the message.
     attr_accessor :text
 
     # Time message was generated in RFC3339 format.
@@ -34,8 +43,8 @@ module SenzingTypeDef
       out.level = SenzingTypeDef::from_json_data(String, data["level"])
       out.location = SenzingTypeDef::from_json_data(String, data["location"])
       out.status = SenzingTypeDef::from_json_data(String, data["status"])
-      out.text = SenzingTypeDef::from_json_data(Object, data["text"])
-      out.time = SenzingTypeDef::from_json_data(String, data["time"])
+      out.text = SenzingTypeDef::from_json_data(String, data["text"])
+      out.time = SenzingTypeDef::from_json_data(DateTime, data["time"])
       out
     end
 
@@ -54,18 +63,26 @@ module SenzingTypeDef
     end
   end
 
+  # A detail published by the message generator.
   class Detail
+    # The unique identifier of the detail.
     attr_accessor :key
+
+    # The order in which the detail was given to the message generator.
     attr_accessor :position
+
+    # The value of the detail in string form.
     attr_accessor :value
-    attr_accessor :value_as_string
+
+    # The value of the detail if it differs from string form.
+    attr_accessor :value_raw
 
     def self.from_json_data(data)
       out = Detail.new
       out.key = SenzingTypeDef::from_json_data(String, data["key"])
       out.position = SenzingTypeDef::from_json_data(Integer, data["position"])
-      out.value = SenzingTypeDef::from_json_data(Object, data["value"])
-      out.value_as_string = SenzingTypeDef::from_json_data(String, data["valueAsString"])
+      out.value = SenzingTypeDef::from_json_data(String, data["value"])
+      out.value_raw = SenzingTypeDef::from_json_data(Object, data["valueRaw"])
       out
     end
 
@@ -74,11 +91,12 @@ module SenzingTypeDef
       data["key"] = SenzingTypeDef::to_json_data(key)
       data["position"] = SenzingTypeDef::to_json_data(position)
       data["value"] = SenzingTypeDef::to_json_data(value)
-      data["valueAsString"] = SenzingTypeDef::to_json_data(value_as_string)
+      data["valueRaw"] = SenzingTypeDef::to_json_data(value_raw)
       data
     end
   end
 
+  # A list of details.
   class Details
     attr_accessor :value
 
@@ -93,6 +111,7 @@ module SenzingTypeDef
     end
   end
 
+  # The text representation of the error.
   class Error
     attr_accessor :value
 
@@ -107,6 +126,7 @@ module SenzingTypeDef
     end
   end
 
+  # A list of errors.  Usually a stack of errors.
   class Errors
     attr_accessor :value
 

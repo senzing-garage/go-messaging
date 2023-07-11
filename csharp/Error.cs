@@ -6,6 +6,9 @@ using System.Text.Json.Serialization;
 
 namespace Senzing
 {
+    /// <summary>
+    /// The text representation of the error.
+    /// </summary>
     [JsonConverter(typeof(ErrorJsonConverter))]
     public class Error
     {

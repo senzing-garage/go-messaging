@@ -31,12 +31,19 @@ type MessageFormat struct {
 	Time     string      `json:"time,omitempty"`     // Time of message in UTC.
 	Level    string      `json:"level,omitempty"`    // Level:  TRACE, DEBUG, INFO, WARN, ERROR, FATAL, PANIC.
 	Id       string      `json:"id,omitempty"`       // Message identifier.
-	Text     interface{} `json:"text,omitempty"`     // Message text.
+	Text     string      `json:"text,omitempty"`     // Message text.
 	Status   string      `json:"status,omitempty"`   // Status information.
 	Duration int64       `json:"duration,omitempty"` // Duration in nanoseconds
 	Location string      `json:"location,omitempty"` // Location in the code issuing message.
 	Errors   interface{} `json:"errors,omitempty"`   // List of errors.
-	Details  interface{} `json:"details,omitempty"`  // All instances passed into the message.
+	Details  []Detail    `json:"details,omitempty"`  // All instances passed into the message.
+}
+
+type Detail struct {
+	Key      string      `json:"key,omitempty"`
+	Position int32       `json:"position,omitempty"`
+	Value    string      `json:"value,omitempty"`
+	ValueRaw interface{} `json:"valueRaw,omitempty"`
 }
 
 // --- Override values when creating messages ---------------------------------
@@ -73,7 +80,7 @@ type MessageStatus struct {
 
 // Value of the "text" field.
 type MessageText struct {
-	Value interface{} // Message text.
+	Value string // Message text.
 }
 
 // Value of the "time" field.

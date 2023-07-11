@@ -5,6 +5,9 @@ package com.senzing.schema;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+/**
+ * The text representation of the error.
+ */
 public class Error {
     @JsonValue
     private String value;

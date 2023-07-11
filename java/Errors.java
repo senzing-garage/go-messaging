@@ -6,6 +6,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.List;
 
+/**
+ * A list of errors.  Usually a stack of errors.
+ */
 public class Errors {
     @JsonValue
     private List<Error> value;

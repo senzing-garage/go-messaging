@@ -9,8 +9,20 @@ from typing import Any, Dict, List, Optional, Union, get_args, get_origin
 @dataclass
 class SenzingMessage:
     details: 'Details'
+    """
+    A list of objects sent to the message generator.
+    """
+
     duration: 'int'
+    """
+    Time duration reported by the message.
+    """
+
     errors: 'Errors'
+    """
+    A list of errors.  Usually a stack of errors.
+    """
+
     id: 'str'
     """
     The unique identification of the message.
@@ -24,12 +36,20 @@ class SenzingMessage:
 
     location: 'str'
     """
-    Location in the code.
+    Location in the code identifying where the message was generated.
     """
 
     status: 'str'
-    text: 'Any'
-    time: 'str'
+    """
+    User-defined status of message.
+    """
+
+    text: 'str'
+    """
+    Text representation of the message.
+    """
+
+    time: 'datetime'
     """
     Time message was generated in RFC3339 format.
     """
@@ -45,8 +65,8 @@ class SenzingMessage:
             _from_json_data(str, data.get("level")),
             _from_json_data(str, data.get("location")),
             _from_json_data(str, data.get("status")),
-            _from_json_data(Any, data.get("text")),
-            _from_json_data(str, data.get("time")),
+            _from_json_data(str, data.get("text")),
+            _from_json_data(datetime, data.get("time")),
         )
 
     def to_json_data(self) -> Any:
@@ -64,18 +84,38 @@ class SenzingMessage:
 
 @dataclass
 class Detail:
+    """
+    A detail published by the message generator.
+    """
+
     key: 'str'
+    """
+    The unique identifier of the detail.
+    """
+
     position: 'int'
-    value: 'Any'
-    value_as_string: 'str'
+    """
+    The order in which the detail was given to the message generator.
+    """
+
+    value: 'str'
+    """
+    The value of the detail in string form.
+    """
+
+    value_raw: 'Any'
+    """
+    The value of the detail if it differs from string form.
+    """
+
 
     @classmethod
     def from_json_data(cls, data: Any) -> 'Detail':
         return cls(
             _from_json_data(str, data.get("key")),
             _from_json_data(int, data.get("position")),
-            _from_json_data(Any, data.get("value")),
-            _from_json_data(str, data.get("valueAsString")),
+            _from_json_data(str, data.get("value")),
+            _from_json_data(Any, data.get("valueRaw")),
         )
 
     def to_json_data(self) -> Any:
@@ -83,11 +123,15 @@ class Detail:
         data["key"] = _to_json_data(self.key)
         data["position"] = _to_json_data(self.position)
         data["value"] = _to_json_data(self.value)
-        data["valueAsString"] = _to_json_data(self.value_as_string)
+        data["valueRaw"] = _to_json_data(self.value_raw)
         return data
 
 @dataclass
 class Details:
+    """
+    A list of details.
+    """
+
     value: 'List[Detail]'
 
     @classmethod
@@ -99,6 +143,10 @@ class Details:
 
 @dataclass
 class Error:
+    """
+    The text representation of the error.
+    """
+
     value: 'str'
 
     @classmethod
@@ -110,6 +158,10 @@ class Error:
 
 @dataclass
 class Errors:
+    """
+    A list of errors.  Usually a stack of errors.
+    """
+
     value: 'List[Error]'
 
     @classmethod

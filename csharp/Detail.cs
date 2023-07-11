@@ -4,18 +4,33 @@ using System.Text.Json.Serialization;
 
 namespace Senzing
 {
+    /// <summary>
+    /// A detail published by the message generator.
+    /// </summary>
     public class Detail
     {
+        /// <summary>
+        /// The unique identifier of the detail.
+        /// </summary>
         [JsonPropertyName("key")]
         public string Key { get; set; }
 
+        /// <summary>
+        /// The order in which the detail was given to the message generator.
+        /// </summary>
         [JsonPropertyName("position")]
         public int Position { get; set; }
 
+        /// <summary>
+        /// The value of the detail in string form.
+        /// </summary>
         [JsonPropertyName("value")]
-        public object Value { get; set; }
+        public string Value { get; set; }
 
-        [JsonPropertyName("valueAsString")]
-        public string ValueAsString { get; set; }
+        /// <summary>
+        /// The value of the detail if it differs from string form.
+        /// </summary>
+        [JsonPropertyName("valueRaw")]
+        public object ValueRaw { get; set; }
     }
 }

@@ -5,6 +5,9 @@ package com.senzing.schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+/**
+ * A detail published by the message generator.
+ */
 @JsonSerialize
 public class Detail {
     @JsonProperty("key")
@@ -14,16 +17,17 @@ public class Detail {
     private Integer position;
 
     @JsonProperty("value")
-    private Object value;
+    private String value;
 
-    @JsonProperty("valueAsString")
-    private String valueAsString;
+    @JsonProperty("valueRaw")
+    private Object valueRaw;
 
     public Detail() {
     }
 
     /**
      * Getter for key.<p>
+     * The unique identifier of the detail.
      */
     public String getKey() {
         return key;
@@ -31,6 +35,7 @@ public class Detail {
 
     /**
      * Setter for key.<p>
+     * The unique identifier of the detail.
      */
     public void setKey(String key) {
         this.key = key;
@@ -38,6 +43,7 @@ public class Detail {
 
     /**
      * Getter for position.<p>
+     * The order in which the detail was given to the message generator.
      */
     public Integer getPosition() {
         return position;
@@ -45,6 +51,7 @@ public class Detail {
 
     /**
      * Setter for position.<p>
+     * The order in which the detail was given to the message generator.
      */
     public void setPosition(Integer position) {
         this.position = position;
@@ -52,29 +59,33 @@ public class Detail {
 
     /**
      * Getter for value.<p>
+     * The value of the detail in string form.
      */
-    public Object getValue() {
+    public String getValue() {
         return value;
     }
 
     /**
      * Setter for value.<p>
+     * The value of the detail in string form.
      */
-    public void setValue(Object value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
     /**
-     * Getter for valueAsString.<p>
+     * Getter for valueRaw.<p>
+     * The value of the detail if it differs from string form.
      */
-    public String getValueAsString() {
-        return valueAsString;
+    public Object getValueRaw() {
+        return valueRaw;
     }
 
     /**
-     * Setter for valueAsString.<p>
+     * Setter for valueRaw.<p>
+     * The value of the detail if it differs from string form.
      */
-    public void setValueAsString(String valueAsString) {
-        this.valueAsString = valueAsString;
+    public void setValueRaw(Object valueRaw) {
+        this.valueRaw = valueRaw;
     }
 }

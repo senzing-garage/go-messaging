@@ -2,11 +2,16 @@
 
 package typedef
 
+import "time"
+
 type SenzingMessage struct {
+	// A list of objects sent to the message generator.
 	Details Details `json:"details"`
 
-	Duration int32 `json:"duration"`
+	// Time duration reported by the message.
+	Duration int64 `json:"duration"`
 
+	// A list of errors.  Usually a stack of errors.
 	Errors Errors `json:"errors"`
 
 	// The unique identification of the message.
@@ -16,29 +21,39 @@ type SenzingMessage struct {
 	// PANIC.
 	Level string `json:"level"`
 
-	// Location in the code.
+	// Location in the code identifying where the message was generated.
 	Location string `json:"location"`
 
+	// User-defined status of message.
 	Status string `json:"status"`
 
-	Text interface{} `json:"text"`
+	// Text representation of the message.
+	Text string `json:"text"`
 
 	// Time message was generated in RFC3339 format.
-	Time string `json:"time"`
+	Time time.Time `json:"time"`
 }
 
+// A detail published by the message generator.
 type Detail struct {
+	// The unique identifier of the detail.
 	Key string `json:"key"`
 
+	// The order in which the detail was given to the message generator.
 	Position int32 `json:"position"`
 
-	Value interface{} `json:"value"`
+	// The value of the detail in string form.
+	Value string `json:"value"`
 
-	ValueAsString string `json:"valueAsString"`
+	// The value of the detail if it differs from string form.
+	ValueRaw interface{} `json:"valueRaw"`
 }
 
+// A list of details.
 type Details = []Detail
 
+// The text representation of the error.
 type Error = string
 
+// A list of errors.  Usually a stack of errors.
 type Errors = []Error
