@@ -83,13 +83,19 @@ func main() {
 	// Parse some messages.
 
 	message1 := messenger2.NewJson(0001, "Bob", "Mary")
-	parsedMessage1 := parser.Parse(message1)
-	fmt.Println(parsedMessage1.GetId())
-	fmt.Println(parsedMessage1.GetMessageText())
+	parsedMessage1, err := parser.Parse(message1)
+	if err != nil {
+		fmt.Printf("Error: %s", err.Error())
+	}
+	fmt.Println(parsedMessage1.ID)
+	fmt.Println(parsedMessage1.Text)
 
 	message2 := `{"time":"2023-04-24T21:32:46.077696362Z","level":"DEBUG","id":"senzing-99981001","text":"DEBUG: Bob works with Mary","location":"In main() at main.go:84","errors":["error #1",{"time":"2023-04-10T11:00:20.623748617-04:00","level":"TRACE","id":"senzing-99990002","text":"A fake error","location":"In main() at main.go:36","details":{"1":"Bob","2":"Mary"}}],"details":{"1":"Bob","2":"Mary"}}`
-	parsedMessage2 := parser.Parse(message2)
-	fmt.Println(parsedMessage2.GetId())
-	fmt.Println(parsedMessage2.GetMessageText())
+	parsedMessage2, err := parser.Parse(message2)
+	if err != nil {
+		fmt.Printf("Error: %s", err.Error())
+	}
+	fmt.Println(parsedMessage2.ID)
+	fmt.Println(parsedMessage2.Text)
 
 }

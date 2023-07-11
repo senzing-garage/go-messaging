@@ -258,7 +258,7 @@ func (messenger *MessengerImpl) populateStructure(messageNumber int, details ...
 		case *MessageText:
 			text = typedValue.Value
 		case *MessageTime:
-			timeNow = typedValue.Value.String()
+			timeNow = typedValue.Value.Format(time.RFC3339Nano)
 		case *OptionCallerSkip:
 			callerSkip = typedValue.Value
 		case error:

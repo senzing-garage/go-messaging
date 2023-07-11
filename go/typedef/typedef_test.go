@@ -54,70 +54,70 @@ var testCasesForTypedef = []struct {
 		name:                "typedef-0001",
 		messageNumber:       1,
 		details:             []interface{}{"Bob", "Jane", getTimestamp()},
-		expectedMessageJson: `{"time":"2000-01-01 00:00:00 +0000 UTC","level":"TRACE","id":"senzing-99990001","text":"TRACE: Bob works with Jane","status":"Status for 0001","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
+		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"senzing-99990001","text":"TRACE: Bob works with Jane","status":"Status for 0001","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
 		expectedText:        "TRACE: Bob works with Jane",
 	},
 	{
 		name:                "typedef-1001",
 		messageNumber:       1001,
 		details:             []interface{}{"Bob", "Jane", getTimestamp()},
-		expectedMessageJson: `{"time":"2000-01-01 00:00:00 +0000 UTC","level":"DEBUG","id":"senzing-99991001","text":"DEBUG: Bob works with Jane","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
+		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"DEBUG","id":"senzing-99991001","text":"DEBUG: Bob works with Jane","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
 		expectedText:        "DEBUG: Bob works with Jane",
 	},
 	{
 		name:                "typedef-2001",
 		messageNumber:       2001,
 		details:             []interface{}{"Bob", "Jane", getTimestamp()},
-		expectedMessageJson: `{"time":"2000-01-01 00:00:00 +0000 UTC","level":"INFO","id":"senzing-99992001","text":"INFO: Bob works with Jane","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
+		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"INFO","id":"senzing-99992001","text":"INFO: Bob works with Jane","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
 		expectedText:        "INFO: Bob works with Jane",
 	},
 	{
 		name:                "typedef-2002",
 		messageNumber:       2002,
 		details:             []interface{}{"Bob", "Jane", getTimestamp()},
-		expectedMessageJson: `{"time":"2000-01-01 00:00:00 +0000 UTC","level":"INFO","id":"senzing-99992002","text":"Bob","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
+		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"INFO","id":"senzing-99992002","text":"Bob","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
 		expectedText:        "Bob",
 	},
 	{
 		name:                "typedef-2003",
 		messageNumber:       2002,
 		details:             []interface{}{jsonStrings[1], getTimestamp()},
-		expectedMessageJson: `{"time":"2000-01-01 00:00:00 +0000 UTC","level":"INFO","id":"senzing-99992002","text":"{\"a\":{\"b\":{\"c\":{\"d\":{\"e\":\"f\"},\"g\":{\"h\":\"i\"},\"j\":{}}},\"k\":{\"m\":{\"n\":\"o\"}},\"p\":{\"q\":\"r\"},\"s\":{\"t\":{\"u\":\"v\"}}},\"w\":\"x\"}","details":[{"position":1,"value":"{\"a\":{\"b\":{\"c\":{\"d\":{\"e\":\"f\"},\"g\":{\"h\":\"i\"},\"j\":{}}},\"k\":{\"m\":{\"n\":\"o\"}},\"p\":{\"q\":\"r\"},\"s\":{\"t\":{\"u\":\"v\"}}},\"w\":\"x\"}","valueRaw":{"a":{"b":{"c":{"d":{"e":"f"},"g":{"h":"i"},"j":{}}},"k":{"m":{"n":"o"}},"p":{"q":"r"},"s":{"t":{"u":"v"}}},"w":"x"}},{"key":"text","position":2,"value":"{\"a\":{\"b\":{\"c\":{\"d\":{\"e\":\"f\"},\"g\":{\"h\":\"i\"},\"j\":{}}},\"k\":{\"m\":{\"n\":\"o\"}},\"p\":{\"q\":\"r\"},\"s\":{\"t\":{\"u\":\"v\"}}},\"w\":\"x\"}","valueRaw":{"a":{"b":{"c":{"d":{"e":"f"},"g":{"h":"i"},"j":{}}},"k":{"m":{"n":"o"}},"p":{"q":"r"},"s":{"t":{"u":"v"}}},"w":"x"}}]}`,
+		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"INFO","id":"senzing-99992002","text":"{\"a\":{\"b\":{\"c\":{\"d\":{\"e\":\"f\"},\"g\":{\"h\":\"i\"},\"j\":{}}},\"k\":{\"m\":{\"n\":\"o\"}},\"p\":{\"q\":\"r\"},\"s\":{\"t\":{\"u\":\"v\"}}},\"w\":\"x\"}","details":[{"position":1,"value":"{\"a\":{\"b\":{\"c\":{\"d\":{\"e\":\"f\"},\"g\":{\"h\":\"i\"},\"j\":{}}},\"k\":{\"m\":{\"n\":\"o\"}},\"p\":{\"q\":\"r\"},\"s\":{\"t\":{\"u\":\"v\"}}},\"w\":\"x\"}","valueRaw":{"a":{"b":{"c":{"d":{"e":"f"},"g":{"h":"i"},"j":{}}},"k":{"m":{"n":"o"}},"p":{"q":"r"},"s":{"t":{"u":"v"}}},"w":"x"}},{"key":"text","position":2,"value":"{\"a\":{\"b\":{\"c\":{\"d\":{\"e\":\"f\"},\"g\":{\"h\":\"i\"},\"j\":{}}},\"k\":{\"m\":{\"n\":\"o\"}},\"p\":{\"q\":\"r\"},\"s\":{\"t\":{\"u\":\"v\"}}},\"w\":\"x\"}","valueRaw":{"a":{"b":{"c":{"d":{"e":"f"},"g":{"h":"i"},"j":{}}},"k":{"m":{"n":"o"}},"p":{"q":"r"},"s":{"t":{"u":"v"}}},"w":"x"}}]}`,
 		expectedText:        `{"a":{"b":{"c":{"d":{"e":"f"},"g":{"h":"i"},"j":{}}},"k":{"m":{"n":"o"}},"p":{"q":"r"},"s":{"t":{"u":"v"}}},"w":"x"}`,
 	},
 	{
 		name:                "typedef-2004",
 		messageNumber:       2003,
 		details:             []interface{}{jsonStrings[1], getTimestamp()},
-		expectedMessageJson: `{"time":"2000-01-01 00:00:00 +0000 UTC","level":"INFO","id":"senzing-99992003","text":"JSON: {\"a\":{\"b\":{\"c\":{\"d\":{\"e\":\"f\"},\"g\":{\"h\":\"i\"},\"j\":{}}},\"k\":{\"m\":{\"n\":\"o\"}},\"p\":{\"q\":\"r\"},\"s\":{\"t\":{\"u\":\"v\"}}},\"w\":\"x\"}","details":[{"position":1,"value":"{\"a\":{\"b\":{\"c\":{\"d\":{\"e\":\"f\"},\"g\":{\"h\":\"i\"},\"j\":{}}},\"k\":{\"m\":{\"n\":\"o\"}},\"p\":{\"q\":\"r\"},\"s\":{\"t\":{\"u\":\"v\"}}},\"w\":\"x\"}","valueRaw":{"a":{"b":{"c":{"d":{"e":"f"},"g":{"h":"i"},"j":{}}},"k":{"m":{"n":"o"}},"p":{"q":"r"},"s":{"t":{"u":"v"}}},"w":"x"}}]}`,
+		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"INFO","id":"senzing-99992003","text":"JSON: {\"a\":{\"b\":{\"c\":{\"d\":{\"e\":\"f\"},\"g\":{\"h\":\"i\"},\"j\":{}}},\"k\":{\"m\":{\"n\":\"o\"}},\"p\":{\"q\":\"r\"},\"s\":{\"t\":{\"u\":\"v\"}}},\"w\":\"x\"}","details":[{"position":1,"value":"{\"a\":{\"b\":{\"c\":{\"d\":{\"e\":\"f\"},\"g\":{\"h\":\"i\"},\"j\":{}}},\"k\":{\"m\":{\"n\":\"o\"}},\"p\":{\"q\":\"r\"},\"s\":{\"t\":{\"u\":\"v\"}}},\"w\":\"x\"}","valueRaw":{"a":{"b":{"c":{"d":{"e":"f"},"g":{"h":"i"},"j":{}}},"k":{"m":{"n":"o"}},"p":{"q":"r"},"s":{"t":{"u":"v"}}},"w":"x"}}]}`,
 		expectedText:        `JSON: {"a":{"b":{"c":{"d":{"e":"f"},"g":{"h":"i"},"j":{}}},"k":{"m":{"n":"o"}},"p":{"q":"r"},"s":{"t":{"u":"v"}}},"w":"x"}`,
 	},
 	{
 		name:                "typedef-3001",
 		messageNumber:       3001,
 		details:             []interface{}{"Bob", "Jane", getTimestamp()},
-		expectedMessageJson: `{"time":"2000-01-01 00:00:00 +0000 UTC","level":"WARN","id":"senzing-99993001","text":"WARN: Bob works with Jane","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
+		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"WARN","id":"senzing-99993001","text":"WARN: Bob works with Jane","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
 		expectedText:        "WARN: Bob works with Jane",
 	},
 	{
 		name:                "typedef-4001",
 		messageNumber:       4001,
 		details:             []interface{}{"Bob", "Jane", getTimestamp()},
-		expectedMessageJson: `{"time":"2000-01-01 00:00:00 +0000 UTC","level":"ERROR","id":"senzing-99994001","text":"ERROR: Bob works with Jane","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
+		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"ERROR","id":"senzing-99994001","text":"ERROR: Bob works with Jane","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
 		expectedText:        "ERROR: Bob works with Jane",
 	},
 	{
 		name:                "typedef-5001",
 		messageNumber:       5001,
 		details:             []interface{}{"Bob", "Jane", getTimestamp()},
-		expectedMessageJson: `{"time":"2000-01-01 00:00:00 +0000 UTC","level":"FATAL","id":"senzing-99995001","text":"FATAL: Bob works with Jane","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
+		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"FATAL","id":"senzing-99995001","text":"FATAL: Bob works with Jane","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
 		expectedText:        "FATAL: Bob works with Jane",
 	},
 	{
 		name:                "typedef-6001",
 		messageNumber:       6001,
 		details:             []interface{}{"Bob", "Jane", getTimestamp()},
-		expectedMessageJson: `{"time":"2000-01-01 00:00:00 +0000 UTC","level":"PANIC","id":"senzing-99996001","text":"PANIC: Bob works with Jane","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
+		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"PANIC","id":"senzing-99996001","text":"PANIC: Bob works with Jane","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
 		expectedText:        "PANIC: Bob works with Jane",
 	},
 }
@@ -159,7 +159,7 @@ func teardown() error {
 }
 
 // ----------------------------------------------------------------------------
-// Internal functions - names begin with lowercase letter
+// Internal functions
 // ----------------------------------------------------------------------------
 
 func testError(test *testing.T, err error) {
@@ -168,6 +168,7 @@ func testError(test *testing.T, err error) {
 		assert.FailNow(test, err.Error())
 	}
 }
+
 func printRequest(test *testing.T, request string) {
 	if false {
 		test.Log(request)
@@ -188,10 +189,10 @@ func printResult(test *testing.T, result *SenzingMessage) {
 		if len(result.Details) > 0 {
 			test.Logf(" Details:\n")
 			for _, detail := range result.Details {
-				test.Logf("         Position: %d\n", detail.Position)
-				test.Logf("              Key: %s\n", detail.Key)
-				test.Logf("   ValueAsString: %s\n", detail.ValueAsString)
-				test.Logf("           Value: %s\n", detail.Value)
+				test.Logf("     Position: %d\n", detail.Position)
+				test.Logf("          Key: %s\n", detail.Key)
+				test.Logf("        Value: %s\n", detail.Value)
+				test.Logf("     ValueRaw: %s\n", detail.ValueRaw)
 			}
 		}
 
@@ -216,10 +217,10 @@ func getTimestamp() *messenger.MessageTime {
 // --- Test cases
 // ----------------------------------------------------------------------------
 
-func TestMessengerImpl_NewJson(test *testing.T) {
+func TestTypedef_NewJson(test *testing.T) {
 	for _, testCase := range testCasesForTypedef {
 		if len(testCase.expectedMessageJson) > 0 {
-			test.Run(testCase.name+"-NewJson", func(test *testing.T) {
+			test.Run(testCase.name, func(test *testing.T) {
 				jsonString := logger.NewJson(testCase.messageNumber, testCase.details...)
 				result := &SenzingMessage{}
 				err := json.Unmarshal([]byte(jsonString), result)
@@ -232,7 +233,7 @@ func TestMessengerImpl_NewJson(test *testing.T) {
 	}
 }
 
-func TestSenzingMessageSimple(test *testing.T) {
+func TestTypedefSimple(test *testing.T) {
 	jsonString := logger.NewJson(2, "Bob", "Mary")
 	result := &SenzingMessage{}
 	err := json.Unmarshal([]byte(jsonString), result)
@@ -242,7 +243,7 @@ func TestSenzingMessageSimple(test *testing.T) {
 	assert.Equal(test, "Bob", result.Details[0].Value)
 }
 
-func TestSenzingMessageErrors(test *testing.T) {
+func TestTypedefErrors(test *testing.T) {
 	err1 := errors.New("example error #1")
 	err2 := errors.New("example error #2")
 	jsonString := logger.NewJson(2, "Bob", "Mary", err1, err2)
@@ -254,7 +255,7 @@ func TestSenzingMessageErrors(test *testing.T) {
 	assert.Equal(test, "Bob", result.Details[0].Value)
 }
 
-func TestSenzingMessageMap(test *testing.T) {
+func TestTypedefMap(test *testing.T) {
 	aMap := map[string]string{
 		"BobKey":  "BobValue",
 		"MaryKey": "MaryValue",
