@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"runtime"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 
@@ -32,22 +32,28 @@ type MessengerImpl struct {
 // Private functions
 // ----------------------------------------------------------------------------
 
+// Strip \t and \n from string.
+func cleanTabsAndNewlines(unknownString string) string {
+	result := unknownString
+	result = strings.ReplaceAll(result, "\n", "")
+	result = strings.ReplaceAll(result, "\t", "")
+	return result
+}
+
+func cleanErrorString(xErr error) string {
+	return cleanTabsAndNewlines(xErr.Error())
+}
+
 // Determine if string is syntactically JSON.
 func isJson(unknownString string) bool {
-	unknownStringUnescaped, err := strconv.Unquote(unknownString)
-	if err != nil {
-		unknownStringUnescaped = unknownString
-	}
+	unknownStringUnescaped := cleanTabsAndNewlines(unknownString)
 	var jsonString json.RawMessage
 	return json.Unmarshal([]byte(unknownStringUnescaped), &jsonString) == nil
 }
 
 // Cast JSON string into an interface{}.
 func jsonAsInterface(unknownString string) interface{} {
-	unknownStringUnescaped, err := strconv.Unquote(unknownString)
-	if err != nil {
-		unknownStringUnescaped = unknownString
-	}
+	unknownStringUnescaped := cleanTabsAndNewlines(unknownString)
 	var jsonString json.RawMessage
 	json.Unmarshal([]byte(unknownStringUnescaped), &jsonString)
 	return jsonString
@@ -61,7 +67,11 @@ func interfaceAsString(unknown interface{}) string {
 	case nil:
 		result = "<nil>"
 	case string:
-		result = value
+		if isJson(value) {
+			result = cleanTabsAndNewlines(value)
+		} else {
+			result = value
+		}
 	case int:
 		result = fmt.Sprintf("%d", value)
 	case float64:
@@ -69,7 +79,7 @@ func interfaceAsString(unknown interface{}) string {
 	case bool:
 		result = fmt.Sprintf("%t", value)
 	case error:
-		result = value.Error()
+		result = cleanErrorString(value)
 	default:
 		result = fmt.Sprintf("%#v", unknown)
 	}
@@ -77,44 +87,67 @@ func interfaceAsString(unknown interface{}) string {
 }
 
 // Walk through the details to improve their future JSON representation.
-func messageDetails(details ...interface{}) interface{} {
-
-	result := make(map[string]interface{})
+func messageDetails(details ...interface{}) []Detail {
+	result := []Detail{}
 
 	// Process different types of details.
 
 	for index, value := range details {
+		detail := Detail{}
+		detail.Position = int32(index + 1)
 		switch typedValue := value.(type) {
 		case nil:
-			result[strconv.Itoa(index+1)] = "<nil>"
-		case int, float64:
-			result[strconv.Itoa(index+1)] = typedValue
+			detail.Type = "nil"
+			result = append(result, detail)
+		case int:
+			detail.Type = "integer"
+			detail.Value = interfaceAsString(typedValue)
+			detail.ValueRaw = typedValue
+			result = append(result, detail)
+		case float64:
+			detail.Type = "float"
+			detail.Value = interfaceAsString(typedValue)
+			detail.ValueRaw = typedValue
+			result = append(result, detail)
 		case string:
+			detail.Type = "string"
+			detail.Value = typedValue
 			if isJson(typedValue) {
-				result[strconv.Itoa(index+1)] = jsonAsInterface(typedValue)
-			} else {
-				result[strconv.Itoa(index+1)] = typedValue
+				detail.ValueRaw = jsonAsInterface(typedValue)
 			}
+			result = append(result, detail)
 		case bool:
-			result[strconv.Itoa(index+1)] = fmt.Sprintf("%t", typedValue)
+			detail.Type = "boolean"
+			detail.Value = interfaceAsString(typedValue)
+			detail.ValueRaw = typedValue
+			result = append(result, detail)
 		case error:
-			// do nothing.
+			detail.Type = "error"
+			detail.Value = cleanErrorString(typedValue)
+			if isJson(detail.Value) {
+				detail.ValueRaw = jsonAsInterface(detail.Value)
+			}
+			result = append(result, detail)
 		case map[string]string:
 			for mapIndex, mapValue := range typedValue {
-				mapValueAsString := interfaceAsString(mapValue)
-				if isJson(mapValueAsString) {
-					result[mapIndex] = jsonAsInterface(mapValueAsString)
-				} else {
-					result[mapIndex] = mapValueAsString
+				detail := Detail{}
+				detail.Position = int32(index + 1)
+				detail.Key = mapIndex
+				detail.Type = "map[string]string"
+				detail.Value = interfaceAsString(mapValue)
+				if isJson(detail.Value) {
+					detail.ValueRaw = jsonAsInterface(detail.Value)
 				}
+				result = append(result, detail)
 			}
 		default:
-			valueAsString := interfaceAsString(typedValue)
-			if isJson(valueAsString) {
-				result[strconv.Itoa(index+1)] = jsonAsInterface(valueAsString)
-			} else {
-				result[strconv.Itoa(index+1)] = valueAsString
+			detail.Type = reflect.TypeOf(value).Elem().Name()
+			detail.Value = interfaceAsString(typedValue)
+			detail.ValueRaw = typedValue
+			if isJson(detail.Value) {
+				detail.ValueRaw = jsonAsInterface(detail.Value)
 			}
+			result = append(result, detail)
 		}
 	}
 
@@ -202,7 +235,7 @@ func (messenger *MessengerImpl) populateStructure(messageNumber int, details ...
 		level      string
 		location   string
 		status     string
-		text       interface{}
+		text       string
 	)
 
 	// Calculate fields.
@@ -211,14 +244,23 @@ func (messenger *MessengerImpl) populateStructure(messageNumber int, details ...
 	callerSkip = messenger.callerSkip
 	level = messenger.getLevel(messageNumber)
 	id := fmt.Sprintf(messenger.messageIdTemplate, messageNumber)
+	statusCandidate, ok := messenger.idStatuses[messageNumber]
+	if ok {
+		status = statusCandidate
+	}
+
+	// Construct "text".
+
 	textTemplate, ok := messenger.idMessages[messageNumber]
 	if ok {
 		textRaw := fmt.Sprintf(textTemplate, details...)
 		text = strings.Split(textRaw, "%!(")[0]
-	}
-	statusCandidate, ok := messenger.idStatuses[messageNumber]
-	if ok {
-		status = statusCandidate
+		if isJson(text) {
+			textThing := map[string]string{
+				"text": fmt.Sprintf("%+v", text),
+			}
+			details = append(details, textThing)
+		}
 	}
 
 	// TODO: Find status in underlying error.
@@ -242,17 +284,12 @@ func (messenger *MessengerImpl) populateStructure(messageNumber int, details ...
 		case *MessageText:
 			text = typedValue.Value
 		case *MessageTime:
-			timeNow = typedValue.Value.String()
+			timeNow = typedValue.Value.Format(time.RFC3339Nano)
 		case *OptionCallerSkip:
 			callerSkip = typedValue.Value
 		case error:
-			errorMessage := typedValue.Error()
-			// var priorError interface{}
-			if isJson(errorMessage) {
-				errorList = append(errorList, jsonAsInterface(errorMessage))
-			} else {
-				errorList = append(errorList, errorMessage)
-			}
+			errorList = append(errorList, cleanErrorString(typedValue))
+			filteredDetails = append(filteredDetails, typedValue)
 
 			// TODO:
 			// messageSplits := strings.Split(errorMessage, "|")
@@ -372,10 +409,7 @@ func (messenger *MessengerImpl) NewSlogLevel(messageNumber int, details ...inter
 
 	// Create a text message.
 
-	message := ""
-	if messageFormat.Text != nil {
-		message = messageFormat.Text.(string)
-	}
+	message := messageFormat.Text
 
 	// Create a slog.Level message level
 

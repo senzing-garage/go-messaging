@@ -5,80 +5,56 @@ import (
 	"testing"
 	"time"
 
+	"github.com/senzing/go-messaging/go/typedef"
 	"github.com/stretchr/testify/assert"
 )
 
 var testCasesForMessage = []struct {
 	name                  string
 	message               string
-	expectedDetails       map[string]string
+	expectedDetails       typedef.Details
 	expectedDetailsNumber int
 	expectedDuration      int64
+	expectedError         string
 	expectedErrors        []string
 	expectedErrorsNumber  int
 	expectedId            string
-	expectedIsJson        bool
 	expectedLevel         string
 	expectedLocation      string
-	expectedMessage       string
-	expectedMessageText   string
-	expectedParseError    error
 	expectedStatus        string
 	expectedText          string
 	expectedTime          time.Time
 }{
 	{
-		name:               "parser-0001",
-		message:            "",
-		expectedDetails:    map[string]string{},
-		expectedErrors:     []string{},
-		expectedParseError: fmt.Errorf("string is not JSON"),
-		expectedTime:       time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
+		name:          "parser-0001",
+		message:       "",
+		expectedError: "unexpected end of JSON input",
 	},
 	{
-		name:                "parser-0002",
-		message:             "{}",
-		expectedDetails:     map[string]string{},
-		expectedErrors:      []string{},
-		expectedIsJson:      true,
-		expectedMessage:     "{}",
-		expectedMessageText: "{}",
-		expectedTime:        time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
+		name:    "parser-0002",
+		message: "{}",
 	},
 	{
-		name:                "parser-0003",
-		message:             "{Not really JSON}",
-		expectedDetails:     map[string]string{},
-		expectedErrors:      []string{},
-		expectedMessage:     "{Not really JSON}",
-		expectedMessageText: "{Not really JSON}",
-		expectedParseError:  fmt.Errorf("string is not JSON"),
-		expectedTime:        time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
+		name:          "parser-0003",
+		message:       "{Not really JSON}",
+		expectedError: "invalid character 'N' looking for beginning of object key string",
 	},
 	{
-		name:                "parser-0004",
-		message:             `{"text":"Bob works with Jane", But not really JSON}`,
-		expectedDetails:     map[string]string{},
-		expectedErrors:      []string{},
-		expectedMessage:     `{"text":"Bob works with Jane", But not really JSON}`,
-		expectedMessageText: `{"text":"Bob works with Jane", But not really JSON}`,
-		expectedParseError:  fmt.Errorf("string is not JSON"),
-		expectedTime:        time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC),
+		name:          "parser-0004",
+		message:       `{"text":"Bob works with Jane", But not really JSON}`,
+		expectedError: "invalid character 'B' looking for beginning of object key string",
 	},
 	{
 		name:                  "parser-0010",
-		message:               `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`,
-		expectedDetails:       map[string]string{"1": "Bob", "2": "Jane"},
+		message:               `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
+		expectedDetails:       typedef.Details{{Position: 1, Value: "Bob"}, {Position: 2, Value: "Jane"}},
 		expectedDetailsNumber: 2,
 		expectedDuration:      int64(1234),
 		expectedErrors:        []string{"error1", "error2"},
 		expectedErrorsNumber:  2,
 		expectedId:            "senzing-99990001",
-		expectedIsJson:        true,
 		expectedLevel:         "TRACE",
 		expectedLocation:      "In func1() at messenger_test.go:173",
-		expectedMessage:       `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`,
-		expectedMessageText:   "Bob works with Jane",
 		expectedStatus:        "OK",
 		expectedText:          "Bob works with Jane",
 		expectedTime:          time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC),
@@ -89,27 +65,24 @@ var testCasesForMessage = []struct {
 // Test interface functions
 // ----------------------------------------------------------------------------
 
-// -- Test Parse() method -----------------------------------------------------
-
-func TestParserImpl_Parse(test *testing.T) {
+func TestParse(test *testing.T) {
 	for _, testCase := range testCasesForMessage {
 		test.Run(testCase.name, func(test *testing.T) {
-			testObject := Parse(testCase.message)
-			assert.Equal(test, testCase.expectedDetails, testObject.GetDetails(), testCase.name+"-GetMessage()")
-			assert.Equal(test, testCase.expectedDetailsNumber, len(testObject.GetDetails()), testCase.name+"-GetDetails()")
-			assert.Equal(test, testCase.expectedDuration, testObject.GetDuration(), testCase.name+"-GetDuration()")
-			assert.Equal(test, testCase.expectedErrors, testObject.GetErrors(), testCase.name+"-GetErrors()")
-			assert.Equal(test, testCase.expectedErrorsNumber, len(testObject.GetErrors()), testCase.name+"-GetErrors()")
-			assert.Equal(test, testCase.expectedId, testObject.GetId(), testCase.name+"-GetId()")
-			assert.Equal(test, testCase.expectedIsJson, testObject.IsJson(), testCase.name+"-IsJson()")
-			assert.Equal(test, testCase.expectedLevel, testObject.GetLevel(), testCase.name+"-GetLevel()")
-			assert.Equal(test, testCase.expectedLocation, testObject.GetLocation(), testCase.name+"-GetLocation()")
-			assert.Equal(test, testCase.expectedMessage, testObject.GetMessage(), testCase.name+"-GetMessage()")
-			assert.Equal(test, testCase.expectedMessageText, testObject.GetMessageText(), testCase.name+"-GetMessageText()")
-			assert.Equal(test, testCase.expectedParseError, testObject.GetParseError(), testCase.name+"-GetParseError()")
-			assert.Equal(test, testCase.expectedStatus, testObject.GetStatus(), testCase.name+"-GetStatus()")
-			assert.Equal(test, testCase.expectedText, testObject.GetText(), testCase.name+"-GetText()")
-			assert.Equal(test, testCase.expectedTime, testObject.GetTime(), testCase.name+"-GetTime()")
+			parsedMessage, err := Parse(testCase.message)
+			if err != nil {
+				assert.Equal(test, testCase.expectedError, err.Error(), testCase.name+"-ExpectedError")
+			}
+			assert.Equal(test, testCase.expectedDetails, parsedMessage.Details, testCase.name+"-Details")
+			assert.Equal(test, testCase.expectedDetailsNumber, len(parsedMessage.Details), testCase.name+"-DetailsNum")
+			assert.Equal(test, testCase.expectedDuration, parsedMessage.Duration, testCase.name+"-Duration")
+			assert.Equal(test, testCase.expectedErrors, parsedMessage.Errors, testCase.name+"-Errors")
+			assert.Equal(test, testCase.expectedErrorsNumber, len(parsedMessage.Errors), testCase.name+"-ErrorsNum")
+			assert.Equal(test, testCase.expectedId, parsedMessage.ID, testCase.name+"-ID")
+			assert.Equal(test, testCase.expectedLevel, parsedMessage.Level, testCase.name+"-Level")
+			assert.Equal(test, testCase.expectedLocation, parsedMessage.Location, testCase.name+"-Location")
+			assert.Equal(test, testCase.expectedStatus, parsedMessage.Status, testCase.name+"-Status")
+			assert.Equal(test, testCase.expectedText, parsedMessage.Text, testCase.name+"-Text")
+			assert.Equal(test, testCase.expectedTime, parsedMessage.Time, testCase.name+"-Time")
 		})
 	}
 }
@@ -118,105 +91,90 @@ func TestParserImpl_Parse(test *testing.T) {
 // Examples for godoc documentation
 // ----------------------------------------------------------------------------
 
-func ExampleParse() {
+func ExampleParse_details() {
 	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
-	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
-	parser := Parse(exampleMesssage)
-	fmt.Println(parser.GetParseError())
-	//Output: <nil>
-}
-
-func ExampleParseWithError() {
-	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
-	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
-	parser, err := ParseWithError(exampleMesssage)
+	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
+	parsedMessage, err := Parse(message)
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
-	fmt.Println(parser.GetParseError())
-	//Output: <nil>
+	fmt.Println(parsedMessage.Details)
+	//Output: [{ 1  Bob <nil>} { 2  Jane <nil>}]
 }
 
-func ExampleParserImpl_GetDetails() {
+func ExampleParse_duration() {
 	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
-	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
-	fmt.Print(Parse(exampleMesssage).GetDetails())
-	//Output: map[1:Bob 2:Jane]
-}
-
-func ExampleParserImpl_GetDuration() {
-	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
-	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
-	fmt.Print(Parse(exampleMesssage).GetDuration())
+	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
+	parsedMessage, err := Parse(message)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(parsedMessage.Duration)
 	//Output: 1234
 }
 
-func ExampleParserImpl_GetErrors() {
+func ExampleParse_errors() {
 	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
-	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
-	fmt.Print(Parse(exampleMesssage).GetErrors())
+	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
+	parsedMessage, err := Parse(message)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(parsedMessage.Errors)
 	//Output: [error1 error2]
 }
 
-func ExampleParserImpl_GetId() {
+func ExampleParse_id() {
 	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
-	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
-	fmt.Print(Parse(exampleMesssage).GetId())
+	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
+	parsedMessage, err := Parse(message)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(parsedMessage.ID)
 	//Output: senzing-99990001
 }
 
-func ExampleParserImpl_GetLevel() {
+func ExampleParse_level() {
 	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
-	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
-	fmt.Print(Parse(exampleMesssage).GetLevel())
+	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
+	parsedMessage, err := Parse(message)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(parsedMessage.Level)
 	//Output: TRACE
 }
 
-func ExampleParserImpl_GetLocation() {
+func ExampleParse_status() {
 	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
-	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
-	fmt.Print(Parse(exampleMesssage).GetLocation())
-	//Output: In func1() at messenger_test.go:173
-}
-
-func ExampleParserImpl_GetMessage() {
-	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
-	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
-	fmt.Print(Parse(exampleMesssage).GetMessage())
-	//Output: {"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}
-}
-
-func ExampleParserImpl_GetMessageText() {
-	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
-	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
-	fmt.Print(Parse(exampleMesssage).GetMessageText())
-	//Output: Bob works with Jane
-}
-
-func ExampleParserImpl_GetStatus() {
-	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
-	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
-	fmt.Print(Parse(exampleMesssage).GetStatus())
+	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
+	parsedMessage, err := Parse(message)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(parsedMessage.Status)
 	//Output: OK
 }
 
-func ExampleParserImpl_GetText() {
+func ExampleParse_text() {
 	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
-	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
-	fmt.Print(Parse(exampleMesssage).GetText())
+	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
+	parsedMessage, err := Parse(message)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(parsedMessage.Text)
 	//Output: Bob works with Jane
 }
 
-func ExampleParserImpl_GetTime() {
+func ExampleParse_time() {
 	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
-	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
-	fmt.Print(Parse(exampleMesssage).GetTime().Format(time.RFC3339))
+	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
+	parsedMessage, err := Parse(message)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(parsedMessage.Time.Format(time.RFC3339Nano))
 	//Output: 2000-01-01T00:00:00Z
-}
-
-func ExampleParserImpl_IsJson() {
-	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
-	exampleMesssage := `{"time":"2000-01-01T00:00:00.00000000Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","location":"In func1() at messenger_test.go:173","status":"OK","duration":1234,"errors":["error1", "error2"],"details":{"1":"Bob","2":"Jane"}}`
-	fmt.Print(Parse(exampleMesssage).IsJson())
-	//Output: true
 }
