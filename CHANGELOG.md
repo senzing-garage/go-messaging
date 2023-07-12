@@ -10,9 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -
 
-## [0.3.0] - 2023-07-11
+## [0.3.0] - 2023-07-12
 
-### Chanaged in 0.3.0
+### Added in 0.3.0
+
+- [JSON typedef](https://jsontypedef.com/) structures
+
+### Changed in 0.3.0
 
 - Modified `github.com/senzing/go-messaging/parser`
 - Modified message `details` format

@@ -35,8 +35,8 @@ var testCasesForMessage = []struct {
 		messageNumber:       1,
 		options:             []interface{}{getOptionIdMessages(), getOptionCallerSkip()},
 		details:             []interface{}{"Bob", "Jane", getTimestamp()},
-		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"senzing-99990001","text":"TRACE: Bob works with Jane","location":"In func1() at messenger_test.go:173","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
-		expectedMessageSlog: []interface{}{"id", "senzing-99990001", "location", "In func1() at messenger_test.go:186", "details", []Detail{{Key: "", Position: 1, Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Value: "Jane", ValueRaw: interface{}(nil)}}},
+		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"senzing-99990001","text":"TRACE: Bob works with Jane","location":"In func1() at messenger_test.go:173","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
+		expectedMessageSlog: []interface{}{"id", "senzing-99990001", "location", "In func1() at messenger_test.go:186", "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}}},
 		expectedText:        "TRACE: Bob works with Jane",
 		expectedSlogLevel:   LevelTraceSlog,
 	},
@@ -45,8 +45,8 @@ var testCasesForMessage = []struct {
 		messageNumber:       1001,
 		options:             []interface{}{getOptionIdMessages(), getOptionCallerSkip()},
 		details:             []interface{}{"Bob", "Jane", getTimestamp()},
-		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"DEBUG","id":"senzing-99991001","text":"DEBUG: Bob works with Jane","location":"In func1() at messenger_test.go:173","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
-		expectedMessageSlog: []interface{}{"id", "senzing-99991001", "location", "In func1() at messenger_test.go:186", "details", []Detail{{Key: "", Position: 1, Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Value: "Jane", ValueRaw: interface{}(nil)}}},
+		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"DEBUG","id":"senzing-99991001","text":"DEBUG: Bob works with Jane","location":"In func1() at messenger_test.go:173","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
+		expectedMessageSlog: []interface{}{"id", "senzing-99991001", "location", "In func1() at messenger_test.go:186", "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}}},
 		expectedText:        "DEBUG: Bob works with Jane",
 		expectedSlogLevel:   LevelDebugSlog,
 	},
@@ -55,8 +55,8 @@ var testCasesForMessage = []struct {
 		messageNumber:       2001,
 		options:             []interface{}{getOptionIdMessages(), getOptionCallerSkip()},
 		details:             []interface{}{"Bob", "Jane", getTimestamp()},
-		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"INFO","id":"senzing-99992001","text":"INFO: Bob works with Jane","location":"In func1() at messenger_test.go:173","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
-		expectedMessageSlog: []interface{}{"id", "senzing-99992001", "location", "In func1() at messenger_test.go:186", "details", []Detail{{Key: "", Position: 1, Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Value: "Jane", ValueRaw: interface{}(nil)}}},
+		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"INFO","id":"senzing-99992001","text":"INFO: Bob works with Jane","location":"In func1() at messenger_test.go:173","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
+		expectedMessageSlog: []interface{}{"id", "senzing-99992001", "location", "In func1() at messenger_test.go:186", "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}}},
 		expectedText:        "INFO: Bob works with Jane",
 		expectedSlogLevel:   LevelInfoSlog,
 	},
@@ -65,8 +65,8 @@ var testCasesForMessage = []struct {
 		messageNumber:       3001,
 		options:             []interface{}{getOptionIdMessages(), getOptionCallerSkip()},
 		details:             []interface{}{"Bob", "Jane", getTimestamp()},
-		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"WARN","id":"senzing-99993001","text":"WARN: Bob works with Jane","location":"In func1() at messenger_test.go:173","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
-		expectedMessageSlog: []interface{}{"id", "senzing-99993001", "location", "In func1() at messenger_test.go:186", "details", []Detail{{Key: "", Position: 1, Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Value: "Jane", ValueRaw: interface{}(nil)}}},
+		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"WARN","id":"senzing-99993001","text":"WARN: Bob works with Jane","location":"In func1() at messenger_test.go:173","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
+		expectedMessageSlog: []interface{}{"id", "senzing-99993001", "location", "In func1() at messenger_test.go:186", "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}}},
 		expectedText:        "WARN: Bob works with Jane",
 		expectedSlogLevel:   LevelWarnSlog,
 	},
@@ -75,8 +75,8 @@ var testCasesForMessage = []struct {
 		messageNumber:       4001,
 		options:             []interface{}{getOptionIdMessages(), getOptionCallerSkip()},
 		details:             []interface{}{"Bob", "Jane", getTimestamp()},
-		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"ERROR","id":"senzing-99994001","text":"ERROR: Bob works with Jane","location":"In func1() at messenger_test.go:173","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
-		expectedMessageSlog: []interface{}{"id", "senzing-99994001", "location", "In func1() at messenger_test.go:186", "details", []Detail{{Key: "", Position: 1, Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Value: "Jane", ValueRaw: interface{}(nil)}}},
+		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"ERROR","id":"senzing-99994001","text":"ERROR: Bob works with Jane","location":"In func1() at messenger_test.go:173","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
+		expectedMessageSlog: []interface{}{"id", "senzing-99994001", "location", "In func1() at messenger_test.go:186", "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}}},
 		expectedText:        "ERROR: Bob works with Jane",
 		expectedSlogLevel:   LevelErrorSlog,
 	},
@@ -85,8 +85,8 @@ var testCasesForMessage = []struct {
 		messageNumber:       5001,
 		options:             []interface{}{getOptionIdMessages(), getOptionCallerSkip()},
 		details:             []interface{}{"Bob", "Jane", getTimestamp()},
-		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"FATAL","id":"senzing-99995001","text":"FATAL: Bob works with Jane","location":"In func1() at messenger_test.go:173","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
-		expectedMessageSlog: []interface{}{"id", "senzing-99995001", "location", "In func1() at messenger_test.go:186", "details", []Detail{{Key: "", Position: 1, Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Value: "Jane", ValueRaw: interface{}(nil)}}},
+		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"FATAL","id":"senzing-99995001","text":"FATAL: Bob works with Jane","location":"In func1() at messenger_test.go:173","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
+		expectedMessageSlog: []interface{}{"id", "senzing-99995001", "location", "In func1() at messenger_test.go:186", "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}}},
 		expectedText:        "FATAL: Bob works with Jane",
 		expectedSlogLevel:   LevelFatalSlog,
 	},
@@ -95,8 +95,8 @@ var testCasesForMessage = []struct {
 		messageNumber:       6001,
 		options:             []interface{}{getOptionIdMessages(), getOptionCallerSkip()},
 		details:             []interface{}{"Bob", "Jane", getTimestamp()},
-		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"PANIC","id":"senzing-99996001","text":"PANIC: Bob works with Jane","location":"In func1() at messenger_test.go:173","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`,
-		expectedMessageSlog: []interface{}{"id", "senzing-99996001", "location", "In func1() at messenger_test.go:186", "details", []Detail{{Key: "", Position: 1, Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Value: "Jane", ValueRaw: interface{}(nil)}}},
+		expectedMessageJson: `{"time":"2000-01-01T00:00:00Z","level":"PANIC","id":"senzing-99996001","text":"PANIC: Bob works with Jane","location":"In func1() at messenger_test.go:173","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
+		expectedMessageSlog: []interface{}{"id", "senzing-99996001", "location", "In func1() at messenger_test.go:186", "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}}},
 		expectedText:        "PANIC: Bob works with Jane",
 		expectedSlogLevel:   LevelPanicSlog,
 	},
@@ -203,7 +203,7 @@ func ExampleMessengerImpl_NewJson() {
 		fmt.Println(err)
 	}
 	fmt.Print(example.NewJson(2001, "Bob", "Jane", getTimestamp(), getOptionCallerSkip()))
-	//Output: {"time":"2000-01-01T00:00:00Z","level":"INFO","id":"senzing-99992001","location":"In ExampleMessengerImpl_NewJson() at messenger_test.go:205","details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}
+	//Output: {"time":"2000-01-01T00:00:00Z","level":"INFO","id":"senzing-99992001","location":"In ExampleMessengerImpl_NewJson() at messenger_test.go:205","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}
 }
 
 func ExampleMessengerImpl_NewSlog() {
@@ -213,7 +213,7 @@ func ExampleMessengerImpl_NewSlog() {
 		fmt.Println(err)
 	}
 	fmt.Print(example.NewSlog(2001, "Bob", "Jane", getTimestamp(), getOptionCallerSkip()))
-	//Output: [id senzing-99992001 location In NewSlog() at messenger.go:370 details [{ 1 Bob <nil>} { 2 Jane <nil>}]]
+	//Output: [id senzing-99992001 location In NewSlog() at messenger.go:391 details [{ 1 string Bob <nil>} { 2 string Jane <nil>}]]
 }
 
 func ExampleMessengerImpl_NewSlogLevel() {
@@ -223,5 +223,5 @@ func ExampleMessengerImpl_NewSlogLevel() {
 		fmt.Println(err)
 	}
 	fmt.Print(example.NewSlogLevel(2001, "Bob", "Jane", getTimestamp(), getOptionCallerSkip()))
-	//Output: INFO [id senzing-99992001 location In ExampleMessengerImpl_NewSlogLevel() at messenger_test.go:225 details [{ 1 Bob <nil>} { 2 Jane <nil>}]]
+	//Output: INFO [id senzing-99992001 location In ExampleMessengerImpl_NewSlogLevel() at messenger_test.go:225 details [{ 1 string Bob <nil>} { 2 string Jane <nil>}]]
 }

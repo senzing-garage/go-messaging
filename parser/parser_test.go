@@ -99,7 +99,7 @@ func ExampleParse_details() {
 		panic(err)
 	}
 	fmt.Println(parsedMessage.Details)
-	//Output: [{ 1 Bob <nil>} { 2 Jane <nil>}]
+	//Output: [{ 1  Bob <nil>} { 2  Jane <nil>}]
 }
 
 func ExampleParse_duration() {
