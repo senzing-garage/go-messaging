@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -
 
+## [1.3.1] - 2023-07-13
+
+### Changed in 1.3.1
+
+- Fixed issue with stringifying datatypes.
+
 ## [0.3.0] - 2023-07-12
 
 ### Added in 0.3.0

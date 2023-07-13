@@ -141,7 +141,7 @@ func messageDetails(details ...interface{}) []Detail {
 				result = append(result, detail)
 			}
 		default:
-			detail.Type = reflect.TypeOf(value).Elem().Name()
+			detail.Type = fmt.Sprintf("%+v", reflect.TypeOf(value))
 			detail.Value = interfaceAsString(typedValue)
 			detail.ValueRaw = typedValue
 			if isJson(detail.Value) {
