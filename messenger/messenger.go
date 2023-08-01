@@ -55,7 +55,10 @@ func isJson(unknownString string) bool {
 func jsonAsInterface(unknownString string) interface{} {
 	unknownStringUnescaped := cleanTabsAndNewlines(unknownString)
 	var jsonString json.RawMessage
-	json.Unmarshal([]byte(unknownStringUnescaped), &jsonString)
+	err := json.Unmarshal([]byte(unknownStringUnescaped), &jsonString)
+	if err != nil {
+		panic(err)
+	}
 	return jsonString
 }
 
