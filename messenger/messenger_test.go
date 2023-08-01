@@ -213,7 +213,7 @@ func ExampleMessengerImpl_NewSlog() {
 		fmt.Println(err)
 	}
 	fmt.Print(example.NewSlog(2001, "Bob", "Jane", getTimestamp(), getOptionCallerSkip()))
-	//Output: [id senzing-99992001 location In NewSlog() at messenger.go:391 details [{ 1 string Bob <nil>} { 2 string Jane <nil>}]]
+	//Output: [id senzing-99992001 location In NewSlog() at messenger.go:394 details [{ 1 string Bob <nil>} { 2 string Jane <nil>}]]
 }
 
 func ExampleMessengerImpl_NewSlogLevel() {
