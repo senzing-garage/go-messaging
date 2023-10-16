@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 -
+## [1.3.3] - 2023-10-13
+
+### Changed in 1.3.2
+
+- Refactor to `template-go`
+- Update dependencies
+  - golang.org/x/exp v0.0.0-20231006140011-7918f672742d
 
 ## [1.3.2] - 2023-08-04
 

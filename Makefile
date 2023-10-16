@@ -23,7 +23,6 @@ GO_PACKAGE_NAME := $(shell echo $(GIT_REMOTE_URL) | sed -e 's|^git@github.com:|g
 
 # Recursive assignment ('=')
 
-CC = gcc
 GO_OSARCH = $(subst /, ,$@)
 GO_OS = $(word 1, $(GO_OSARCH))
 GO_ARCH = $(word 2, $(GO_OSARCH))
@@ -51,6 +50,10 @@ default: help
 
 -include Makefile.$(OSTYPE)
 -include Makefile.$(OSTYPE)_$(OSARCH)
+
+
+.PHONY: hello-world
+hello-world: hello-world-osarch-specific
 
 # -----------------------------------------------------------------------------
 # Generate code
@@ -133,60 +136,35 @@ dependencies:
 
 # -----------------------------------------------------------------------------
 # Build
-#  - The "build" target is implemented in Makefile.OS.ARCH files.
 #  - docker-build: https://docs.docker.com/engine/reference/commandline/build/
 # -----------------------------------------------------------------------------
 
 PLATFORMS := darwin/amd64 linux/amd64 windows/amd64
 $(PLATFORMS):
 	@echo Building $(TARGET_DIRECTORY)/$(GO_OS)-$(GO_ARCH)/$(PROGRAM_NAME)
-	@mkdir -p $(TARGET_DIRECTORY)/$(GO_OS)-$(GO_ARCH) || true
 	@GOOS=$(GO_OS) GOARCH=$(GO_ARCH) go build -o $(TARGET_DIRECTORY)/$(GO_OS)-$(GO_ARCH)/$(PROGRAM_NAME)
 
 
-.PHONY: build-all $(PLATFORMS)
-build-all: $(PLATFORMS)
-	@mv $(TARGET_DIRECTORY)/windows-amd64/$(PROGRAM_NAME) $(TARGET_DIRECTORY)/windows-amd64/$(PROGRAM_NAME).exe
-
-
-.PHONY: build-scratch
-build-scratch:
-	@GOOS=linux \
-	GOARCH=amd64 \
-	CGO_ENABLED=0 \
-	go build \
-		-a \
-		-installsuffix cgo \
-		-ldflags "-s -w" \
-		-o $(GO_PACKAGE_NAME)
-	@mkdir -p $(TARGET_DIRECTORY)/scratch || true
-	@mv $(GO_PACKAGE_NAME) $(TARGET_DIRECTORY)/scratch
+.PHONY: build
+build: build-osarch-specific
 
 # -----------------------------------------------------------------------------
 # Test
 # -----------------------------------------------------------------------------
 
 .PHONY: test
-test:
-	@go test -v -p 1 ./...
-#	@go test -v -p 1 ./.
-#	@go test -v ./go/typedef
-#	@go test -v ./messenger
-#	@go test -v ./parser
+test: test-osarch-specific
 
 # -----------------------------------------------------------------------------
 # Run
 # -----------------------------------------------------------------------------
 
 .PHONY: run
-run:
-	@go run main.go
+run: run-osarch-specific
 
 # -----------------------------------------------------------------------------
 # Clean
 # -----------------------------------------------------------------------------
-
-
 
 .PHONY: clean-csharp
 clean-csharp:
@@ -230,13 +208,15 @@ clean-typescript:
 # -----------------------------------------------------------------------------
 
 .PHONY: clean
-clean: clean-csharp clean-go clean-java clean-python clean-ruby clean-rust clean-typescript
+clean: clean-osarch-specific
 	@go clean -cache
 	@go clean -testcache
-	@rm -rf $(TARGET_DIRECTORY) || true
-	@rm -f $(GOPATH)/bin/$(PROGRAM_NAME) || true
 
 
+.PHONY: clean-generated code
+clean-generated code: clean-go clean-java clean-python clean-ruby clean-rust clean-typescript
+
+	
 .PHONY: help
 help:
 	@echo "Build $(PROGRAM_NAME) version $(BUILD_VERSION)-$(BUILD_ITERATION)".
@@ -252,8 +232,7 @@ print-make-variables:
 
 
 .PHONY: setup
-setup:
-	@echo "No setup required."
+setup: setup-osarch-specific
 
 
 .PHONY: update-pkg-cache
