@@ -6,8 +6,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/senzing/go-messaging/messenger"
-	"github.com/senzing/go-messaging/parser"
+	"github.com/senzing-garage/go-messaging/messenger"
+	"github.com/senzing-garage/go-messaging/parser"
 )
 
 var idMessages = map[int]string{

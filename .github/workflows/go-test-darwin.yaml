@@ -2,7 +2,6 @@
 # - https://github.com/marketplace/actions/setup-go-environment
 
 name: go-test-darwin.yaml
-
 on: [push]
 
 jobs:

@@ -3,7 +3,7 @@ package parser
 import (
 	"encoding/json"
 
-	"github.com/senzing/go-messaging/go/typedef"
+	"github.com/senzing-garage/go-messaging/go/typedef"
 )
 
 // ----------------------------------------------------------------------------

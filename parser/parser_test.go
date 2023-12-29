@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/senzing/go-messaging/go/typedef"
+	"github.com/senzing-garage/go-messaging/go/typedef"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -92,7 +92,7 @@ func TestParse(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func ExampleParse_details() {
-	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
+	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/parser/parser_test.go
 	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
 	parsedMessage, err := Parse(message)
 	if err != nil {
@@ -103,7 +103,7 @@ func ExampleParse_details() {
 }
 
 func ExampleParse_duration() {
-	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
+	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/parser/parser_test.go
 	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
 	parsedMessage, err := Parse(message)
 	if err != nil {
@@ -114,7 +114,7 @@ func ExampleParse_duration() {
 }
 
 func ExampleParse_errors() {
-	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
+	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/parser/parser_test.go
 	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
 	parsedMessage, err := Parse(message)
 	if err != nil {
@@ -125,7 +125,7 @@ func ExampleParse_errors() {
 }
 
 func ExampleParse_id() {
-	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
+	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/parser/parser_test.go
 	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
 	parsedMessage, err := Parse(message)
 	if err != nil {
@@ -136,7 +136,7 @@ func ExampleParse_id() {
 }
 
 func ExampleParse_level() {
-	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
+	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/parser/parser_test.go
 	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
 	parsedMessage, err := Parse(message)
 	if err != nil {
@@ -147,7 +147,7 @@ func ExampleParse_level() {
 }
 
 func ExampleParse_status() {
-	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
+	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/parser/parser_test.go
 	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
 	parsedMessage, err := Parse(message)
 	if err != nil {
@@ -158,7 +158,7 @@ func ExampleParse_status() {
 }
 
 func ExampleParse_text() {
-	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
+	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/parser/parser_test.go
 	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
 	parsedMessage, err := Parse(message)
 	if err != nil {
@@ -169,7 +169,7 @@ func ExampleParse_text() {
 }
 
 func ExampleParse_time() {
-	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/parser/parser_test.go
+	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/parser/parser_test.go
 	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"senzing-99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
 	parsedMessage, err := Parse(message)
 	if err != nil {
