@@ -197,7 +197,7 @@ func TestMessengerImpl_NewSlogLevel(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func ExampleMessengerImpl_NewJson() {
-	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/messenger/messenger_test.go
+	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/messenger/messenger_test.go
 	example, err := New()
 	if err != nil {
 		fmt.Println(err)
@@ -207,7 +207,7 @@ func ExampleMessengerImpl_NewJson() {
 }
 
 func ExampleMessengerImpl_NewSlog() {
-	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/messenger/messenger_test.go
+	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/messenger/messenger_test.go
 	example, err := New()
 	if err != nil {
 		fmt.Println(err)
@@ -217,7 +217,7 @@ func ExampleMessengerImpl_NewSlog() {
 }
 
 func ExampleMessengerImpl_NewSlogLevel() {
-	// For more information, visit https://github.com/Senzing/go-messaging/blob/main/messenger/messenger_test.go
+	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/messenger/messenger_test.go
 	example, err := New()
 	if err != nil {
 		fmt.Println(err)

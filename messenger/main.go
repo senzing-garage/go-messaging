@@ -112,7 +112,7 @@ type OptionMessageIdTemplate struct {
 }
 
 // The component identifier.
-// See https://github.com/Senzing/knowledge-base/blob/main/lists/senzing-product-ids.md
+// See https://github.com/senzing-garage/knowledge-base/blob/main/lists/senzing-product-ids.md
 type OptionSenzingComponentId struct {
 	Value int // Component issuing message.
 }
@@ -236,7 +236,7 @@ func New(options ...interface{}) (MessengerInterface, error) {
 	// Detect incorrect option values.
 
 	if componentIdentifier <= 0 || componentIdentifier >= 10000 {
-		err := errors.New("componentIdentifier must be in range 1..9999. See https://github.com/Senzing/knowledge-base/blob/main/lists/senzing-product-ids.md")
+		err := errors.New("componentIdentifier must be in range 1..9999. See https://github.com/senzing-garage/knowledge-base/blob/main/lists/senzing-product-ids.md")
 		return result, err
 	}
 
