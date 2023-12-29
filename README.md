@@ -24,8 +24,12 @@ The Senzing `go-messaging` packages are used to create structured messages.
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/senzing-garage/go-messaging.svg)](https://pkg.go.dev/github.com/senzing-garage/go-messaging)
 [![Go Report Card](https://goreportcard.com/badge/github.com/senzing-garage/go-messaging)](https://goreportcard.com/report/github.com/senzing-garage/go-messaging)
-[![go-test-linux.yaml](https://github.com/senzing-garage/go-messaging/actions/workflows/go-test-linux.yaml/badge.svg)](https://github.com/senzing-garage/go-messaging/actions/workflows/go-test-linux.yaml)
 [![License](https://img.shields.io/badge/License-Apache2-brightgreen.svg)](https://github.com/senzing-garage/go-messaging/blob/main/LICENSE)
+
+[![gosec.yaml](https://github.com/senzing-garage/go-messaging/actions/workflows/gosec.yaml/badge.svg)](https://github.com/senzing-garage/go-messaging/actions/workflows/gosec.yaml)
+[![go-test-linux.yaml](https://github.com/senzing-garage/go-messaging/actions/workflows/go-test-linux.yaml/badge.svg)](https://github.com/senzing-garage/go-messaging/actions/workflows/go-test-linux.yaml)
+[![go-test-darwin.yaml](https://github.com/senzing-garage/go-messaging/actions/workflows/go-test-darwin.yaml/badge.svg)](https://github.com/senzing-garage/go-messaging/actions/workflows/go-test-darwin.yaml)
+[![go-test-windows.yaml](https://github.com/senzing-garage/go-messaging/actions/workflows/go-test-windows.yaml/badge.svg)](https://github.com/senzing-garage/go-messaging/actions/workflows/go-test-windows.yaml)
 
 ## Overview
 
