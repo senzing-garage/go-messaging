@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 -
+
+## [0.4.0] - 2023-12-29
+
+### Changed in 0.4.0
+
+- Renamed module to `github.com/senzing-garage/go-messaging`
+- Refactor to [template-go](https://github.com/senzing-garage/template-go)
+- Update dependencies
+  - golang.org/x/exp v0.0.0-20231226003508-02704c960a9b
+
 ## [1.3.3] - 2023-10-13
 
 ### Changed in 1.3.2
