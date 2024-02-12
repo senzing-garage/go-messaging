@@ -33,10 +33,23 @@ func main() {
 		"id": "senzing-99990002",
 		"text": "A fake error",
 		"location": "In main() at main.go:36",
-		"details": {
-			"1": "Bob",
-			"2": "Mary"
-		}
+		"errors": ["0027E|Unknown DATA_SOURCE value 'DOESNTEXIST'"],
+		"details": [
+			{"position": 1, "type": "string", "value": "DoesntExist"},
+			{"position": 2, "type": "string", "value": "1070", "valueRaw": 1070},
+			{"position": 3, "type": "int64", "value": "-1", "valueRaw": -1},
+			{
+				"position": 4,
+				"type": "g2engine._Ctype_longlong",
+				"value": "-2",
+				"valueRaw": -2,
+			},
+			{
+				"position": 5,
+				"type": "error",
+				"value": "0027E|Unknown DATA_SOURCE value 'DOESNTEXIST'",
+			},
+		],
 	}`)
 
 	// ------------------------------------------------------------------------
