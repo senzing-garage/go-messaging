@@ -30,3 +30,6 @@ go.work
 
 # Makefile
 target/
+
+.coverage
+python/typedef/__pycache__/

@@ -63,3 +63,6 @@ For more examples, see
 - [Development](docs/development.md)
 - [Errors](docs/errors.md)
 - [Examples](docs/examples.md)
+
+- [JSON TypeDef](https://jsontypedef.com/)
+- [JSON TypeDef on Github](https://github.com/jsontypedef)
