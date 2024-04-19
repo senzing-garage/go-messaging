@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update dependencies
   - github.com/stretchr/testify v1.9.0
-  - golang.org/x/exp v0.0.0-20240205201215-2c58cdc269a3
+  - golang.org/x/exp v0.0.0-20240416160154-fe59bbe5cc7f
 
 ## [1.4.0] - 2023-12-29
 
