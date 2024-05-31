@@ -255,7 +255,7 @@ func New(options ...interface{}) (Interface, error) {
 
 	// Create MessengerInterface.
 
-	result = &Implementation{
+	result = &SimpleMessenger{
 		callerSkip:        callerSkip,
 		idMessages:        idMessages,
 		idStatuses:        idStatuses,

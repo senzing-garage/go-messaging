@@ -19,8 +19,8 @@ import (
 // Types
 // ----------------------------------------------------------------------------
 
-// Implementation is an type-struct for an implementation of the MessengerInterface.
-type Implementation struct {
+// SimpleMessenger is an type-struct for an implementation of the MessengerInterface.
+type SimpleMessenger struct {
 	idMessages          map[int]string // Map message numbers to text format strings
 	idStatuses          map[int]string
 	messageIDTemplate   string // A string template for fmt.Sprinf()
@@ -160,7 +160,7 @@ func messageDetails(details ...interface{}) []Detail {
 
 // Create a slice of ["key1", value1, "key2", value2, ...] which has oscillating
 // key and values in the slice.
-func (messenger *Implementation) getKeyValuePairs(appMessageFormat *MessageFormat, keys []string) []interface{} {
+func (messenger *SimpleMessenger) getKeyValuePairs(appMessageFormat *MessageFormat, keys []string) []interface{} {
 	var result []interface{}
 	keyValueMap := map[string]interface{}{
 		"time":     appMessageFormat.Time,
@@ -199,7 +199,7 @@ func (messenger *Implementation) getKeyValuePairs(appMessageFormat *MessageForma
 }
 
 // Given a message number, figure out the Level (TRACE, DEBUG, ..., FATAL, PANIC)
-func (messenger *Implementation) getLevel(messageNumber int) string {
+func (messenger *SimpleMessenger) getLevel(messageNumber int) string {
 	sortedMessageLevelKeys := messenger.getSortedIDLevelRanges(IDLevelRangesAsString)
 	for _, messageLevelKey := range sortedMessageLevelKeys {
 		if messageNumber >= messageLevelKey {
@@ -210,7 +210,7 @@ func (messenger *Implementation) getLevel(messageNumber int) string {
 }
 
 // Since a map[int]any is not guaranteed to be in order, return an ordered slice of int.
-func (messenger *Implementation) getSortedIDLevelRanges(idLevelRanges map[int]string) []int {
+func (messenger *SimpleMessenger) getSortedIDLevelRanges(idLevelRanges map[int]string) []int {
 	if messenger.sortedIDLevelRanges == nil {
 		messenger.sortedIDLevelRanges = make([]int, 0, len(idLevelRanges))
 		for key := range idLevelRanges {
@@ -222,7 +222,7 @@ func (messenger *Implementation) getSortedIDLevelRanges(idLevelRanges map[int]st
 }
 
 // Create a populated MessageFormat.
-func (messenger *Implementation) populateStructure(messageNumber int, details ...interface{}) *MessageFormat {
+func (messenger *SimpleMessenger) populateStructure(messageNumber int, details ...interface{}) *MessageFormat {
 
 	var (
 		callerSkip int
@@ -349,7 +349,7 @@ Input
 Output
   - A JSON string representing the details formatted by the template identified by the messageNumber.
 */
-func (messenger *Implementation) NewJSON(messageNumber int, details ...interface{}) string {
+func (messenger *SimpleMessenger) NewJSON(messageNumber int, details ...interface{}) string {
 	messageFormat := messenger.populateStructure(messageNumber, details...)
 
 	// Construct return value.
@@ -383,7 +383,7 @@ Output
   - A text message
   - A slice of oscillating key-value pairs.
 */
-func (messenger *Implementation) NewSlog(messageNumber int, details ...interface{}) (string, []interface{}) {
+func (messenger *SimpleMessenger) NewSlog(messageNumber int, details ...interface{}) (string, []interface{}) {
 	message, _, keyValuePairs := messenger.NewSlogLevel(messageNumber, details...)
 	return message, keyValuePairs
 }
@@ -400,7 +400,7 @@ Output
   - A message level
   - A slice of oscillating key-value pairs.
 */
-func (messenger *Implementation) NewSlogLevel(messageNumber int, details ...interface{}) (string, slog.Level, []interface{}) {
+func (messenger *SimpleMessenger) NewSlogLevel(messageNumber int, details ...interface{}) (string, slog.Level, []interface{}) {
 	messageFormat := messenger.populateStructure(messageNumber, details...)
 
 	// Create a text message.
