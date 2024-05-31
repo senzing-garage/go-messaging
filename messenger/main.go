@@ -193,6 +193,12 @@ var TextToLevelMap = map[string]slog.Level{
 	LevelWarnName:  LevelWarnSlog,
 }
 
+var (
+	ErrBadComponentId = errors.New("componentIdentifier must be in range 1..9999. See https://github.com/senzing-garage/knowledge-base/blob/main/lists/senzing-product-ids.md")
+	ErrEmptyMessages  = errors.New("messages must be a map[int]string")
+	ErrEmptyStatuses  = errors.New("statuses must be a map[int]string")
+)
+
 // ----------------------------------------------------------------------------
 // Public functions
 // ----------------------------------------------------------------------------
@@ -212,7 +218,7 @@ func New(options ...interface{}) (MessengerInterface, error) {
 		idMessages          map[int]string = map[int]string{}
 		idStatuses          map[int]string = map[int]string{}
 		componentIdentifier int            = 9999
-		messageIdTemplate   string         = fmt.Sprintf("senzing-%04d", componentIdentifier) + "%04d"
+		messageIdTemplate   string         = fmt.Sprintf("SZSDK%04d", componentIdentifier) + "%04d"
 	)
 
 	// Process options.
@@ -227,7 +233,7 @@ func New(options ...interface{}) (MessengerInterface, error) {
 			idStatuses = typedValue.Value
 		case *OptionSenzingComponentId:
 			componentIdentifier = typedValue.Value
-			messageIdTemplate = fmt.Sprintf("senzing-%04d", componentIdentifier) + "%04d"
+			messageIdTemplate = fmt.Sprintf("SZSDK%04d", componentIdentifier) + "%04d"
 		case *OptionMessageIdTemplate:
 			messageIdTemplate = typedValue.Value
 		}
@@ -236,18 +242,15 @@ func New(options ...interface{}) (MessengerInterface, error) {
 	// Detect incorrect option values.
 
 	if componentIdentifier <= 0 || componentIdentifier >= 10000 {
-		err := errors.New("componentIdentifier must be in range 1..9999. See https://github.com/senzing-garage/knowledge-base/blob/main/lists/senzing-product-ids.md")
-		return result, err
+		return result, ErrBadComponentId
 	}
 
 	if idMessages == nil {
-		err := errors.New("messages must be a map[int]string")
-		return result, err
+		return result, ErrEmptyMessages
 	}
 
 	if idStatuses == nil {
-		err := errors.New("statuses must be a map[int]string")
-		return result, err
+		return result, ErrEmptyStatuses
 	}
 
 	// Create MessengerInterface.

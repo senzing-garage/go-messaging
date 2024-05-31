@@ -40,26 +40,26 @@ func cleanTabsAndNewlines(unknownString string) string {
 	return result
 }
 
-func cleanErrorString(xErr error) string {
-	return cleanTabsAndNewlines(xErr.Error())
+func cleanErrorString(err error) string {
+	return cleanTabsAndNewlines(err.Error())
 }
 
 // Determine if string is syntactically JSON.
 func isJson(unknownString string) bool {
 	unknownStringUnescaped := cleanTabsAndNewlines(unknownString)
-	var jsonString json.RawMessage
-	return json.Unmarshal([]byte(unknownStringUnescaped), &jsonString) == nil
+	var jsonRawMessage json.RawMessage
+	return json.Unmarshal([]byte(unknownStringUnescaped), &jsonRawMessage) == nil
 }
 
 // Cast JSON string into an interface{}.
 func jsonAsInterface(unknownString string) interface{} {
 	unknownStringUnescaped := cleanTabsAndNewlines(unknownString)
-	var jsonString json.RawMessage
-	err := json.Unmarshal([]byte(unknownStringUnescaped), &jsonString)
+	var jsonRawMessage json.RawMessage
+	err := json.Unmarshal([]byte(unknownStringUnescaped), &jsonRawMessage)
 	if err != nil {
 		panic(err)
 	}
-	return jsonString
+	return jsonRawMessage
 }
 
 // Cast an interface{} into a string.
@@ -147,9 +147,6 @@ func messageDetails(details ...interface{}) []Detail {
 			detail.Type = fmt.Sprintf("%+v", reflect.TypeOf(value))
 			detail.Value = interfaceAsString(typedValue)
 			detail.ValueRaw = typedValue
-			if isJson(detail.Value) {
-				detail.ValueRaw = jsonAsInterface(detail.Value)
-			}
 			result = append(result, detail)
 		}
 	}
