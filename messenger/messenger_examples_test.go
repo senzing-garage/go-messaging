@@ -9,7 +9,7 @@ import (
 // ----------------------------------------------------------------------------
 
 func ExampleImplementation_NewJSON() {
-	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/messenger/messenger_test.go
+	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/messenger/messenger_examples_test.go
 	example, err := New()
 	if err != nil {
 		fmt.Println(err)
@@ -19,7 +19,7 @@ func ExampleImplementation_NewJSON() {
 }
 
 func ExampleImplementation_NewSlog() {
-	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/messenger/messenger_test.go
+	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/messenger/messenger_examples_test.go
 	example, err := New()
 	if err != nil {
 		fmt.Println(err)
@@ -29,7 +29,7 @@ func ExampleImplementation_NewSlog() {
 }
 
 func ExampleImplementation_NewSlogLevel() {
-	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/messenger/messenger_test.go
+	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/messenger/messenger_examples_test.go
 	example, err := New()
 	if err != nil {
 		fmt.Println(err)

@@ -242,11 +242,6 @@ func getOptionSenzingComponentID() *OptionSenzingComponentID {
 	}
 }
 
-// func getTestObject() *Implementation {
-// 	result := &Implementation{}
-// 	return result
-// }
-
 func getTimestamp() *MessageTime {
 	return &MessageTime{
 		Value: time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC),
@@ -286,13 +281,6 @@ func TestImplementation_NewSlogLevel(test *testing.T) {
 		}
 	}
 }
-
-// func TestImplementation_getLevel(test *testing.T) {
-// 	expected := "UNKNOWN"
-// 	testObject := getTestObject()
-// 	actual := testObject.getLevel(badLevel)
-// 	assert.Equal(test, expected, actual)
-// }
 
 func Test_New_badComponentID(test *testing.T) {
 	_, err := New(&OptionSenzingComponentID{Value: 99999})
