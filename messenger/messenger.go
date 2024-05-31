@@ -151,10 +151,6 @@ func messageDetails(details ...interface{}) []Detail {
 		}
 	}
 
-	if len(result) == 0 {
-		result = nil
-	}
-
 	return result
 }
 
