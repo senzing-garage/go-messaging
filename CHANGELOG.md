@@ -14,7 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed in 1.4.2
 
--
+- `NewJson()` is now `NewJSON()`
+- Default id prefix changed from `senzing-` to `SZSDK`
 
 ## [1.4.1] - 2024-04-19
 
