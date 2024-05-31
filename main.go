@@ -65,7 +65,7 @@ func main() {
 	// Example from README.md
 
 	aMessenger, _ := messenger.New()
-	fmt.Printf("%s\n\n", aMessenger.NewJson(0001, "Bob", "Mary"))
+	fmt.Printf("%s\n\n", aMessenger.NewJSON(0001, "Bob", "Mary"))
 	fmt.Println(aMessenger.NewSlog(1001, "Bob", "Mary"))
 	fmt.Println()
 
@@ -76,8 +76,8 @@ func main() {
 
 	// Print some messages.
 
-	fmt.Printf("%s\n\n", messenger1.NewJson(2001, "Bob", "Mary"))
-	fmt.Printf("%s\n\n", messenger1.NewJson(3001, "Bob", "Mary", err1, err2))
+	fmt.Printf("%s\n\n", messenger1.NewJSON(2001, "Bob", "Mary"))
+	fmt.Printf("%s\n\n", messenger1.NewJSON(3001, "Bob", "Mary", err1, err2))
 
 	// ------------------------------------------------------------------------
 	// --- Using a configured message generator
@@ -85,20 +85,20 @@ func main() {
 
 	// Create a configured message generator.
 
-	optionSenzingComponentId := &messenger.OptionSenzingComponentId{Value: 9998}
+	optionSenzingComponentID := &messenger.OptionSenzingComponentID{Value: 9998}
 	optionCallerSkip := &messenger.OptionCallerSkip{Value: 2}
-	optionIdMessages := &messenger.OptionIdMessages{Value: idMessages}
-	messenger2, err := messenger.New(optionSenzingComponentId, optionCallerSkip, optionIdMessages)
+	optionIDMessages := &messenger.OptionIDMessages{Value: idMessages}
+	messenger2, err := messenger.New(optionSenzingComponentID, optionCallerSkip, optionIDMessages)
 	testError(err, "Error: %s\n")
 
 	// Print some messages.
 
-	fmt.Printf("%s\n\n", messenger2.NewJson(0001, "Bob", "Mary"))
-	fmt.Printf("%s\n\n", messenger2.NewJson(1001, "Bob", "Mary", err1, err2))
+	fmt.Printf("%s\n\n", messenger2.NewJSON(0001, "Bob", "Mary"))
+	fmt.Printf("%s\n\n", messenger2.NewJSON(1001, "Bob", "Mary", err1, err2))
 
 	// Parse some messages.
 
-	message1 := messenger2.NewJson(0001, "Bob", "Mary")
+	message1 := messenger2.NewJSON(0001, "Bob", "Mary")
 	parsedMessage1, err := parser.Parse(message1)
 	testError(err, "Error1: %s\n")
 	fmt.Printf("Parse test 1:  ID: %s; Text: %s\n", parsedMessage1.ID, parsedMessage1.Text)
@@ -108,7 +108,7 @@ func main() {
 	testError(err, "Error2: %s\n")
 	fmt.Printf("Parse test 2:  ID: %s; Text: %s\n", parsedMessage2.ID, parsedMessage2.Text)
 
-	message3 := messenger2.NewJson(2001, "Bob", "Mary", err1, err2)
+	message3 := messenger2.NewJSON(2001, "Bob", "Mary", err1, err2)
 	parsedMessage3, err := parser.Parse(message3)
 	testError(err, "Error3: %s\n")
 	fmt.Printf("Parse test 3:  ID: %s; Text: %s\n", parsedMessage3.ID, parsedMessage3.Text)

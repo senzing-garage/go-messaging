@@ -18,7 +18,7 @@ var testCasesForMessage = []struct {
 	expectedError         string
 	expectedErrors        []string
 	expectedErrorsNumber  int
-	expectedId            string
+	expectedID            string
 	expectedLevel         string
 	expectedLocation      string
 	expectedStatus        string
@@ -52,7 +52,7 @@ var testCasesForMessage = []struct {
 		expectedDuration:      int64(1234),
 		expectedErrors:        []string{"error1", "error2"},
 		expectedErrorsNumber:  2,
-		expectedId:            "SZSDK99990001",
+		expectedID:            "SZSDK99990001",
 		expectedLevel:         "TRACE",
 		expectedLocation:      "In func1() at messenger_test.go:173",
 		expectedStatus:        "OK",
@@ -73,11 +73,11 @@ func TestParse(test *testing.T) {
 				assert.Equal(test, testCase.expectedError, err.Error(), testCase.name+"-ExpectedError")
 			}
 			assert.Equal(test, testCase.expectedDetails, parsedMessage.Details, testCase.name+"-Details")
-			assert.Equal(test, testCase.expectedDetailsNumber, len(parsedMessage.Details), testCase.name+"-DetailsNum")
+			assert.Len(test, parsedMessage.Details, testCase.expectedDetailsNumber, testCase.name+"-DetailsNum")
 			assert.Equal(test, testCase.expectedDuration, parsedMessage.Duration, testCase.name+"-Duration")
 			assert.Equal(test, testCase.expectedErrors, parsedMessage.Errors, testCase.name+"-Errors")
-			assert.Equal(test, testCase.expectedErrorsNumber, len(parsedMessage.Errors), testCase.name+"-ErrorsNum")
-			assert.Equal(test, testCase.expectedId, parsedMessage.ID, testCase.name+"-ID")
+			assert.Len(test, parsedMessage.Errors, testCase.expectedErrorsNumber, testCase.name+"-ErrorsNum")
+			assert.Equal(test, testCase.expectedID, parsedMessage.ID, testCase.name+"-ID")
 			assert.Equal(test, testCase.expectedLevel, parsedMessage.Level, testCase.name+"-Level")
 			assert.Equal(test, testCase.expectedLocation, parsedMessage.Location, testCase.name+"-Location")
 			assert.Equal(test, testCase.expectedStatus, parsedMessage.Status, testCase.name+"-Status")

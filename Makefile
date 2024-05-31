@@ -245,7 +245,7 @@ clean: clean-osarch-specific
 .PHONY: clean-generated code
 clean-generated code: clean-go clean-java clean-python clean-ruby clean-rust clean-typescript
 
-	
+
 .PHONY: help
 help:
 	@echo "Build $(PROGRAM_NAME) version $(BUILD_VERSION)-$(BUILD_ITERATION)".
