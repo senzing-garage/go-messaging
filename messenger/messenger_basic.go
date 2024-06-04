@@ -4,10 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"os"
 	"path/filepath"
 	"reflect"
 	"regexp"
 	"runtime"
+	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -21,10 +23,11 @@ import (
 
 // BasicMessenger is an type-struct for an implementation of the MessengerInterface.
 type BasicMessenger struct {
+	callerSkip          int            // Levels of code nexting to skip when calculation location
 	idMessages          map[int]string // Map message numbers to text format strings
 	idStatuses          map[int]string
+	messageFields       []string
 	messageIDTemplate   string // A string template for fmt.Sprinf()
-	callerSkip          int    // Levels of code nexting to skip when calculation location
 	sortedIDLevelRanges []int  // The keys of IdLevelRanges in sorted order.
 }
 
@@ -221,17 +224,37 @@ func (messenger *BasicMessenger) getSortedIDLevelRanges(idLevelRanges map[int]st
 	return messenger.sortedIDLevelRanges
 }
 
+func (messenger *BasicMessenger) populateMessageFields() {
+	senzingMessageFields := strings.TrimSpace(strings.ToLower(os.Getenv("SENZING_MESSAGE_FIELDS")))
+	switch {
+	case len(senzingMessageFields) == 0:
+		messenger.messageFields = []string{"id", "text"}
+	case senzingMessageFields == "all":
+		messenger.messageFields = AllMessageFields
+	default:
+		messenger.messageFields = []string{}
+		messageSplits := strings.Split(senzingMessageFields, ",")
+		for _, value := range messageSplits {
+			valueTrimmed := strings.TrimSpace(value)
+			if slices.Contains(AllMessageFields, valueTrimmed) {
+				messenger.messageFields = append(messenger.messageFields, valueTrimmed)
+			}
+		}
+	}
+}
+
 // Create a populated MessageFormat.
 func (messenger *BasicMessenger) populateStructure(messageNumber int, details ...interface{}) *MessageFormat {
 
 	var (
-		callerSkip int
-		duration   int64
-		errorList  []interface{}
-		level      string
-		location   string
-		status     string
-		text       string
+		callerSkip    int
+		duration      int64
+		errorList     []interface{}
+		level         string
+		location      string
+		messageFields []string
+		status        string
+		text          string
 	)
 
 	// Calculate fields.
@@ -283,6 +306,8 @@ func (messenger *BasicMessenger) populateStructure(messageNumber int, details ..
 			timeNow = typedValue.Value.Format(time.RFC3339Nano)
 		case *OptionCallerSkip:
 			callerSkip = typedValue.Value
+		case *OptionMessageFields:
+			messageFields = typedValue.Value
 		case error:
 			errorList = append(errorList, cleanErrorString(typedValue))
 			filteredDetails = append(filteredDetails, typedValue)
@@ -315,23 +340,51 @@ func (messenger *BasicMessenger) populateStructure(messageNumber int, details ..
 		}
 	}
 
+	// Determine fields to print.
+
+	if messageFields == nil {
+		if messenger.messageFields == nil {
+			messenger.populateMessageFields()
+		}
+		messageFields = messenger.messageFields
+	}
+
 	// Compose result.
 
-	result := &MessageFormat{
-		Time:     timeNow,
-		Level:    level,
-		ID:       id,
-		Text:     text,
-		Status:   status,
-		Duration: duration,
-		Location: location,
+	result := &MessageFormat{}
+
+	if slices.Contains(messageFields, "details") {
+		if len(filteredDetails) > 0 {
+			result.Details = messageDetails(filteredDetails...)
+		}
 	}
-	if len(errorList) > 0 {
-		result.Errors = errorList
+	if slices.Contains(messageFields, "duration") {
+		result.Duration = duration
 	}
-	if len(filteredDetails) > 0 {
-		result.Details = messageDetails(filteredDetails...)
+	if slices.Contains(messageFields, "errors") {
+		if len(errorList) > 0 {
+			result.Errors = errorList
+		}
 	}
+	if slices.Contains(messageFields, "id") {
+		result.ID = id
+	}
+	if slices.Contains(messageFields, "level") {
+		result.Level = level
+	}
+	if slices.Contains(messageFields, "location") {
+		result.Location = location
+	}
+	if slices.Contains(messageFields, "status") {
+		result.Status = status
+	}
+	if slices.Contains(messageFields, "text") {
+		result.Text = text
+	}
+	if slices.Contains(messageFields, "time") {
+		result.Time = timeNow
+	}
+
 	return result
 }
 

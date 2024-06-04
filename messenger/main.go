@@ -106,6 +106,11 @@ type OptionIDStatuses struct {
 	Value map[int]string // Message number to status map
 }
 
+// List of fields included in final message.
+type OptionMessageFields struct {
+	Value []string // One or more of AllMessageFields values.
+}
+
 // Format of the unique id.
 type OptionMessageIDTemplate struct {
 	Value string // Format string.
@@ -199,6 +204,8 @@ var (
 	ErrEmptyStatuses  = errors.New("statuses must be a map[int]string")
 )
 
+var AllMessageFields = []string{"details", "duration", "errors", "id", "level", "location", "status", "text", "time"}
+
 // ----------------------------------------------------------------------------
 // Public functions
 // ----------------------------------------------------------------------------
@@ -219,6 +226,7 @@ func New(options ...interface{}) (Messenger, error) {
 		idStatuses          = map[int]string{}
 		componentIdentifier = 9999
 		messageIDTemplate   = fmt.Sprintf("SZSDK%04d", componentIdentifier) + "%04d"
+		messageFields       []string
 	)
 
 	// Process options.
@@ -227,6 +235,8 @@ func New(options ...interface{}) (Messenger, error) {
 		switch typedValue := value.(type) {
 		case *OptionCallerSkip:
 			callerSkip = typedValue.Value
+		case *OptionMessageFields:
+			messageFields = typedValue.Value
 		case *OptionIDMessages:
 			idMessages = typedValue.Value
 		case *OptionIDStatuses:
@@ -259,6 +269,7 @@ func New(options ...interface{}) (Messenger, error) {
 		callerSkip:        callerSkip,
 		idMessages:        idMessages,
 		idStatuses:        idStatuses,
+		messageFields:     messageFields,
 		messageIDTemplate: messageIDTemplate,
 	}
 	return result, err

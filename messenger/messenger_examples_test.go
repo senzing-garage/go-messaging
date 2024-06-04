@@ -14,8 +14,8 @@ func ExampleBasicMessenger_NewJSON() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Print(example.NewJSON(2001, "Bob", "Jane", getTimestamp(), getOptionCallerSkip()))
-	//Output: {"time":"2000-01-01T00:00:00Z","level":"INFO","id":"SZSDK99992001","location":"In ExampleBasicMessenger_NewJSON() at messenger_examples_test.go:17","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}
+	fmt.Print(example.NewJSON(2001, "Bob", "Jane", getOptionMessageFields()))
+	//Output: {"level":"INFO","id":"SZSDK99992001","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}
 }
 
 func ExampleBasicMessenger_NewSlog() {
@@ -24,8 +24,8 @@ func ExampleBasicMessenger_NewSlog() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Print(example.NewSlog(2001, "Bob", "Jane", getTimestamp(), getOptionCallerSkip()))
-	//Output: [id SZSDK99992001 location In NewSlog() at messenger_basic.go:387 details [{ 1 string Bob <nil>} { 2 string Jane <nil>}]]
+	fmt.Print(example.NewSlog(2001, "Bob", "Jane", getOptionMessageFields()))
+	//Output: [id SZSDK99992001 details [{ 1 string Bob <nil>} { 2 string Jane <nil>}]]
 }
 
 func ExampleBasicMessenger_NewSlogLevel() {
@@ -34,6 +34,6 @@ func ExampleBasicMessenger_NewSlogLevel() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Print(example.NewSlogLevel(2001, "Bob", "Jane", getTimestamp(), getOptionCallerSkip()))
-	//Output: INFO [id SZSDK99992001 location In ExampleBasicMessenger_NewSlogLevel() at messenger_examples_test.go:37 details [{ 1 string Bob <nil>} { 2 string Jane <nil>}]]
+	fmt.Print(example.NewSlogLevel(2001, "Bob", "Jane", getOptionMessageFields()))
+	//Output: INFO [id SZSDK99992001 details [{ 1 string Bob <nil>} { 2 string Jane <nil>}]]
 }

@@ -64,14 +64,18 @@ func main() {
 
 	// Example from README.md
 
-	aMessenger, _ := messenger.New()
+	optionMessageFields := &messenger.OptionMessageFields{
+		Value: []string{"id", "details"},
+	}
+
+	aMessenger, _ := messenger.New(optionMessageFields)
 	fmt.Printf("%s\n\n", aMessenger.NewJSON(0001, "Bob", "Mary"))
 	fmt.Println(aMessenger.NewSlog(1001, "Bob", "Mary"))
 	fmt.Println()
 
 	// Create a bare message generator.
 
-	messenger1, err := messenger.New()
+	messenger1, err := messenger.New(optionMessageFields)
 	testError(err, "Error: %s\n")
 
 	// Print some messages.
