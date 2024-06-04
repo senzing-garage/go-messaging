@@ -19,13 +19,13 @@ import (
 // Types
 // ----------------------------------------------------------------------------
 
-// MessengerImpl is an type-struct for an implementation of the MessengerInterface.
-type MessengerImpl struct {
+// SimpleMessenger is an type-struct for an implementation of the MessengerInterface.
+type SimpleMessenger struct {
 	idMessages          map[int]string // Map message numbers to text format strings
 	idStatuses          map[int]string
-	messageIdTemplate   string // A string template for fmt.Sprinf()
+	messageIDTemplate   string // A string template for fmt.Sprinf()
 	callerSkip          int    // Levels of code nexting to skip when calculation location
-	sortedIdLevelRanges []int  // The keys of IdLevelRanges in sorted order.
+	sortedIDLevelRanges []int  // The keys of IdLevelRanges in sorted order.
 }
 
 // ----------------------------------------------------------------------------
@@ -40,26 +40,26 @@ func cleanTabsAndNewlines(unknownString string) string {
 	return result
 }
 
-func cleanErrorString(xErr error) string {
-	return cleanTabsAndNewlines(xErr.Error())
+func cleanErrorString(err error) string {
+	return cleanTabsAndNewlines(err.Error())
 }
 
 // Determine if string is syntactically JSON.
-func isJson(unknownString string) bool {
+func isJSON(unknownString string) bool {
 	unknownStringUnescaped := cleanTabsAndNewlines(unknownString)
-	var jsonString json.RawMessage
-	return json.Unmarshal([]byte(unknownStringUnescaped), &jsonString) == nil
+	var jsonRawMessage json.RawMessage
+	return json.Unmarshal([]byte(unknownStringUnescaped), &jsonRawMessage) == nil
 }
 
 // Cast JSON string into an interface{}.
 func jsonAsInterface(unknownString string) interface{} {
 	unknownStringUnescaped := cleanTabsAndNewlines(unknownString)
-	var jsonString json.RawMessage
-	err := json.Unmarshal([]byte(unknownStringUnescaped), &jsonString)
+	var jsonRawMessage json.RawMessage
+	err := json.Unmarshal([]byte(unknownStringUnescaped), &jsonRawMessage)
 	if err != nil {
 		panic(err)
 	}
-	return jsonString
+	return jsonRawMessage
 }
 
 // Cast an interface{} into a string.
@@ -70,7 +70,7 @@ func interfaceAsString(unknown interface{}) string {
 	case nil:
 		result = "<nil>"
 	case string:
-		if isJson(value) {
+		if isJSON(value) {
 			result = cleanTabsAndNewlines(value)
 		} else {
 			result = value
@@ -115,7 +115,7 @@ func messageDetails(details ...interface{}) []Detail {
 		case string:
 			detail.Type = "string"
 			detail.Value = typedValue
-			if isJson(typedValue) {
+			if isJSON(typedValue) {
 				detail.ValueRaw = jsonAsInterface(typedValue)
 			}
 			result = append(result, detail)
@@ -127,7 +127,7 @@ func messageDetails(details ...interface{}) []Detail {
 		case error:
 			detail.Type = "error"
 			detail.Value = cleanErrorString(typedValue)
-			if isJson(detail.Value) {
+			if isJSON(detail.Value) {
 				detail.ValueRaw = jsonAsInterface(detail.Value)
 			}
 			result = append(result, detail)
@@ -138,7 +138,7 @@ func messageDetails(details ...interface{}) []Detail {
 				detail.Key = mapIndex
 				detail.Type = "map[string]string"
 				detail.Value = interfaceAsString(mapValue)
-				if isJson(detail.Value) {
+				if isJSON(detail.Value) {
 					detail.ValueRaw = jsonAsInterface(detail.Value)
 				}
 				result = append(result, detail)
@@ -147,15 +147,8 @@ func messageDetails(details ...interface{}) []Detail {
 			detail.Type = fmt.Sprintf("%+v", reflect.TypeOf(value))
 			detail.Value = interfaceAsString(typedValue)
 			detail.ValueRaw = typedValue
-			if isJson(detail.Value) {
-				detail.ValueRaw = jsonAsInterface(detail.Value)
-			}
 			result = append(result, detail)
 		}
-	}
-
-	if len(result) == 0 {
-		result = nil
 	}
 
 	return result
@@ -167,12 +160,12 @@ func messageDetails(details ...interface{}) []Detail {
 
 // Create a slice of ["key1", value1, "key2", value2, ...] which has oscillating
 // key and values in the slice.
-func (messenger *MessengerImpl) getKeyValuePairs(appMessageFormat *MessageFormat, keys []string) []interface{} {
-	var result []interface{} = nil
+func (messenger *SimpleMessenger) getKeyValuePairs(appMessageFormat *MessageFormat, keys []string) []interface{} {
+	var result []interface{}
 	keyValueMap := map[string]interface{}{
 		"time":     appMessageFormat.Time,
 		"level":    appMessageFormat.Level,
-		"id":       appMessageFormat.Id,
+		"id":       appMessageFormat.ID,
 		"status":   appMessageFormat.Status,
 		"duration": appMessageFormat.Duration,
 		"location": appMessageFormat.Location,
@@ -206,30 +199,30 @@ func (messenger *MessengerImpl) getKeyValuePairs(appMessageFormat *MessageFormat
 }
 
 // Given a message number, figure out the Level (TRACE, DEBUG, ..., FATAL, PANIC)
-func (messenger *MessengerImpl) getLevel(messageNumber int) string {
-	sortedMessageLevelKeys := messenger.getSortedIdLevelRanges(IdLevelRangesAsString)
+func (messenger *SimpleMessenger) getLevel(messageNumber int) string {
+	sortedMessageLevelKeys := messenger.getSortedIDLevelRanges(IDLevelRangesAsString)
 	for _, messageLevelKey := range sortedMessageLevelKeys {
 		if messageNumber >= messageLevelKey {
-			return IdLevelRangesAsString[messageLevelKey]
+			return IDLevelRangesAsString[messageLevelKey]
 		}
 	}
 	return "UNKNOWN"
 }
 
 // Since a map[int]any is not guaranteed to be in order, return an ordered slice of int.
-func (messenger *MessengerImpl) getSortedIdLevelRanges(idLevelRanges map[int]string) []int {
-	if messenger.sortedIdLevelRanges == nil {
-		messenger.sortedIdLevelRanges = make([]int, 0, len(idLevelRanges))
+func (messenger *SimpleMessenger) getSortedIDLevelRanges(idLevelRanges map[int]string) []int {
+	if messenger.sortedIDLevelRanges == nil {
+		messenger.sortedIDLevelRanges = make([]int, 0, len(idLevelRanges))
 		for key := range idLevelRanges {
-			messenger.sortedIdLevelRanges = append(messenger.sortedIdLevelRanges, key)
+			messenger.sortedIDLevelRanges = append(messenger.sortedIDLevelRanges, key)
 		}
-		sort.Sort(sort.Reverse(sort.IntSlice(messenger.sortedIdLevelRanges)))
+		sort.Sort(sort.Reverse(sort.IntSlice(messenger.sortedIDLevelRanges)))
 	}
-	return messenger.sortedIdLevelRanges
+	return messenger.sortedIDLevelRanges
 }
 
 // Create a populated MessageFormat.
-func (messenger *MessengerImpl) populateStructure(messageNumber int, details ...interface{}) *MessageFormat {
+func (messenger *SimpleMessenger) populateStructure(messageNumber int, details ...interface{}) *MessageFormat {
 
 	var (
 		callerSkip int
@@ -246,7 +239,7 @@ func (messenger *MessengerImpl) populateStructure(messageNumber int, details ...
 	timeNow := time.Now().UTC().Format(time.RFC3339Nano)
 	callerSkip = messenger.callerSkip
 	level = messenger.getLevel(messageNumber)
-	id := fmt.Sprintf(messenger.messageIdTemplate, messageNumber)
+	id := fmt.Sprintf(messenger.messageIDTemplate, messageNumber)
 	statusCandidate, ok := messenger.idStatuses[messageNumber]
 	if ok {
 		status = statusCandidate
@@ -258,7 +251,7 @@ func (messenger *MessengerImpl) populateStructure(messageNumber int, details ...
 	if ok {
 		textRaw := fmt.Sprintf(textTemplate, details...)
 		text = strings.Split(textRaw, "%!(")[0]
-		if isJson(text) {
+		if isJSON(text) {
 			textThing := map[string]string{
 				"text": fmt.Sprintf("%+v", text),
 			}
@@ -276,7 +269,7 @@ func (messenger *MessengerImpl) populateStructure(messageNumber int, details ...
 		switch typedValue := value.(type) {
 		case *MessageDuration:
 			duration = typedValue.Value
-		case *MessageId:
+		case *MessageID:
 			id = typedValue.Value
 		case *MessageLevel:
 			level = typedValue.Value
@@ -327,7 +320,7 @@ func (messenger *MessengerImpl) populateStructure(messageNumber int, details ...
 	result := &MessageFormat{
 		Time:     timeNow,
 		Level:    level,
-		Id:       id,
+		ID:       id,
 		Text:     text,
 		Status:   status,
 		Duration: duration,
@@ -347,7 +340,7 @@ func (messenger *MessengerImpl) populateStructure(messageNumber int, details ...
 // ----------------------------------------------------------------------------
 
 /*
-The NewJson method return a JSON string with the elements of the message.
+The NewJSON method return a JSON string with the elements of the message.
 
 Input
   - messageNumber: A message identifier which indexes into "idMessages".
@@ -356,7 +349,7 @@ Input
 Output
   - A JSON string representing the details formatted by the template identified by the messageNumber.
 */
-func (messenger *MessengerImpl) NewJson(messageNumber int, details ...interface{}) string {
+func (messenger *SimpleMessenger) NewJSON(messageNumber int, details ...interface{}) string {
 	messageFormat := messenger.populateStructure(messageNumber, details...)
 
 	// Construct return value.
@@ -390,7 +383,7 @@ Output
   - A text message
   - A slice of oscillating key-value pairs.
 */
-func (messenger *MessengerImpl) NewSlog(messageNumber int, details ...interface{}) (string, []interface{}) {
+func (messenger *SimpleMessenger) NewSlog(messageNumber int, details ...interface{}) (string, []interface{}) {
 	message, _, keyValuePairs := messenger.NewSlogLevel(messageNumber, details...)
 	return message, keyValuePairs
 }
@@ -407,7 +400,7 @@ Output
   - A message level
   - A slice of oscillating key-value pairs.
 */
-func (messenger *MessengerImpl) NewSlogLevel(messageNumber int, details ...interface{}) (string, slog.Level, []interface{}) {
+func (messenger *SimpleMessenger) NewSlogLevel(messageNumber int, details ...interface{}) (string, slog.Level, []interface{}) {
 	messageFormat := messenger.populateStructure(messageNumber, details...)
 
 	// Create a text message.

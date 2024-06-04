@@ -33,3 +33,4 @@ target/
 
 .coverage
 python/typedef/__pycache__/
+coverage.html

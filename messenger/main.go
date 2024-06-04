@@ -12,10 +12,10 @@ import (
 // Types - interface
 // ----------------------------------------------------------------------------
 
-// The MessengerInterface interface has methods for creating different
+// The Interface interface has methods for creating different
 // representations of a message.
-type MessengerInterface interface {
-	NewJson(messageNumber int, details ...interface{}) string
+type Interface interface {
+	NewJSON(messageNumber int, details ...interface{}) string
 	NewSlog(messageNumber int, details ...interface{}) (string, []interface{})
 	NewSlogLevel(messageNumber int, details ...interface{}) (string, slog.Level, []interface{})
 }
@@ -30,7 +30,7 @@ type MessengerInterface interface {
 type MessageFormat struct {
 	Time     string      `json:"time,omitempty"`     // Time of message in UTC.
 	Level    string      `json:"level,omitempty"`    // Level:  TRACE, DEBUG, INFO, WARN, ERROR, FATAL, PANIC.
-	Id       string      `json:"id,omitempty"`       // Message identifier.
+	ID       string      `json:"id,omitempty"`       // Message identifier.
 	Text     string      `json:"text,omitempty"`     // Message text.
 	Status   string      `json:"status,omitempty"`   // Status information.
 	Duration int64       `json:"duration,omitempty"` // Duration in nanoseconds
@@ -60,7 +60,7 @@ type MessageDuration struct {
 }
 
 // Value of the "id" field.
-type MessageId struct {
+type MessageID struct {
 	Value string // Message identifier.
 }
 
@@ -97,23 +97,23 @@ type OptionCallerSkip struct {
 }
 
 // Map of message number to message templates.
-type OptionIdMessages struct {
+type OptionIDMessages struct {
 	Value map[int]string // Message number to message template map.
 }
 
 // Map of message number to status values.
-type OptionIdStatuses struct {
+type OptionIDStatuses struct {
 	Value map[int]string // Message number to status map
 }
 
 // Format of the unique id.
-type OptionMessageIdTemplate struct {
+type OptionMessageIDTemplate struct {
 	Value string // Format string.
 }
 
 // The component identifier.
 // See https://github.com/senzing-garage/knowledge-base/blob/main/lists/senzing-product-ids.md
-type OptionSenzingComponentId struct {
+type OptionSenzingComponentID struct {
 	Value int // Component issuing message.
 }
 
@@ -161,7 +161,7 @@ const (
 
 // Message ID Low-bound for message levels
 // i.e. a message in range 0 - 999 is a TRACE message.
-var IdLevelRangesAsString = map[int]string{
+var IDLevelRangesAsString = map[int]string{
 	0000: LevelTraceName,
 	1000: LevelDebugName,
 	2000: LevelInfoName,
@@ -193,6 +193,12 @@ var TextToLevelMap = map[string]slog.Level{
 	LevelWarnName:  LevelWarnSlog,
 }
 
+var (
+	ErrBadComponentID = errors.New("componentIdentifier must be in range 1..9999. See https://github.com/senzing-garage/knowledge-base/blob/main/lists/senzing-product-ids.md")
+	ErrEmptyMessages  = errors.New("messages must be a map[int]string")
+	ErrEmptyStatuses  = errors.New("statuses must be a map[int]string")
+)
+
 // ----------------------------------------------------------------------------
 // Public functions
 // ----------------------------------------------------------------------------
@@ -201,18 +207,18 @@ var TextToLevelMap = map[string]slog.Level{
 The New function creates a new instance of MessengerInterface.
 Adding options can be used to modify subcomponents.
 */
-func New(options ...interface{}) (MessengerInterface, error) {
-	var err error = nil
-	var result MessengerInterface = nil
+func New(options ...interface{}) (Interface, error) {
+	var err error
+	var result Interface
 
 	// Default values.
 
 	var (
-		callerSkip          int            = 0
-		idMessages          map[int]string = map[int]string{}
-		idStatuses          map[int]string = map[int]string{}
-		componentIdentifier int            = 9999
-		messageIdTemplate   string         = fmt.Sprintf("senzing-%04d", componentIdentifier) + "%04d"
+		callerSkip          int
+		idMessages          = map[int]string{}
+		idStatuses          = map[int]string{}
+		componentIdentifier = 9999
+		messageIDTemplate   = fmt.Sprintf("SZSDK%04d", componentIdentifier) + "%04d"
 	)
 
 	// Process options.
@@ -221,42 +227,39 @@ func New(options ...interface{}) (MessengerInterface, error) {
 		switch typedValue := value.(type) {
 		case *OptionCallerSkip:
 			callerSkip = typedValue.Value
-		case *OptionIdMessages:
+		case *OptionIDMessages:
 			idMessages = typedValue.Value
-		case *OptionIdStatuses:
+		case *OptionIDStatuses:
 			idStatuses = typedValue.Value
-		case *OptionSenzingComponentId:
+		case *OptionSenzingComponentID:
 			componentIdentifier = typedValue.Value
-			messageIdTemplate = fmt.Sprintf("senzing-%04d", componentIdentifier) + "%04d"
-		case *OptionMessageIdTemplate:
-			messageIdTemplate = typedValue.Value
+			messageIDTemplate = fmt.Sprintf("SZSDK%04d", componentIdentifier) + "%04d"
+		case *OptionMessageIDTemplate:
+			messageIDTemplate = typedValue.Value
 		}
 	}
 
 	// Detect incorrect option values.
 
 	if componentIdentifier <= 0 || componentIdentifier >= 10000 {
-		err := errors.New("componentIdentifier must be in range 1..9999. See https://github.com/senzing-garage/knowledge-base/blob/main/lists/senzing-product-ids.md")
-		return result, err
+		return result, ErrBadComponentID
 	}
 
 	if idMessages == nil {
-		err := errors.New("messages must be a map[int]string")
-		return result, err
+		return result, ErrEmptyMessages
 	}
 
 	if idStatuses == nil {
-		err := errors.New("statuses must be a map[int]string")
-		return result, err
+		return result, ErrEmptyStatuses
 	}
 
 	// Create MessengerInterface.
 
-	result = &MessengerImpl{
+	result = &SimpleMessenger{
 		callerSkip:        callerSkip,
 		idMessages:        idMessages,
 		idStatuses:        idStatuses,
-		messageIdTemplate: messageIdTemplate,
+		messageIDTemplate: messageIDTemplate,
 	}
 	return result, err
 }
