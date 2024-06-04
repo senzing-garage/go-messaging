@@ -12,9 +12,9 @@ import (
 // Types - interface
 // ----------------------------------------------------------------------------
 
-// The Interface interface has methods for creating different
+// The Messenger interface has methods for creating different
 // representations of a message.
-type Interface interface {
+type Messenger interface {
 	NewJSON(messageNumber int, details ...interface{}) string
 	NewSlog(messageNumber int, details ...interface{}) (string, []interface{})
 	NewSlogLevel(messageNumber int, details ...interface{}) (string, slog.Level, []interface{})
@@ -207,9 +207,9 @@ var (
 The New function creates a new instance of MessengerInterface.
 Adding options can be used to modify subcomponents.
 */
-func New(options ...interface{}) (Interface, error) {
+func New(options ...interface{}) (Messenger, error) {
 	var err error
-	var result Interface
+	var result Messenger
 
 	// Default values.
 
@@ -255,7 +255,7 @@ func New(options ...interface{}) (Interface, error) {
 
 	// Create MessengerInterface.
 
-	result = &SimpleMessenger{
+	result = &BasicMessenger{
 		callerSkip:        callerSkip,
 		idMessages:        idMessages,
 		idStatuses:        idStatuses,
