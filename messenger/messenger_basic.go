@@ -4,10 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"os"
 	"path/filepath"
 	"reflect"
 	"regexp"
 	"runtime"
+	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -19,12 +21,13 @@ import (
 // Types
 // ----------------------------------------------------------------------------
 
-// SimpleMessenger is an type-struct for an implementation of the MessengerInterface.
-type SimpleMessenger struct {
+// BasicMessenger is an type-struct for an implementation of the MessengerInterface.
+type BasicMessenger struct {
+	callerSkip          int            // Levels of code nexting to skip when calculation location
 	idMessages          map[int]string // Map message numbers to text format strings
 	idStatuses          map[int]string
+	messageFields       []string
 	messageIDTemplate   string // A string template for fmt.Sprinf()
-	callerSkip          int    // Levels of code nexting to skip when calculation location
 	sortedIDLevelRanges []int  // The keys of IdLevelRanges in sorted order.
 }
 
@@ -160,7 +163,7 @@ func messageDetails(details ...interface{}) []Detail {
 
 // Create a slice of ["key1", value1, "key2", value2, ...] which has oscillating
 // key and values in the slice.
-func (messenger *SimpleMessenger) getKeyValuePairs(appMessageFormat *MessageFormat, keys []string) []interface{} {
+func (messenger *BasicMessenger) getKeyValuePairs(appMessageFormat *MessageFormat, keys []string) []interface{} {
 	var result []interface{}
 	keyValueMap := map[string]interface{}{
 		"time":     appMessageFormat.Time,
@@ -199,7 +202,7 @@ func (messenger *SimpleMessenger) getKeyValuePairs(appMessageFormat *MessageForm
 }
 
 // Given a message number, figure out the Level (TRACE, DEBUG, ..., FATAL, PANIC)
-func (messenger *SimpleMessenger) getLevel(messageNumber int) string {
+func (messenger *BasicMessenger) getLevel(messageNumber int) string {
 	sortedMessageLevelKeys := messenger.getSortedIDLevelRanges(IDLevelRangesAsString)
 	for _, messageLevelKey := range sortedMessageLevelKeys {
 		if messageNumber >= messageLevelKey {
@@ -210,7 +213,7 @@ func (messenger *SimpleMessenger) getLevel(messageNumber int) string {
 }
 
 // Since a map[int]any is not guaranteed to be in order, return an ordered slice of int.
-func (messenger *SimpleMessenger) getSortedIDLevelRanges(idLevelRanges map[int]string) []int {
+func (messenger *BasicMessenger) getSortedIDLevelRanges(idLevelRanges map[int]string) []int {
 	if messenger.sortedIDLevelRanges == nil {
 		messenger.sortedIDLevelRanges = make([]int, 0, len(idLevelRanges))
 		for key := range idLevelRanges {
@@ -221,17 +224,37 @@ func (messenger *SimpleMessenger) getSortedIDLevelRanges(idLevelRanges map[int]s
 	return messenger.sortedIDLevelRanges
 }
 
+func (messenger *BasicMessenger) populateMessageFields() {
+	senzingMessageFields := strings.TrimSpace(strings.ToLower(os.Getenv("SENZING_MESSAGE_FIELDS")))
+	switch {
+	case len(senzingMessageFields) == 0:
+		messenger.messageFields = []string{"id", "text"}
+	case senzingMessageFields == "all":
+		messenger.messageFields = AllMessageFields
+	default:
+		messenger.messageFields = []string{}
+		messageSplits := strings.Split(senzingMessageFields, ",")
+		for _, value := range messageSplits {
+			valueTrimmed := strings.TrimSpace(value)
+			if slices.Contains(AllMessageFields, valueTrimmed) {
+				messenger.messageFields = append(messenger.messageFields, valueTrimmed)
+			}
+		}
+	}
+}
+
 // Create a populated MessageFormat.
-func (messenger *SimpleMessenger) populateStructure(messageNumber int, details ...interface{}) *MessageFormat {
+func (messenger *BasicMessenger) populateStructure(messageNumber int, details ...interface{}) *MessageFormat {
 
 	var (
-		callerSkip int
-		duration   int64
-		errorList  []interface{}
-		level      string
-		location   string
-		status     string
-		text       string
+		callerSkip    int
+		duration      int64
+		errorList     []interface{}
+		level         string
+		location      string
+		messageFields []string
+		status        string
+		text          string
 	)
 
 	// Calculate fields.
@@ -283,6 +306,8 @@ func (messenger *SimpleMessenger) populateStructure(messageNumber int, details .
 			timeNow = typedValue.Value.Format(time.RFC3339Nano)
 		case *OptionCallerSkip:
 			callerSkip = typedValue.Value
+		case *OptionMessageFields:
+			messageFields = typedValue.Value
 		case error:
 			errorList = append(errorList, cleanErrorString(typedValue))
 			filteredDetails = append(filteredDetails, typedValue)
@@ -315,23 +340,51 @@ func (messenger *SimpleMessenger) populateStructure(messageNumber int, details .
 		}
 	}
 
+	// Determine fields to print.
+
+	if messageFields == nil {
+		if messenger.messageFields == nil {
+			messenger.populateMessageFields()
+		}
+		messageFields = messenger.messageFields
+	}
+
 	// Compose result.
 
-	result := &MessageFormat{
-		Time:     timeNow,
-		Level:    level,
-		ID:       id,
-		Text:     text,
-		Status:   status,
-		Duration: duration,
-		Location: location,
+	result := &MessageFormat{}
+
+	if slices.Contains(messageFields, "details") {
+		if len(filteredDetails) > 0 {
+			result.Details = messageDetails(filteredDetails...)
+		}
 	}
-	if len(errorList) > 0 {
-		result.Errors = errorList
+	if slices.Contains(messageFields, "duration") {
+		result.Duration = duration
 	}
-	if len(filteredDetails) > 0 {
-		result.Details = messageDetails(filteredDetails...)
+	if slices.Contains(messageFields, "errors") {
+		if len(errorList) > 0 {
+			result.Errors = errorList
+		}
 	}
+	if slices.Contains(messageFields, "id") {
+		result.ID = id
+	}
+	if slices.Contains(messageFields, "level") {
+		result.Level = level
+	}
+	if slices.Contains(messageFields, "location") {
+		result.Location = location
+	}
+	if slices.Contains(messageFields, "status") {
+		result.Status = status
+	}
+	if slices.Contains(messageFields, "text") {
+		result.Text = text
+	}
+	if slices.Contains(messageFields, "time") {
+		result.Time = timeNow
+	}
+
 	return result
 }
 
@@ -349,7 +402,7 @@ Input
 Output
   - A JSON string representing the details formatted by the template identified by the messageNumber.
 */
-func (messenger *SimpleMessenger) NewJSON(messageNumber int, details ...interface{}) string {
+func (messenger *BasicMessenger) NewJSON(messageNumber int, details ...interface{}) string {
 	messageFormat := messenger.populateStructure(messageNumber, details...)
 
 	// Construct return value.
@@ -383,7 +436,7 @@ Output
   - A text message
   - A slice of oscillating key-value pairs.
 */
-func (messenger *SimpleMessenger) NewSlog(messageNumber int, details ...interface{}) (string, []interface{}) {
+func (messenger *BasicMessenger) NewSlog(messageNumber int, details ...interface{}) (string, []interface{}) {
 	message, _, keyValuePairs := messenger.NewSlogLevel(messageNumber, details...)
 	return message, keyValuePairs
 }
@@ -400,7 +453,7 @@ Output
   - A message level
   - A slice of oscillating key-value pairs.
 */
-func (messenger *SimpleMessenger) NewSlogLevel(messageNumber int, details ...interface{}) (string, slog.Level, []interface{}) {
+func (messenger *BasicMessenger) NewSlogLevel(messageNumber int, details ...interface{}) (string, slog.Level, []interface{}) {
 	messageFormat := messenger.populateStructure(messageNumber, details...)
 
 	// Create a text message.

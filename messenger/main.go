@@ -12,9 +12,9 @@ import (
 // Types - interface
 // ----------------------------------------------------------------------------
 
-// The Interface interface has methods for creating different
+// The Messenger interface has methods for creating different
 // representations of a message.
-type Interface interface {
+type Messenger interface {
 	NewJSON(messageNumber int, details ...interface{}) string
 	NewSlog(messageNumber int, details ...interface{}) (string, []interface{})
 	NewSlogLevel(messageNumber int, details ...interface{}) (string, slog.Level, []interface{})
@@ -104,6 +104,11 @@ type OptionIDMessages struct {
 // Map of message number to status values.
 type OptionIDStatuses struct {
 	Value map[int]string // Message number to status map
+}
+
+// List of fields included in final message.
+type OptionMessageFields struct {
+	Value []string // One or more of AllMessageFields values.
 }
 
 // Format of the unique id.
@@ -199,6 +204,8 @@ var (
 	ErrEmptyStatuses  = errors.New("statuses must be a map[int]string")
 )
 
+var AllMessageFields = []string{"details", "duration", "errors", "id", "level", "location", "status", "text", "time"}
+
 // ----------------------------------------------------------------------------
 // Public functions
 // ----------------------------------------------------------------------------
@@ -207,9 +214,9 @@ var (
 The New function creates a new instance of MessengerInterface.
 Adding options can be used to modify subcomponents.
 */
-func New(options ...interface{}) (Interface, error) {
+func New(options ...interface{}) (Messenger, error) {
 	var err error
-	var result Interface
+	var result Messenger
 
 	// Default values.
 
@@ -219,6 +226,7 @@ func New(options ...interface{}) (Interface, error) {
 		idStatuses          = map[int]string{}
 		componentIdentifier = 9999
 		messageIDTemplate   = fmt.Sprintf("SZSDK%04d", componentIdentifier) + "%04d"
+		messageFields       []string
 	)
 
 	// Process options.
@@ -227,6 +235,8 @@ func New(options ...interface{}) (Interface, error) {
 		switch typedValue := value.(type) {
 		case *OptionCallerSkip:
 			callerSkip = typedValue.Value
+		case *OptionMessageFields:
+			messageFields = typedValue.Value
 		case *OptionIDMessages:
 			idMessages = typedValue.Value
 		case *OptionIDStatuses:
@@ -255,10 +265,11 @@ func New(options ...interface{}) (Interface, error) {
 
 	// Create MessengerInterface.
 
-	result = &SimpleMessenger{
+	result = &BasicMessenger{
 		callerSkip:        callerSkip,
 		idMessages:        idMessages,
 		idStatuses:        idStatuses,
+		messageFields:     messageFields,
 		messageIDTemplate: messageIDTemplate,
 	}
 	return result, err
