@@ -32,6 +32,8 @@ type MessageFormat struct {
 	Level    string      `json:"level,omitempty"`    // Level:  TRACE, DEBUG, INFO, WARN, ERROR, FATAL, PANIC.
 	ID       string      `json:"id,omitempty"`       // Message identifier.
 	Text     string      `json:"text,omitempty"`     // Message text.
+	Code     string      `json:"code,omitempty"`     // Underlying reason code.
+	Reason   string      `json:"reason,omitempty"`   // Underlying reason.
 	Status   string      `json:"status,omitempty"`   // Status information.
 	Duration int64       `json:"duration,omitempty"` // Duration in nanoseconds
 	Location string      `json:"location,omitempty"` // Location in the code issuing message.
@@ -48,6 +50,11 @@ type Detail struct {
 }
 
 // --- Override values when creating messages ---------------------------------
+
+// Value of the "code" field.
+type MessageCode struct {
+	Value string // Underlying message code.
+}
 
 // Value of the "details" field.
 type MessageDetails struct {
@@ -72,6 +79,11 @@ type MessageLevel struct {
 // Value of the "location" field.
 type MessageLocation struct {
 	Value string // Location in the code issuing message.
+}
+
+// Value of the "reason" field.
+type MessageReason struct {
+	Value string // Underlying message reason.
 }
 
 // Value of the "status" field.
@@ -104,6 +116,11 @@ type OptionIDMessages struct {
 // Map of message number to status values.
 type OptionIDStatuses struct {
 	Value map[int]string // Message number to status map
+}
+
+// List of fields included in final message.
+type OptionMessageField struct {
+	Value string // One of AllMessageFields values.
 }
 
 // List of fields included in final message.
@@ -204,7 +221,7 @@ var (
 	ErrEmptyStatuses  = errors.New("statuses must be a map[int]string")
 )
 
-var AllMessageFields = []string{"details", "duration", "errors", "id", "level", "location", "status", "text", "time"}
+var AllMessageFields = []string{"code", "details", "duration", "errors", "id", "level", "location", "reason", "status", "text", "time"}
 
 // ----------------------------------------------------------------------------
 // Public functions
