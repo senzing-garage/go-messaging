@@ -11,23 +11,25 @@ import (
 	"github.com/senzing-garage/go-messaging/parser"
 )
 
-var err1 = errors.New("example error")
+var (
+	err1 = errors.New("example error")
 
-var idMessages = map[int]string{
-	1001: "DEBUG: %s works with %s",
-	2001: "INFO: %s works with %s",
-	3001: "WARN: %s works with %s",
-	4001: "ERROR: %s works with %s",
-	5001: "FATAL: %s works with %s",
-	6001: "PANIC: %s works with %s",
-	7001: "Xxxxx: %s works with %s",
-}
+	idMessages = map[int]string{
+		1001: "DEBUG: %s works with %s",
+		2001: "INFO: %s works with %s",
+		3001: "WARN: %s works with %s",
+		4001: "ERROR: %s works with %s",
+		5001: "FATAL: %s works with %s",
+		6001: "PANIC: %s works with %s",
+		7001: "Xxxxx: %s works with %s",
+	}
 
-var optionIDMessages = &messenger.OptionIDMessages{Value: idMessages}
+	optionIDMessages = &messenger.OptionIDMessages{Value: idMessages}
 
-var reason = &messenger.MessageReason{
-	Value: "The reason is...",
-}
+	reason = &messenger.MessageReason{
+		Value: "The reason is...",
+	}
+)
 
 func main() {
 
@@ -64,11 +66,20 @@ func main() {
 	testError(err, "Error4: %s\n")
 	displayMessages("Messages with 'errors' field", aMessenger)
 
+	// Example messages with all fields.
+
+	optionMessageFields = &messenger.OptionMessageFields{
+		Value: messenger.AllMessageFields,
+	}
+	aMessenger, err = messenger.New(optionMessageFields, optionIDMessages)
+	testError(err, "Error5: %s\n")
+	displayMessages("Messages with all fields", aMessenger)
+
 	// Example messages with componentID of 9998.
 
 	optionComponentID := &messenger.OptionComponentID{Value: 9998}
 	aMessenger, err = messenger.New(optionComponentID, optionIDMessages)
-	testError(err, "Error5: %s\n")
+	testError(err, "Error6: %s\n")
 	displayMessages("Messages with componentID of 9998", aMessenger)
 
 	// ------------------------------------------------------------------------

@@ -26,7 +26,7 @@ type Messenger interface {
 
 // Fields in the formatted message.
 // Order is important.
-// It should be time, level, id, text, status, duration, location, errors, details.
+// It should be time, level, id, text, code, reason, status, duration, location, errors, details.
 type MessageFormat struct {
 	Time     string      `json:"time,omitempty"`     // Time of message in UTC.
 	Level    string      `json:"level,omitempty"`    // Level:  TRACE, DEBUG, INFO, WARN, ERROR, FATAL, PANIC.
@@ -108,6 +108,12 @@ type OptionCallerSkip struct {
 	Value int // Number of callers to skip in the stack trace when determining the location.
 }
 
+// The component identifier.
+// See https://github.com/senzing-garage/knowledge-base/blob/main/lists/senzing-product-ids.md
+type OptionComponentID struct {
+	Value int // Component issuing message.
+}
+
 // Map of message number to message templates.
 type OptionIDMessages struct {
 	Value map[int]string // Message number to message template map.
@@ -131,12 +137,6 @@ type OptionMessageFields struct {
 // Format of the unique id.
 type OptionMessageIDTemplate struct {
 	Value string // Format string.
-}
-
-// The component identifier.
-// See https://github.com/senzing-garage/knowledge-base/blob/main/lists/senzing-product-ids.md
-type OptionComponentID struct {
-	Value int // Component issuing message.
 }
 
 // ----------------------------------------------------------------------------
@@ -221,7 +221,22 @@ var (
 	ErrEmptyStatuses  = errors.New("statuses must be a map[int]string")
 )
 
-var AllMessageFields = []string{"code", "details", "duration", "errors", "id", "level", "location", "reason", "status", "text", "time"}
+// Order is important in AllMessageFields. Should match order in MessageFormat.
+// var AllMessageFields = []string{"time", "level", "id", "text", "code", "reason", "status", "duration", "location", "errors", "details"}
+
+var AllMessageFields = []string{
+	"code",
+	"details",
+	"duration",
+	"errors",
+	"id",
+	"level",
+	"location",
+	"reason",
+	"status",
+	"text",
+	"time",
+}
 
 // ----------------------------------------------------------------------------
 // Public functions
@@ -252,15 +267,15 @@ func New(options ...interface{}) (Messenger, error) {
 		switch typedValue := value.(type) {
 		case *OptionCallerSkip:
 			callerSkip = typedValue.Value
-		case *OptionMessageFields:
-			messageFields = typedValue.Value
+		case *OptionComponentID:
+			componentIdentifier = typedValue.Value
+			messageIDTemplate = fmt.Sprintf("SZSDK%04d", componentIdentifier) + "%04d"
 		case *OptionIDMessages:
 			idMessages = typedValue.Value
 		case *OptionIDStatuses:
 			idStatuses = typedValue.Value
-		case *OptionComponentID:
-			componentIdentifier = typedValue.Value
-			messageIDTemplate = fmt.Sprintf("SZSDK%04d", componentIdentifier) + "%04d"
+		case *OptionMessageFields:
+			messageFields = typedValue.Value
 		case *OptionMessageIDTemplate:
 			messageIDTemplate = typedValue.Value
 		}
