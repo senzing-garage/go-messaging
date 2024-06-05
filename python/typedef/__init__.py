@@ -8,6 +8,11 @@ from typing import Any, Dict, List, Optional, Union, get_args, get_origin
 
 @dataclass
 class SenzingMessage:
+    code: 'str'
+    """
+    Code for message.
+    """
+
     details: 'Details'
     """
     A list of objects sent to the message generator.
@@ -39,6 +44,11 @@ class SenzingMessage:
     Location in the code identifying where the message was generated.
     """
 
+    reason: 'str'
+    """
+    Reason for message.
+    """
+
     status: 'str'
     """
     User-defined status of message.
@@ -58,12 +68,14 @@ class SenzingMessage:
     @classmethod
     def from_json_data(cls, data: Any) -> 'SenzingMessage':
         return cls(
+            _from_json_data(str, data.get("code")),
             _from_json_data(Details, data.get("details")),
             _from_json_data(int, data.get("duration")),
             _from_json_data(Errors, data.get("errors")),
             _from_json_data(str, data.get("id")),
             _from_json_data(str, data.get("level")),
             _from_json_data(str, data.get("location")),
+            _from_json_data(str, data.get("reason")),
             _from_json_data(str, data.get("status")),
             _from_json_data(str, data.get("text")),
             _from_json_data(datetime, data.get("time")),
@@ -71,12 +83,14 @@ class SenzingMessage:
 
     def to_json_data(self) -> Any:
         data: Dict[str, Any] = {}
+        data["code"] = _to_json_data(self.code)
         data["details"] = _to_json_data(self.details)
         data["duration"] = _to_json_data(self.duration)
         data["errors"] = _to_json_data(self.errors)
         data["id"] = _to_json_data(self.id)
         data["level"] = _to_json_data(self.level)
         data["location"] = _to_json_data(self.location)
+        data["reason"] = _to_json_data(self.reason)
         data["status"] = _to_json_data(self.status)
         data["text"] = _to_json_data(self.text)
         data["time"] = _to_json_data(self.time)

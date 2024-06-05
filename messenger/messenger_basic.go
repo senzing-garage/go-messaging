@@ -98,10 +98,11 @@ Output
 */
 func (messenger *BasicMessenger) NewSlogLevel(messageNumber int, details ...interface{}) (string, slog.Level, []interface{}) {
 
-	option := &OptionMessageField{
-		Value: "level",
-	}
-	populateDetails := append(details, option)
+	// Add "level" to details temporarily.
+
+	populateDetails := []interface{}{}
+	populateDetails = append(populateDetails, details...)
+	populateDetails = append(populateDetails, &OptionMessageField{Value: "level"})
 	messageFormat := messenger.populateStructure(messageNumber, populateDetails...)
 
 	// Create a text message.
@@ -280,14 +281,16 @@ func (messenger *BasicMessenger) findMessageFields(details ...interface{}) []str
 func (messenger *BasicMessenger) getKeyValuePairs(appMessageFormat *MessageFormat, keys []string) []interface{} {
 	var result []interface{}
 	keyValueMap := map[string]interface{}{
-		"time":     appMessageFormat.Time,
-		"level":    appMessageFormat.Level,
-		"id":       appMessageFormat.ID,
-		"status":   appMessageFormat.Status,
-		"duration": appMessageFormat.Duration,
-		"location": appMessageFormat.Location,
-		"errors":   appMessageFormat.Errors,
+		"code":     appMessageFormat.Code,
 		"details":  appMessageFormat.Details,
+		"duration": appMessageFormat.Duration,
+		"errors":   appMessageFormat.Errors,
+		"id":       appMessageFormat.ID,
+		"level":    appMessageFormat.Level,
+		"location": appMessageFormat.Location,
+		"reason":   appMessageFormat.Reason,
+		"status":   appMessageFormat.Status,
+		"time":     appMessageFormat.Time,
 	}
 
 	// In key order, append values to result.

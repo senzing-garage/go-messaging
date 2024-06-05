@@ -150,6 +150,16 @@ var testCasesForMessage = []struct {
 		expectedSlogLevel:   LevelWarnSlog,
 	},
 	{
+		name:                "messenger-3007",
+		messageNumber:       3007,
+		options:             []interface{}{getOptionMessageFieldsAll(), getOptionIDMessages()},
+		details:             []interface{}{"Bob", "Jane", getMessageReason(), getMessageCode(), getMessageLocation(), getTimestamp()},
+		expectedMessageJSON: `{"time":"2000-01-01T00:00:00Z","level":"WARN","id":"SZSDK99993007","code":"MessageCode1","reason":"TestMessageReason1","location":"Test location","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
+		expectedMessageSlog: []interface{}{"code", "MessageCode1", "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}}, "id", "SZSDK99993007", "level", "WARN", "location", "Test location", "reason", "TestMessageReason1", "time", "2000-01-01T00:00:00Z"},
+		expectedText:        "",
+		expectedSlogLevel:   LevelWarnSlog,
+	},
+	{
 		name:                "messenger-4001",
 		messageNumber:       4001,
 		options:             []interface{}{getOptionMessageFields(), getOptionIDMessages()},
@@ -182,7 +192,7 @@ var testCasesForMessage = []struct {
 	{
 		name:                "messenger-7001",
 		messageNumber:       7001,
-		options:             []interface{}{getOptionMessageFields(), getOptionIDMessages(), getOptionCallerSkip(), getOptionIDStatuses(), getOptionSenzingComponentID(), getOptionMessageIDTemplate()},
+		options:             []interface{}{getOptionMessageFields(), getOptionIDMessages(), getOptionCallerSkip(), getOptionIDStatuses(), getOptionComponentID(), getOptionMessageIDTemplate()},
 		details:             []interface{}{"Bob", "Jane"},
 		expectedMessageJSON: `{"level":"PANIC","id":"Template: 7001","text":"PANIC: Bob works with Jane","status":"status-7001","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
 		expectedMessageSlog: []interface{}{"details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}}, "id", "Template: 7001", "level", "PANIC", "status", "status-7001"},
@@ -301,7 +311,7 @@ func Test_NewSlogLevel(test *testing.T) {
 }
 
 func Test_New_badComponentID(test *testing.T) {
-	_, err := New(&OptionSenzingComponentID{Value: 99999})
+	_, err := New(&OptionComponentID{Value: 99999})
 	require.ErrorIs(test, err, ErrBadComponentID)
 }
 
@@ -426,6 +436,12 @@ func Test_messageDetails_stringJSON(test *testing.T) {
 // Internal functions - names begin with lowercase letter
 // ----------------------------------------------------------------------------
 
+func getMessageCode() *MessageCode {
+	return &MessageCode{
+		Value: "MessageCode1",
+	}
+}
+
 func getMessageDuration() *MessageDuration {
 	var duration time.Duration = 100000000
 	return &MessageDuration{
@@ -448,6 +464,12 @@ func getMessageLevel() *MessageLevel {
 func getMessageLocation() *MessageLocation {
 	return &MessageLocation{
 		Value: "Test location",
+	}
+}
+
+func getMessageReason() *MessageReason {
+	return &MessageReason{
+		Value: "TestMessageReason1",
 	}
 }
 
@@ -481,22 +503,6 @@ func getOptionIDStatuses() *OptionIDStatuses {
 	}
 }
 
-func getOptionMessageFieldsWithTime() *OptionMessageFields {
-
-	// Remove "location".
-
-	messageFields := make([]string, len(AllMessageFields))
-	_ = copy(messageFields, AllMessageFields)
-
-	indexOfLocation := slices.Index(messageFields, "location")
-	if indexOfLocation > 0 {
-		messageFields = slices.Delete(messageFields, indexOfLocation, indexOfLocation+1)
-	}
-	return &OptionMessageFields{
-		Value: messageFields,
-	}
-}
-
 func getOptionMessageFields() *OptionMessageFields {
 
 	messageFields := make([]string, len(AllMessageFields))
@@ -521,14 +527,36 @@ func getOptionMessageFields() *OptionMessageFields {
 	}
 }
 
+func getOptionMessageFieldsAll() *OptionMessageFields {
+	return &OptionMessageFields{
+		Value: AllMessageFields,
+	}
+}
+
+func getOptionMessageFieldsWithTime() *OptionMessageFields {
+
+	// Remove "location".
+
+	messageFields := make([]string, len(AllMessageFields))
+	_ = copy(messageFields, AllMessageFields)
+
+	indexOfLocation := slices.Index(messageFields, "location")
+	if indexOfLocation > 0 {
+		messageFields = slices.Delete(messageFields, indexOfLocation, indexOfLocation+1)
+	}
+	return &OptionMessageFields{
+		Value: messageFields,
+	}
+}
+
 func getOptionMessageIDTemplate() *OptionMessageIDTemplate {
 	return &OptionMessageIDTemplate{
 		Value: "Template: %04d",
 	}
 }
 
-func getOptionSenzingComponentID() *OptionSenzingComponentID {
-	return &OptionSenzingComponentID{
+func getOptionComponentID() *OptionComponentID {
+	return &OptionComponentID{
 		Value: 9999,
 	}
 }

@@ -8,6 +8,9 @@ import java.time.OffsetDateTime;
 
 @JsonSerialize
 public class SenzingMessage {
+    @JsonProperty("code")
+    private String code;
+
     @JsonProperty("details")
     private Details details;
 
@@ -26,6 +29,9 @@ public class SenzingMessage {
     @JsonProperty("location")
     private String location;
 
+    @JsonProperty("reason")
+    private String reason;
+
     @JsonProperty("status")
     private String status;
 
@@ -36,6 +42,22 @@ public class SenzingMessage {
     private OffsetDateTime time;
 
     public SenzingMessage() {
+    }
+
+    /**
+     * Getter for code.<p>
+     * Code for message.
+     */
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     * Setter for code.<p>
+     * Code for message.
+     */
+    public void setCode(String code) {
+        this.code = code;
     }
 
     /**
@@ -134,6 +156,22 @@ public class SenzingMessage {
      */
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    /**
+     * Getter for reason.<p>
+     * Reason for message.
+     */
+    public String getReason() {
+        return reason;
+    }
+
+    /**
+     * Setter for reason.<p>
+     * Reason for message.
+     */
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 
     /**

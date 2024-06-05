@@ -135,7 +135,7 @@ type OptionMessageIDTemplate struct {
 
 // The component identifier.
 // See https://github.com/senzing-garage/knowledge-base/blob/main/lists/senzing-product-ids.md
-type OptionSenzingComponentID struct {
+type OptionComponentID struct {
 	Value int // Component issuing message.
 }
 
@@ -258,7 +258,7 @@ func New(options ...interface{}) (Messenger, error) {
 			idMessages = typedValue.Value
 		case *OptionIDStatuses:
 			idStatuses = typedValue.Value
-		case *OptionSenzingComponentID:
+		case *OptionComponentID:
 			componentIdentifier = typedValue.Value
 			messageIDTemplate = fmt.Sprintf("SZSDK%04d", componentIdentifier) + "%04d"
 		case *OptionMessageIDTemplate:
