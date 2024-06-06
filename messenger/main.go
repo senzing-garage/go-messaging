@@ -222,21 +222,7 @@ var (
 )
 
 // Order is important in AllMessageFields. Should match order in MessageFormat.
-// var AllMessageFields = []string{"time", "level", "id", "text", "code", "reason", "status", "duration", "location", "errors", "details"}
-
-var AllMessageFields = []string{
-	"code",
-	"details",
-	"duration",
-	"errors",
-	"id",
-	"level",
-	"location",
-	"reason",
-	"status",
-	"text",
-	"time",
-}
+var AllMessageFields = []string{"time", "level", "id", "text", "code", "reason", "status", "duration", "location", "errors", "details"}
 
 // ----------------------------------------------------------------------------
 // Public functions

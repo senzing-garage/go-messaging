@@ -12,8 +12,7 @@ import (
 )
 
 var (
-	err1 = errors.New("example error")
-
+	err1       = errors.New("example error")
 	idMessages = map[int]string{
 		1001: "DEBUG: %s works with %s",
 		2001: "INFO: %s works with %s",
@@ -23,13 +22,15 @@ var (
 		6001: "PANIC: %s works with %s",
 		7001: "Xxxxx: %s works with %s",
 	}
-
 	optionIDMessages = &messenger.OptionIDMessages{Value: idMessages}
-
-	reason = &messenger.MessageReason{
+	reason           = &messenger.MessageReason{
 		Value: "The reason is...",
 	}
 )
+
+// ----------------------------------------------------------------------------
+// main
+// ----------------------------------------------------------------------------
 
 func main() {
 
@@ -82,31 +83,44 @@ func main() {
 	testError(err, "Error6: %s\n")
 	displayMessages("Messages with componentID of 9998", aMessenger)
 
-	// ------------------------------------------------------------------------
-	// --- Extra parsing examples
-	// ------------------------------------------------------------------------
+	// Example parsed messages.
 
 	printBanner("Parsed messages")
 	message1 := `{"time":"2023-07-11T21:05:51.918625982Z","level":"DEBUG","id":"SZSDK99981001","text":"DEBUG: Bob works with Mary","location":"In main() at main.go:101","errors":["error #1","{\"time\": \"2023-04-10T11:00:20.623748617-04:00\",\"level\": \"TRACE\",\"id\": \"SZSDK99990002\",\"text\": \"A fake error\",\"location\": \"In main() at main.go:36\",\"details\": {\"1\": \"Bob\",\"2\": \"Mary\"}}"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Mary"},{"position":3,"value":"error #1"},{"position":4,"value":"\n\t{\n\t\t\"time\": \"2023-04-10T11:00:20.623748617-04:00\",\n\t\t\"level\": \"TRACE\",\n\t\t\"id\": \"SZSDK99990002\",\n\t\t\"text\": \"A fake error\",\n\t\t\"location\": \"In main() at main.go:36\",\"details\": {\"1\": \"Bob\",\"2\": \"Mary\"}}","valueRaw":{"time":"2023-04-10T11:00:20.623748617-04:00","level":"TRACE","id":"SZSDK99990002","text":"A fake error","location":"In main() at main.go:36","details":{"1":"Bob","2":"Mary"}}}]}	`
 	parsedMessage1, err := parser.Parse(message1)
 	testError(err, "Error8: %s\n")
 	fmt.Printf("Parse test 1 - ID: %s; Text: %s\n", parsedMessage1.ID, parsedMessage1.Text)
+
+	// Epilog.
+
+	printBanner("Done")
+
 }
 
 // ----------------------------------------------------------------------------
 // Internal functions
 // ----------------------------------------------------------------------------
 
+func displayMessages(banner string, aMessenger messenger.Messenger) {
+
+	printBanner(banner)
+
+	printJSONMessage(aMessenger.NewJSON(0001, "Bob", "Mary"))
+	printJSONMessage(aMessenger.NewJSON(2001, "Bob", "Mary"))
+	printJSONMessage(aMessenger.NewJSON(3001, "Bob", "Mary", reason, err1))
+	printJSONMessage(aMessenger.NewJSON(4001, "Bob", "Mary", reason, err1))
+	fmt.Println()
+
+	fmt.Println(aMessenger.NewSlog(1001, "Bob", "Mary"))
+	fmt.Println(aMessenger.NewSlog(2001, "Bob", "Mary"))
+	fmt.Println(aMessenger.NewSlog(3001, "Bob", "Mary", reason, err1))
+	fmt.Println(aMessenger.NewSlog(4001, "Bob", "Mary", reason, err1))
+}
+
 func printBanner(banner string) {
 	fmt.Printf("\n%s\n", strings.Repeat("-", 80))
 	fmt.Printf("-- %s\n", banner)
 	fmt.Printf("%s\n\n", strings.Repeat("-", 80))
-}
-
-func testError(err error, stringFormat string) {
-	if err != nil {
-		fmt.Printf(stringFormat, err.Error())
-	}
 }
 
 func printJSONMessage(message string) {
@@ -123,18 +137,8 @@ func printJSONMessage(message string) {
 	fmt.Printf("\n")
 }
 
-func displayMessages(banner string, aMessenger messenger.Messenger) {
-
-	printBanner(banner)
-
-	printJSONMessage(aMessenger.NewJSON(0001, "Bob", "Mary"))
-	printJSONMessage(aMessenger.NewJSON(2001, "Bob", "Mary"))
-	printJSONMessage(aMessenger.NewJSON(3001, "Bob", "Mary", reason, err1))
-	printJSONMessage(aMessenger.NewJSON(4001, "Bob", "Mary", reason, err1))
-	fmt.Println()
-
-	fmt.Println(aMessenger.NewSlog(1001, "Bob", "Mary"))
-	fmt.Println(aMessenger.NewSlog(2001, "Bob", "Mary"))
-	fmt.Println(aMessenger.NewSlog(3001, "Bob", "Mary", reason, err1))
-	fmt.Println(aMessenger.NewSlog(4001, "Bob", "Mary", reason, err1))
+func testError(err error, stringFormat string) {
+	if err != nil {
+		fmt.Printf(stringFormat, err.Error())
+	}
 }

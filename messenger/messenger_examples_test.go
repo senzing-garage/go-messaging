@@ -25,7 +25,7 @@ func ExampleBasicMessenger_NewSlog() {
 		fmt.Println(err)
 	}
 	fmt.Print(example.NewSlog(2001, "Bob", "Jane", getOptionMessageFields()))
-	//Output: [details [{ 1 string Bob <nil>} { 2 string Jane <nil>}] id SZSDK99992001 level INFO]
+	//Output: [level INFO id SZSDK99992001 details [{ 1 string Bob <nil>} { 2 string Jane <nil>}]]
 }
 
 func ExampleBasicMessenger_NewSlogLevel() {
@@ -35,5 +35,5 @@ func ExampleBasicMessenger_NewSlogLevel() {
 		fmt.Println(err)
 	}
 	fmt.Print(example.NewSlogLevel(2001, "Bob", "Jane", getOptionMessageFields()))
-	//Output: INFO [details [{ 1 string Bob <nil>} { 2 string Jane <nil>}] id SZSDK99992001 level INFO]
+	//Output: INFO [level INFO id SZSDK99992001 details [{ 1 string Bob <nil>} { 2 string Jane <nil>}]]
 }
