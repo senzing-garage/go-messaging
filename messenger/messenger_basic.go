@@ -296,6 +296,7 @@ func (messenger *BasicMessenger) getKeyValuePairs(appMessageFormat *MessageForma
 	// In key order, append values to result.
 
 	for _, key := range keys {
+
 		value, ok := keyValueMap[key]
 		if !ok {
 			continue
@@ -505,6 +506,5 @@ func (messenger *BasicMessenger) populateStructure(messageNumber int, details ..
 	if slices.Contains(messageFields, "time") {
 		result.Time = timeNow
 	}
-
 	return result
 }

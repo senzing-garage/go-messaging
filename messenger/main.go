@@ -233,6 +233,7 @@ The New function creates a new instance of MessengerInterface.
 Adding options can be used to modify subcomponents.
 */
 func New(options ...interface{}) (Messenger, error) {
+
 	var err error
 	var result Messenger
 
