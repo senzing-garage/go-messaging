@@ -281,9 +281,9 @@ func (messenger *BasicMessenger) findMessageFields(details ...interface{}) []str
 	result := messenger.messageFields
 	for _, value := range details {
 		switch typedValue := value.(type) {
-		case *OptionMessageFields:
+		case OptionMessageFields:
 			result = typedValue.Value
-		case *OptionMessageField:
+		case OptionMessageField:
 			appendix = append(appendix, typedValue.Value)
 		default:
 		}

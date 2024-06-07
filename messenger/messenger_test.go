@@ -53,6 +53,7 @@ var idStatuses = map[int]string{
 var testCasesForMessage = []struct {
 	name                string
 	messageNumber       int
+	comment             string
 	options             []interface{}
 	details             []interface{}
 	expectedMessageJSON string
