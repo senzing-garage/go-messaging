@@ -15,6 +15,7 @@ import (
 // The Messenger interface has methods for creating different
 // representations of a message.
 type Messenger interface {
+	NewError(messageNumber int, details ...interface{}) error
 	NewJSON(messageNumber int, details ...interface{}) string
 	NewSlog(messageNumber int, details ...interface{}) (string, []interface{})
 	NewSlogLevel(messageNumber int, details ...interface{}) (string, slog.Level, []interface{})

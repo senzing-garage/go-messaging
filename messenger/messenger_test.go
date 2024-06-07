@@ -282,6 +282,19 @@ func teardown() error {
 
 // -- Test New() method ---------------------------------------------------------
 
+func Test_NewError(test *testing.T) {
+	for _, testCase := range testCasesForMessage {
+		if len(testCase.expectedMessageJSON) > 0 {
+			test.Run(testCase.name+"-NewError", func(test *testing.T) {
+				testObject, err := New(testCase.options...)
+				require.NoError(test, err)
+				actual := testObject.NewError(testCase.messageNumber, testCase.details...)
+				assert.Equal(test, testCase.expectedMessageJSON, actual.Error(), testCase.name)
+			})
+		}
+	}
+}
+
 func Test_NewJSON(test *testing.T) {
 	for _, testCase := range testCasesForMessage {
 		if len(testCase.expectedMessageJSON) > 0 {

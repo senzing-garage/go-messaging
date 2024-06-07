@@ -3,6 +3,7 @@ package messenger
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -34,6 +35,20 @@ type BasicMessenger struct {
 // ----------------------------------------------------------------------------
 // Interface methods
 // ----------------------------------------------------------------------------
+
+/*
+The NewError method returns an error with a JSON string message.
+
+Input
+  - messageNumber: A message identifier which indexes into "idMessages".
+  - details: Variadic arguments of any type to be added to the message.
+
+Output
+  - An error with a JSON string representing the details formatted by the template identified by the messageNumber.
+*/
+func (messenger *BasicMessenger) NewError(messageNumber int, details ...interface{}) error {
+	return errors.New(messenger.NewJSON(messageNumber, details...))
+}
 
 /*
 The NewJSON method return a JSON string with the elements of the message.
