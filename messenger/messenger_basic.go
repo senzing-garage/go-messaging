@@ -79,7 +79,8 @@ func (messenger *BasicMessenger) NewJSON(messageNumber int, details ...interface
 	if err != nil {
 		return err.Error()
 	}
-	return strings.TrimSpace(resultBytes.String())
+	result := strings.TrimSpace(resultBytes.String())
+	return result
 }
 
 /*
@@ -117,7 +118,7 @@ func (messenger *BasicMessenger) NewSlogLevel(messageNumber int, details ...inte
 
 	populateDetails := []interface{}{}
 	populateDetails = append(populateDetails, details...)
-	populateDetails = append(populateDetails, &OptionMessageField{Value: "level"})
+	populateDetails = append(populateDetails, OptionMessageField{Value: "level"})
 	messageFormat := messenger.populateStructure(messageNumber, populateDetails...)
 
 	// Create a text message.
@@ -253,9 +254,9 @@ func messageDetails(details ...interface{}) []Detail {
 				}
 				result = append(result, detail)
 			}
-		case *OptionMessageField:
+		case OptionMessageField:
 			// Do nothing.
-		case *OptionMessageFields:
+		case OptionMessageFields:
 			// Do nothing.
 		default:
 			detail.Type = fmt.Sprintf("%+v", reflect.TypeOf(value))
@@ -424,25 +425,25 @@ func (messenger *BasicMessenger) populateStructure(messageNumber int, details ..
 	filteredDetails := []interface{}{}
 	for _, value := range details {
 		switch typedValue := value.(type) {
-		case *MessageCode:
+		case MessageCode:
 			code = typedValue.Value
-		case *MessageDuration:
+		case MessageDuration:
 			duration = typedValue.Value
-		case *MessageID:
+		case MessageID:
 			id = typedValue.Value
-		case *MessageLevel:
+		case MessageLevel:
 			level = typedValue.Value
-		case *MessageLocation:
+		case MessageLocation:
 			location = typedValue.Value
-		case *MessageReason:
+		case MessageReason:
 			reason = typedValue.Value
-		case *MessageStatus:
+		case MessageStatus:
 			status = typedValue.Value
-		case *MessageText:
+		case MessageText:
 			text = typedValue.Value
-		case *MessageTime:
+		case MessageTime:
 			timeNow = typedValue.Value.Format(time.RFC3339Nano)
-		case *OptionCallerSkip:
+		case OptionCallerSkip:
 			callerSkip = typedValue.Value
 		case error:
 			errorList = append(errorList, cleanErrorString(typedValue))

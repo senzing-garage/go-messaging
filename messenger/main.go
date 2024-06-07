@@ -2,7 +2,6 @@ package messenger
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"golang.org/x/exp/slog"
@@ -109,12 +108,6 @@ type OptionCallerSkip struct {
 	Value int // Number of callers to skip in the stack trace when determining the location.
 }
 
-// The component identifier.
-// See https://github.com/senzing-garage/knowledge-base/blob/main/lists/senzing-product-ids.md
-type OptionComponentID struct {
-	Value int // Component issuing message.
-}
-
 // Map of message number to message templates.
 type OptionIDMessages struct {
 	Value map[int]string // Message number to message template map.
@@ -217,9 +210,8 @@ var TextToLevelMap = map[string]slog.Level{
 }
 
 var (
-	ErrBadComponentID = errors.New("componentIdentifier must be in range 1..9999. See https://github.com/senzing-garage/knowledge-base/blob/main/lists/senzing-product-ids.md")
-	ErrEmptyMessages  = errors.New("messages must be a map[int]string")
-	ErrEmptyStatuses  = errors.New("statuses must be a map[int]string")
+	ErrEmptyMessages = errors.New("messages must be a map[int]string")
+	ErrEmptyStatuses = errors.New("statuses must be a map[int]string")
 )
 
 // Order is important in AllMessageFields. Should match order in MessageFormat.
@@ -241,39 +233,31 @@ func New(options ...interface{}) (Messenger, error) {
 	// Default values.
 
 	var (
-		callerSkip          int
-		idMessages          = map[int]string{}
-		idStatuses          = map[int]string{}
-		componentIdentifier = 9999
-		messageIDTemplate   = fmt.Sprintf("SZSDK%04d", componentIdentifier) + "%04d"
-		messageFields       []string
+		callerSkip        int
+		idMessages        = map[int]string{}
+		idStatuses        = map[int]string{}
+		messageIDTemplate = "%04d"
+		messageFields     []string
 	)
 
 	// Process options.
 
 	for _, value := range options {
 		switch typedValue := value.(type) {
-		case *OptionCallerSkip:
+		case OptionCallerSkip:
 			callerSkip = typedValue.Value
-		case *OptionComponentID:
-			componentIdentifier = typedValue.Value
-			messageIDTemplate = fmt.Sprintf("SZSDK%04d", componentIdentifier) + "%04d"
-		case *OptionIDMessages:
+		case OptionIDMessages:
 			idMessages = typedValue.Value
-		case *OptionIDStatuses:
+		case OptionIDStatuses:
 			idStatuses = typedValue.Value
-		case *OptionMessageFields:
+		case OptionMessageFields:
 			messageFields = typedValue.Value
-		case *OptionMessageIDTemplate:
+		case OptionMessageIDTemplate:
 			messageIDTemplate = typedValue.Value
 		}
 	}
 
 	// Detect incorrect option values.
-
-	if componentIdentifier <= 0 || componentIdentifier >= 10000 {
-		return result, ErrBadComponentID
-	}
 
 	if idMessages == nil {
 		return result, ErrEmptyMessages

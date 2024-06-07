@@ -22,8 +22,8 @@ var (
 		6001: "PANIC: %s works with %s",
 		7001: "Xxxxx: %s works with %s",
 	}
-	optionIDMessages = &messenger.OptionIDMessages{Value: idMessages}
-	reason           = &messenger.MessageReason{
+	optionIDMessages = messenger.OptionIDMessages{Value: idMessages}
+	reason           = messenger.MessageReason{
 		Value: "The reason is...",
 	}
 )
@@ -42,7 +42,7 @@ func main() {
 
 	// Example messages with "text" field.
 
-	optionMessageFields := &messenger.OptionMessageFields{
+	optionMessageFields := messenger.OptionMessageFields{
 		Value: []string{"id", "text"},
 	}
 	aMessenger, err = messenger.New(optionMessageFields, optionIDMessages)
@@ -51,7 +51,7 @@ func main() {
 
 	// Example messages with "reason" field.
 
-	optionMessageFields = &messenger.OptionMessageFields{
+	optionMessageFields = messenger.OptionMessageFields{
 		Value: []string{"id", "reason"},
 	}
 	aMessenger, err = messenger.New(optionMessageFields, optionIDMessages)
@@ -60,7 +60,7 @@ func main() {
 
 	// Example messages with "errors" field.
 
-	optionMessageFields = &messenger.OptionMessageFields{
+	optionMessageFields = messenger.OptionMessageFields{
 		Value: []string{"id", "errors"},
 	}
 	aMessenger, err = messenger.New(optionMessageFields, optionIDMessages)
@@ -69,7 +69,7 @@ func main() {
 
 	// Example messages with all fields.
 
-	optionMessageFields = &messenger.OptionMessageFields{
+	optionMessageFields = messenger.OptionMessageFields{
 		Value: messenger.AllMessageFields,
 	}
 	aMessenger, err = messenger.New(optionMessageFields, optionIDMessages)
@@ -78,8 +78,8 @@ func main() {
 
 	// Example messages with componentID of 9998.
 
-	optionComponentID := &messenger.OptionComponentID{Value: 9998}
-	aMessenger, err = messenger.New(optionComponentID, optionIDMessages)
+	optionMessageIDTemplate := messenger.OptionMessageIDTemplate{Value: "XYZ9998%04d"}
+	aMessenger, err = messenger.New(optionMessageIDTemplate, optionIDMessages)
 	testError(err, "Error6: %s\n")
 	displayMessages("Messages with componentID of 9998", aMessenger)
 

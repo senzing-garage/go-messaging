@@ -63,7 +63,7 @@ var testCasesForMessage = []struct {
 	{
 		name:                "messenger-0001",
 		messageNumber:       1,
-		options:             []interface{}{getOptionMessageFields(), getOptionIDMessages()},
+		options:             []interface{}{getOptionMessageIDTemplate(9999), getOptionMessageFields(), getOptionIDMessages()},
 		details:             []interface{}{"Bob", "Jane"},
 		expectedMessageJSON: `{"level":"TRACE","id":"SZSDK99990001","text":"TRACE: Bob works with Jane","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
 		expectedMessageSlog: []interface{}{"level", "TRACE", "id", "SZSDK99990001", "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}}},
@@ -72,7 +72,7 @@ var testCasesForMessage = []struct {
 	{
 		name:                "messenger-1001",
 		messageNumber:       1001,
-		options:             []interface{}{getOptionMessageFields(), getOptionIDMessages()},
+		options:             []interface{}{getOptionMessageIDTemplate(9999), getOptionMessageFields(), getOptionIDMessages()},
 		details:             []interface{}{"Bob", "Jane"},
 		expectedMessageJSON: `{"level":"DEBUG","id":"SZSDK99991001","text":"DEBUG: Bob works with Jane","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
 		expectedMessageSlog: []interface{}{"level", "DEBUG", "id", "SZSDK99991001", "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}}},
@@ -82,7 +82,7 @@ var testCasesForMessage = []struct {
 	{
 		name:                "messenger-2001",
 		messageNumber:       2001,
-		options:             []interface{}{getOptionMessageFields(), getOptionIDMessages()},
+		options:             []interface{}{getOptionMessageIDTemplate(9999), getOptionMessageFields(), getOptionIDMessages()},
 		details:             []interface{}{"Bob", "Jane"},
 		expectedMessageJSON: `{"level":"INFO","id":"SZSDK99992001","text":"INFO: Bob works with Jane","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
 		expectedMessageSlog: []interface{}{"level", "INFO", "id", "SZSDK99992001", "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}}},
@@ -92,7 +92,7 @@ var testCasesForMessage = []struct {
 	{
 		name:                "messenger-3001",
 		messageNumber:       3001,
-		options:             []interface{}{getOptionMessageFields(), getOptionIDMessages()},
+		options:             []interface{}{getOptionMessageIDTemplate(9999), getOptionMessageFields(), getOptionIDMessages()},
 		details:             []interface{}{"Bob", "Jane"},
 		expectedMessageJSON: `{"level":"WARN","id":"SZSDK99993001","text":"WARN: Bob works with Jane","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
 		expectedMessageSlog: []interface{}{"level", "WARN", "id", "SZSDK99993001", "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}}},
@@ -102,7 +102,7 @@ var testCasesForMessage = []struct {
 	{
 		name:                "messenger-3002",
 		messageNumber:       3002,
-		options:             []interface{}{getOptionMessageFields(), getOptionIDMessages()},
+		options:             []interface{}{getOptionMessageIDTemplate(9999), getOptionMessageFields(), getOptionIDMessages()},
 		details:             []interface{}{"Bob", "Jane", errTest1, errTest2},
 		expectedMessageJSON: `{"level":"WARN","id":"SZSDK99993002","text":"WARN: Bob works with Jane","errors":["error 1","error 2"],"details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"},{"position":3,"type":"error","value":"error 1"},{"position":4,"type":"error","value":"error 2"}]}`,
 		expectedMessageSlog: []interface{}{"level", "WARN", "id", "SZSDK99993002", "errors", []interface{}{"error 1", "error 2"}, "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}, {Key: "", Position: 3, Type: "error", Value: "error 1", ValueRaw: interface{}(nil)}, {Key: "", Position: 4, Type: "error", Value: "error 2", ValueRaw: interface{}(nil)}}},
@@ -112,7 +112,7 @@ var testCasesForMessage = []struct {
 	{
 		name:                "messenger-3003",
 		messageNumber:       3003,
-		options:             []interface{}{getOptionMessageFields(), getOptionIDMessages()},
+		options:             []interface{}{getOptionMessageIDTemplate(9999), getOptionMessageFields(), getOptionIDMessages()},
 		details:             []interface{}{"Bob", "Jane", int64(12345)},
 		expectedMessageJSON: `{"level":"WARN","id":"SZSDK99993003","text":"WARN: Bob works with Jane","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"},{"position":3,"type":"int64","value":"12345","valueRaw":12345}]}`,
 		expectedMessageSlog: []interface{}{"level", "WARN", "id", "SZSDK99993003", "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}, {Key: "", Position: 3, Type: "int64", Value: "12345", ValueRaw: int64(12345)}}},
@@ -122,7 +122,7 @@ var testCasesForMessage = []struct {
 	{
 		name:                "messenger-3004",
 		messageNumber:       3004,
-		options:             []interface{}{getOptionMessageFields(), getOptionIDMessages()},
+		options:             []interface{}{getOptionMessageIDTemplate(9999), getOptionMessageFields(), getOptionIDMessages()},
 		details:             []interface{}{"Bob", "Jane"},
 		expectedMessageJSON: `{"level":"WARN","id":"SZSDK99993004","text":"{\"bob\": \"Bob\", \"jane\": \"Jane\"}","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"},{"key":"text","position":3,"type":"map[string]string","value":"{\"bob\": \"Bob\", \"jane\": \"Jane\"}","valueRaw":{"bob":"Bob","jane":"Jane"}}]}`,
 		expectedMessageSlog: []interface{}{"level", "WARN", "id", "SZSDK99993004", "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}, {Key: "text", Position: 4, Type: "map[string]string", Value: "{\"bob\": \"Bob\", \"jane\": \"Jane\"}", ValueRaw: json.RawMessage{0x7b, 0x22, 0x62, 0x6f, 0x62, 0x22, 0x3a, 0x20, 0x22, 0x42, 0x6f, 0x62, 0x22, 0x2c, 0x20, 0x22, 0x6a, 0x61, 0x6e, 0x65, 0x22, 0x3a, 0x20, 0x22, 0x4a, 0x61, 0x6e, 0x65, 0x22, 0x7d}}}},
@@ -132,7 +132,7 @@ var testCasesForMessage = []struct {
 	{
 		name:                "messenger-3005",
 		messageNumber:       3005,
-		options:             []interface{}{getOptionMessageFields(), getOptionIDMessages()},
+		options:             []interface{}{getOptionMessageIDTemplate(9999), getOptionMessageFields(), getOptionIDMessages()},
 		details:             []interface{}{"Bob", "Jane", getMessageDuration(), getMessageID(), getMessageLevel(), getMessageLocation(), getMessageStatus(), getMessageText(), getOptionCallerSkip()},
 		expectedMessageJSON: `{"level":"TEST_LEVEL","id":"Test-ID-1","text":"Test text","status":"TestStatus","duration":100000000,"details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
 		expectedMessageSlog: []interface{}{"level", "TEST_LEVEL", "id", "Test-ID-1", "status", "TestStatus", "duration", int64(100000000), "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}}},
@@ -142,7 +142,7 @@ var testCasesForMessage = []struct {
 	{
 		name:                "messenger-3006",
 		messageNumber:       3006,
-		options:             []interface{}{getOptionMessageFields(), getOptionIDMessages()},
+		options:             []interface{}{getOptionMessageIDTemplate(9999), getOptionMessageFields(), getOptionIDMessages()},
 		details:             []interface{}{"Bob", "Jane", durationTest},
 		expectedMessageJSON: `{"level":"WARN","id":"SZSDK99993006","duration":100000000,"details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
 		expectedMessageSlog: []interface{}{"level", "WARN", "id", "SZSDK99993006", "duration", int64(100000000), "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}}},
@@ -152,7 +152,7 @@ var testCasesForMessage = []struct {
 	{
 		name:                "messenger-3007",
 		messageNumber:       3007,
-		options:             []interface{}{getOptionMessageFieldsAll(), getOptionIDMessages()},
+		options:             []interface{}{getOptionMessageIDTemplate(9999), getOptionMessageFieldsAll(), getOptionIDMessages()},
 		details:             []interface{}{"Bob", "Jane", getMessageReason(), getMessageCode(), getMessageLocation(), getTimestamp()},
 		expectedMessageJSON: `{"time":"2000-01-01T00:00:00Z","level":"WARN","id":"SZSDK99993007","code":"MessageCode1","reason":"TestMessageReason1","location":"Test location","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
 		expectedMessageSlog: []interface{}{"time", "2000-01-01T00:00:00Z", "level", "WARN", "id", "SZSDK99993007", "code", "MessageCode1", "reason", "TestMessageReason1", "location", "Test location", "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}}},
@@ -162,7 +162,7 @@ var testCasesForMessage = []struct {
 	{
 		name:                "messenger-4001",
 		messageNumber:       4001,
-		options:             []interface{}{getOptionMessageFields(), getOptionIDMessages()},
+		options:             []interface{}{getOptionMessageIDTemplate(9999), getOptionMessageFields(), getOptionIDMessages()},
 		details:             []interface{}{"Bob", "Jane"},
 		expectedMessageJSON: `{"level":"ERROR","id":"SZSDK99994001","text":"ERROR: Bob works with Jane","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
 		expectedMessageSlog: []interface{}{"level", "ERROR", "id", "SZSDK99994001", "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}}},
@@ -172,7 +172,7 @@ var testCasesForMessage = []struct {
 	{
 		name:                "messenger-5001",
 		messageNumber:       5001,
-		options:             []interface{}{getOptionMessageFields(), getOptionIDMessages()},
+		options:             []interface{}{getOptionMessageIDTemplate(9999), getOptionMessageFields(), getOptionIDMessages()},
 		details:             []interface{}{"Bob", "Jane"},
 		expectedMessageJSON: `{"level":"FATAL","id":"SZSDK99995001","text":"FATAL: Bob works with Jane","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
 		expectedMessageSlog: []interface{}{"level", "FATAL", "id", "SZSDK99995001", "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}}},
@@ -182,7 +182,7 @@ var testCasesForMessage = []struct {
 	{
 		name:                "messenger-6001",
 		messageNumber:       6001,
-		options:             []interface{}{getOptionMessageFieldsWithTime(), getOptionIDMessages()},
+		options:             []interface{}{getOptionMessageIDTemplate(9999), getOptionMessageFieldsWithTime(), getOptionIDMessages()},
 		details:             []interface{}{"Bob", "Jane", getTimestamp()},
 		expectedMessageJSON: `{"time":"2000-01-01T00:00:00Z","level":"PANIC","id":"SZSDK99996001","text":"PANIC: Bob works with Jane","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
 		expectedMessageSlog: []interface{}{"time", "2000-01-01T00:00:00Z", "level", "PANIC", "id", "SZSDK99996001", "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}}},
@@ -192,10 +192,10 @@ var testCasesForMessage = []struct {
 	{
 		name:                "messenger-7001",
 		messageNumber:       7001,
-		options:             []interface{}{getOptionMessageFields(), getOptionIDMessages(), getOptionCallerSkip(), getOptionIDStatuses(), getOptionComponentID(), getOptionMessageIDTemplate()},
+		options:             []interface{}{getOptionMessageIDTemplate(9999), getOptionMessageFields(), getOptionIDMessages(), getOptionCallerSkip(), getOptionIDStatuses()},
 		details:             []interface{}{"Bob", "Jane"},
-		expectedMessageJSON: `{"level":"PANIC","id":"Template: 7001","text":"PANIC: Bob works with Jane","status":"status-7001","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
-		expectedMessageSlog: []interface{}{"level", "PANIC", "id", "Template: 7001", "status", "status-7001", "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}}},
+		expectedMessageJSON: `{"level":"PANIC","id":"SZSDK99997001","text":"PANIC: Bob works with Jane","status":"status-7001","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
+		expectedMessageSlog: []interface{}{"level", "PANIC", "id", "SZSDK99997001", "status", "status-7001", "details", []Detail{{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)}, {Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)}}},
 		expectedText:        "PANIC: Bob works with Jane",
 		expectedSlogLevel:   LevelPanicSlog,
 	},
@@ -323,18 +323,13 @@ func Test_NewSlogLevel(test *testing.T) {
 	}
 }
 
-func Test_New_badComponentID(test *testing.T) {
-	_, err := New(&OptionComponentID{Value: 99999})
-	require.ErrorIs(test, err, ErrBadComponentID)
-}
-
 func Test_New_badIdMessages(test *testing.T) {
-	_, err := New(&OptionIDMessages{})
+	_, err := New(OptionIDMessages{})
 	require.ErrorIs(test, err, ErrEmptyMessages)
 }
 
 func Test_New_badIdStatuses(test *testing.T) {
-	_, err := New(&OptionIDStatuses{})
+	_, err := New(OptionIDStatuses{})
 	require.ErrorIs(test, err, ErrEmptyStatuses)
 }
 
@@ -449,74 +444,74 @@ func Test_messageDetails_stringJSON(test *testing.T) {
 // Internal functions - names begin with lowercase letter
 // ----------------------------------------------------------------------------
 
-func getMessageCode() *MessageCode {
-	return &MessageCode{
+func getMessageCode() MessageCode {
+	return MessageCode{
 		Value: "MessageCode1",
 	}
 }
 
-func getMessageDuration() *MessageDuration {
+func getMessageDuration() MessageDuration {
 	var duration time.Duration = 100000000
-	return &MessageDuration{
+	return MessageDuration{
 		Value: duration.Nanoseconds(),
 	}
 }
 
-func getMessageID() *MessageID {
-	return &MessageID{
+func getMessageID() MessageID {
+	return MessageID{
 		Value: "Test-ID-1",
 	}
 }
 
-func getMessageLevel() *MessageLevel {
-	return &MessageLevel{
+func getMessageLevel() MessageLevel {
+	return MessageLevel{
 		Value: "TEST_LEVEL",
 	}
 }
 
-func getMessageLocation() *MessageLocation {
-	return &MessageLocation{
+func getMessageLocation() MessageLocation {
+	return MessageLocation{
 		Value: "Test location",
 	}
 }
 
-func getMessageReason() *MessageReason {
-	return &MessageReason{
+func getMessageReason() MessageReason {
+	return MessageReason{
 		Value: "TestMessageReason1",
 	}
 }
 
-func getMessageStatus() *MessageStatus {
-	return &MessageStatus{
+func getMessageStatus() MessageStatus {
+	return MessageStatus{
 		Value: "TestStatus",
 	}
 }
 
-func getMessageText() *MessageText {
-	return &MessageText{
+func getMessageText() MessageText {
+	return MessageText{
 		Value: "Test text",
 	}
 }
 
-func getOptionCallerSkip() *OptionCallerSkip {
-	return &OptionCallerSkip{
+func getOptionCallerSkip() OptionCallerSkip {
+	return OptionCallerSkip{
 		Value: 2,
 	}
 }
 
-func getOptionIDMessages() *OptionIDMessages {
-	return &OptionIDMessages{
+func getOptionIDMessages() OptionIDMessages {
+	return OptionIDMessages{
 		Value: idMessages,
 	}
 }
 
-func getOptionIDStatuses() *OptionIDStatuses {
-	return &OptionIDStatuses{
+func getOptionIDStatuses() OptionIDStatuses {
+	return OptionIDStatuses{
 		Value: idStatuses,
 	}
 }
 
-func getOptionMessageFields() *OptionMessageFields {
+func getOptionMessageFields() OptionMessageFields {
 
 	messageFields := make([]string, len(AllMessageFields))
 	_ = copy(messageFields, AllMessageFields)
@@ -534,18 +529,18 @@ func getOptionMessageFields() *OptionMessageFields {
 	if indexOfLocation >= 0 {
 		messageFields = slices.Delete(messageFields, indexOfLocation, indexOfLocation+1)
 	}
-	return &OptionMessageFields{
+	return OptionMessageFields{
 		Value: messageFields,
 	}
 }
 
-func getOptionMessageFieldsAll() *OptionMessageFields {
-	return &OptionMessageFields{
+func getOptionMessageFieldsAll() OptionMessageFields {
+	return OptionMessageFields{
 		Value: AllMessageFields,
 	}
 }
 
-func getOptionMessageFieldsWithTime() *OptionMessageFields {
+func getOptionMessageFieldsWithTime() OptionMessageFields {
 
 	// Remove "location".
 
@@ -556,25 +551,19 @@ func getOptionMessageFieldsWithTime() *OptionMessageFields {
 	if indexOfLocation > 0 {
 		messageFields = slices.Delete(messageFields, indexOfLocation, indexOfLocation+1)
 	}
-	return &OptionMessageFields{
+	return OptionMessageFields{
 		Value: messageFields,
 	}
 }
 
-func getOptionMessageIDTemplate() *OptionMessageIDTemplate {
-	return &OptionMessageIDTemplate{
-		Value: "Template: %04d",
+func getOptionMessageIDTemplate(componentID int) OptionMessageIDTemplate {
+	return OptionMessageIDTemplate{
+		Value: fmt.Sprintf("SZSDK%04d", componentID) + "%04d",
 	}
 }
 
-func getOptionComponentID() *OptionComponentID {
-	return &OptionComponentID{
-		Value: 9999,
-	}
-}
-
-func getTimestamp() *MessageTime {
-	return &MessageTime{
+func getTimestamp() MessageTime {
+	return MessageTime{
 		Value: time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC),
 	}
 }
