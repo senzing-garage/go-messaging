@@ -6,6 +6,10 @@ use serde_json::Value;
 
 #[derive(Serialize, Deserialize)]
 pub struct SenzingMessage {
+    /// Code for message.
+    #[serde(rename = "code")]
+    pub code: String,
+
     /// A list of objects sent to the message generator.
     #[serde(rename = "details")]
     pub details: Details,
@@ -30,6 +34,10 @@ pub struct SenzingMessage {
     /// Location in the code identifying where the message was generated.
     #[serde(rename = "location")]
     pub location: String,
+
+    /// Reason for message.
+    #[serde(rename = "reason")]
+    pub reason: String,
 
     /// User-defined status of message.
     #[serde(rename = "status")]

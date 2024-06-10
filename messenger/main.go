@@ -2,7 +2,6 @@ package messenger
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"golang.org/x/exp/slog"
@@ -15,6 +14,7 @@ import (
 // The Messenger interface has methods for creating different
 // representations of a message.
 type Messenger interface {
+	NewError(messageNumber int, details ...interface{}) error
 	NewJSON(messageNumber int, details ...interface{}) string
 	NewSlog(messageNumber int, details ...interface{}) (string, []interface{})
 	NewSlogLevel(messageNumber int, details ...interface{}) (string, slog.Level, []interface{})
@@ -26,12 +26,14 @@ type Messenger interface {
 
 // Fields in the formatted message.
 // Order is important.
-// It should be time, level, id, text, status, duration, location, errors, details.
+// It should be time, level, id, text, code, reason, status, duration, location, errors, details.
 type MessageFormat struct {
 	Time     string      `json:"time,omitempty"`     // Time of message in UTC.
 	Level    string      `json:"level,omitempty"`    // Level:  TRACE, DEBUG, INFO, WARN, ERROR, FATAL, PANIC.
 	ID       string      `json:"id,omitempty"`       // Message identifier.
 	Text     string      `json:"text,omitempty"`     // Message text.
+	Code     string      `json:"code,omitempty"`     // Underlying reason code.
+	Reason   string      `json:"reason,omitempty"`   // Underlying reason.
 	Status   string      `json:"status,omitempty"`   // Status information.
 	Duration int64       `json:"duration,omitempty"` // Duration in nanoseconds
 	Location string      `json:"location,omitempty"` // Location in the code issuing message.
@@ -48,6 +50,11 @@ type Detail struct {
 }
 
 // --- Override values when creating messages ---------------------------------
+
+// Value of the "code" field.
+type MessageCode struct {
+	Value string // Underlying message code.
+}
 
 // Value of the "details" field.
 type MessageDetails struct {
@@ -72,6 +79,11 @@ type MessageLevel struct {
 // Value of the "location" field.
 type MessageLocation struct {
 	Value string // Location in the code issuing message.
+}
+
+// Value of the "reason" field.
+type MessageReason struct {
+	Value string // Underlying message reason.
 }
 
 // Value of the "status" field.
@@ -107,6 +119,11 @@ type OptionIDStatuses struct {
 }
 
 // List of fields included in final message.
+type OptionMessageField struct {
+	Value string // One of AllMessageFields values.
+}
+
+// List of fields included in final message.
 type OptionMessageFields struct {
 	Value []string // One or more of AllMessageFields values.
 }
@@ -114,12 +131,6 @@ type OptionMessageFields struct {
 // Format of the unique id.
 type OptionMessageIDTemplate struct {
 	Value string // Format string.
-}
-
-// The component identifier.
-// See https://github.com/senzing-garage/knowledge-base/blob/main/lists/senzing-product-ids.md
-type OptionSenzingComponentID struct {
-	Value int // Component issuing message.
 }
 
 // ----------------------------------------------------------------------------
@@ -199,12 +210,12 @@ var TextToLevelMap = map[string]slog.Level{
 }
 
 var (
-	ErrBadComponentID = errors.New("componentIdentifier must be in range 1..9999. See https://github.com/senzing-garage/knowledge-base/blob/main/lists/senzing-product-ids.md")
-	ErrEmptyMessages  = errors.New("messages must be a map[int]string")
-	ErrEmptyStatuses  = errors.New("statuses must be a map[int]string")
+	ErrEmptyMessages = errors.New("messages must be a map[int]string")
+	ErrEmptyStatuses = errors.New("statuses must be a map[int]string")
 )
 
-var AllMessageFields = []string{"details", "duration", "errors", "id", "level", "location", "status", "text", "time"}
+// Order is important in AllMessageFields. Should match order in MessageFormat.
+var AllMessageFields = []string{"time", "level", "id", "text", "code", "reason", "status", "duration", "location", "errors", "details"}
 
 // ----------------------------------------------------------------------------
 // Public functions
@@ -215,45 +226,38 @@ The New function creates a new instance of MessengerInterface.
 Adding options can be used to modify subcomponents.
 */
 func New(options ...interface{}) (Messenger, error) {
+
 	var err error
 	var result Messenger
 
 	// Default values.
 
 	var (
-		callerSkip          int
-		idMessages          = map[int]string{}
-		idStatuses          = map[int]string{}
-		componentIdentifier = 9999
-		messageIDTemplate   = fmt.Sprintf("SZSDK%04d", componentIdentifier) + "%04d"
-		messageFields       []string
+		callerSkip        int
+		idMessages        = map[int]string{}
+		idStatuses        = map[int]string{}
+		messageIDTemplate = "%04d"
+		messageFields     []string
 	)
 
 	// Process options.
 
 	for _, value := range options {
 		switch typedValue := value.(type) {
-		case *OptionCallerSkip:
+		case OptionCallerSkip:
 			callerSkip = typedValue.Value
-		case *OptionMessageFields:
-			messageFields = typedValue.Value
-		case *OptionIDMessages:
+		case OptionIDMessages:
 			idMessages = typedValue.Value
-		case *OptionIDStatuses:
+		case OptionIDStatuses:
 			idStatuses = typedValue.Value
-		case *OptionSenzingComponentID:
-			componentIdentifier = typedValue.Value
-			messageIDTemplate = fmt.Sprintf("SZSDK%04d", componentIdentifier) + "%04d"
-		case *OptionMessageIDTemplate:
+		case OptionMessageFields:
+			messageFields = typedValue.Value
+		case OptionMessageIDTemplate:
 			messageIDTemplate = typedValue.Value
 		}
 	}
 
 	// Detect incorrect option values.
-
-	if componentIdentifier <= 0 || componentIdentifier >= 10000 {
-		return result, ErrBadComponentID
-	}
 
 	if idMessages == nil {
 		return result, ErrEmptyMessages

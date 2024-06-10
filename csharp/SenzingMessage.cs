@@ -8,6 +8,12 @@ namespace Senzing
     public class SenzingMessage
     {
         /// <summary>
+        /// Code for message.
+        /// </summary>
+        [JsonPropertyName("code")]
+        public string Code { get; set; }
+
+        /// <summary>
         /// A list of objects sent to the message generator.
         /// </summary>
         [JsonPropertyName("details")]
@@ -43,6 +49,12 @@ namespace Senzing
         /// </summary>
         [JsonPropertyName("location")]
         public string Location { get; set; }
+
+        /// <summary>
+        /// Reason for message.
+        /// </summary>
+        [JsonPropertyName("reason")]
+        public string Reason { get; set; }
 
         /// <summary>
         /// User-defined status of message.

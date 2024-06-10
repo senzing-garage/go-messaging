@@ -2,6 +2,11 @@
 
 export interface SenzingMessage {
   /**
+   * Code for message.
+   */
+  code: string;
+
+  /**
    * A list of objects sent to the message generator.
    */
   details: Details;
@@ -31,6 +36,11 @@ export interface SenzingMessage {
    * Location in the code identifying where the message was generated.
    */
   location: string;
+
+  /**
+   * Reason for message.
+   */
+  reason: string;
 
   /**
    * User-defined status of message.

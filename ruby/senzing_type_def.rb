@@ -6,6 +6,9 @@ require 'time'
 module SenzingTypeDef
 
   class SenzingMessage
+    # Code for message.
+    attr_accessor :code
+
     # A list of objects sent to the message generator.
     attr_accessor :details
 
@@ -25,6 +28,9 @@ module SenzingTypeDef
     # Location in the code identifying where the message was generated.
     attr_accessor :location
 
+    # Reason for message.
+    attr_accessor :reason
+
     # User-defined status of message.
     attr_accessor :status
 
@@ -36,12 +42,14 @@ module SenzingTypeDef
 
     def self.from_json_data(data)
       out = SenzingMessage.new
+      out.code = SenzingTypeDef::from_json_data(String, data["code"])
       out.details = SenzingTypeDef::from_json_data(Details, data["details"])
       out.duration = SenzingTypeDef::from_json_data(Integer, data["duration"])
       out.errors = SenzingTypeDef::from_json_data(Errors, data["errors"])
       out.id = SenzingTypeDef::from_json_data(String, data["id"])
       out.level = SenzingTypeDef::from_json_data(String, data["level"])
       out.location = SenzingTypeDef::from_json_data(String, data["location"])
+      out.reason = SenzingTypeDef::from_json_data(String, data["reason"])
       out.status = SenzingTypeDef::from_json_data(String, data["status"])
       out.text = SenzingTypeDef::from_json_data(String, data["text"])
       out.time = SenzingTypeDef::from_json_data(DateTime, data["time"])
@@ -50,12 +58,14 @@ module SenzingTypeDef
 
     def to_json_data
       data = {}
+      data["code"] = SenzingTypeDef::to_json_data(code)
       data["details"] = SenzingTypeDef::to_json_data(details)
       data["duration"] = SenzingTypeDef::to_json_data(duration)
       data["errors"] = SenzingTypeDef::to_json_data(errors)
       data["id"] = SenzingTypeDef::to_json_data(id)
       data["level"] = SenzingTypeDef::to_json_data(level)
       data["location"] = SenzingTypeDef::to_json_data(location)
+      data["reason"] = SenzingTypeDef::to_json_data(reason)
       data["status"] = SenzingTypeDef::to_json_data(status)
       data["text"] = SenzingTypeDef::to_json_data(text)
       data["time"] = SenzingTypeDef::to_json_data(time)

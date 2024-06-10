@@ -5,6 +5,9 @@ package typedef
 import "time"
 
 type SenzingMessage struct {
+	// Code for message.
+	Code string `json:"code"`
+
 	// A list of objects sent to the message generator.
 	Details Details `json:"details"`
 
@@ -23,6 +26,9 @@ type SenzingMessage struct {
 
 	// Location in the code identifying where the message was generated.
 	Location string `json:"location"`
+
+	// Reason for message.
+	Reason string `json:"reason"`
 
 	// User-defined status of message.
 	Status string `json:"status"`

@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -
 
+## [1.5.1] - 2024-06-10
+
+### Added in 1.5.1
+
+- Support for `SENZING_MESSAGE_FIELDS` environment variable
+- Support for `code` and `reason` message fields
+
 ## [1.5.0] - 2024-06-04
 
 ### Added in 1.5.0
