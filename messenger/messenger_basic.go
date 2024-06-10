@@ -276,11 +276,12 @@ func messageDetails(details ...interface{}) []Detail {
 func (messenger *BasicMessenger) findMessageFields(details ...interface{}) []string {
 	var result []string
 	appendix := []string{}
+	senzingMessageFields := strings.TrimSpace(strings.ToLower(os.Getenv("SENZING_MESSAGE_FIELDS")))
+
 	if messenger.messageFields == nil {
-		messenger.populateMessageFields()
+		messenger.populateMessageFields(senzingMessageFields)
 	}
 
-	senzingMessageFields := strings.TrimSpace(strings.ToLower(os.Getenv("SENZING_MESSAGE_FIELDS")))
 	switch {
 	case len(senzingMessageFields) == 0:
 		result = messenger.messageFields
@@ -376,8 +377,7 @@ func (messenger *BasicMessenger) getSortedIDLevelRanges(idLevelRanges map[int]st
 	return messenger.sortedIDLevelRanges
 }
 
-func (messenger *BasicMessenger) populateMessageFields() {
-	senzingMessageFields := strings.TrimSpace(strings.ToLower(os.Getenv("SENZING_MESSAGE_FIELDS")))
+func (messenger *BasicMessenger) populateMessageFields(senzingMessageFields string) {
 	switch {
 	case len(senzingMessageFields) == 0:
 		messenger.messageFields = []string{"id", "text"}

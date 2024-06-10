@@ -309,6 +309,26 @@ func Test_NewJSON(test *testing.T) {
 	}
 }
 
+func Test_NewJSON_envvar(test *testing.T) {
+	test.Setenv("SENZING_MESSAGE_FIELDS", "id, level, text")
+	options := []interface{}{getOptionMessageIDTemplate(9999), getOptionMessageFields(), getOptionIDMessages()}
+	details := []interface{}{"Bob", "Jane"}
+	expected := `{"level":"WARN","id":"SZSDK99993003","text":"WARN: Bob works with Jane"}`
+	testObject, err := New(options...)
+	require.NoError(test, err)
+	actual := testObject.NewJSON(3003, details...)
+	assert.Equal(test, expected, actual)
+}
+
+func Test_NewJSON_envvar_all(test *testing.T) {
+	test.Setenv("SENZING_MESSAGE_FIELDS", "all")
+	options := []interface{}{getOptionMessageIDTemplate(9999), getOptionMessageFields(), getOptionIDMessages()}
+	details := []interface{}{"Bob", "Jane"}
+	testObject, err := New(options...)
+	require.NoError(test, err)
+	_ = testObject.NewJSON(3003, details...)
+}
+
 func Test_NewSlogLevel(test *testing.T) {
 	for _, testCase := range testCasesForMessage {
 		if len(testCase.expectedMessageSlog) > 0 {
@@ -347,19 +367,19 @@ func TestBasicMessenger_getLevel(test *testing.T) {
 func TestBasicMessenger_populateFields(test *testing.T) {
 	_ = test
 	messenger := &BasicMessenger{}
-	messenger.populateMessageFields()
+	messenger.populateMessageFields("")
 }
 
 func TestBasicMessenger_populateMessageFields(test *testing.T) {
 	test.Setenv("SENZING_MESSAGE_FIELDS", "id, duration, text")
 	messenger := &BasicMessenger{}
-	messenger.populateMessageFields()
+	messenger.populateMessageFields("id, duration, text")
 }
 
 func TestBasicMessenger_populateMessageFields_all(test *testing.T) {
 	test.Setenv("SENZING_MESSAGE_FIELDS", "all")
 	messenger := &BasicMessenger{}
-	messenger.populateMessageFields()
+	messenger.populateMessageFields("all")
 }
 
 func TestBasicMessenger_populateStructure(test *testing.T) {
