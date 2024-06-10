@@ -274,11 +274,29 @@ func messageDetails(details ...interface{}) []Detail {
 // ----------------------------------------------------------------------------
 
 func (messenger *BasicMessenger) findMessageFields(details ...interface{}) []string {
+	var result []string
 	appendix := []string{}
 	if messenger.messageFields == nil {
 		messenger.populateMessageFields()
 	}
-	result := messenger.messageFields
+
+	senzingMessageFields := strings.TrimSpace(strings.ToLower(os.Getenv("SENZING_MESSAGE_FIELDS")))
+	switch {
+	case len(senzingMessageFields) == 0:
+		result = messenger.messageFields
+	case senzingMessageFields == "all":
+		result = AllMessageFields
+	default:
+		result = []string{}
+		messageSplits := strings.Split(senzingMessageFields, ",")
+		for _, value := range messageSplits {
+			valueTrimmed := strings.TrimSpace(value)
+			if slices.Contains(AllMessageFields, valueTrimmed) {
+				result = append(result, valueTrimmed)
+			}
+		}
+	}
+
 	for _, value := range details {
 		switch typedValue := value.(type) {
 		case OptionMessageFields:
