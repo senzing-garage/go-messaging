@@ -77,6 +77,7 @@ For more examples, see [main.go].
 [golangci-lint.yaml Badge]: https://github.com/senzing-garage/go-messaging/actions/workflows/golangci-lint.yaml/badge.svg
 [golangci-lint.yaml]: https://github.com/senzing-garage/go-messaging/actions/workflows/golangci-lint.yaml
 [JSON TypeDef on Github]: https://github.com/jsontypedef
+[JSON TypeDef]: https://jsontypedef.com/
 [License Badge]: https://img.shields.io/badge/License-Apache2-brightgreen.svg
 [License]: https://github.com/senzing-garage/go-messaging/blob/main/LICENSE
 [main.go]: main.go
