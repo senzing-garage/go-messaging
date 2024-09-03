@@ -30,8 +30,7 @@ The Senzing `go-messaging` packages are used to create structured messages.
 ## Overview
 
 `go-messaging` generates structured messages in multiple formats.
-Currently, the JSON format and an
-[slog](https://pkg.go.dev/golang.org/x/exp/slog)-friendly format are supported.
+Currently, the JSON format and a [slog]-friendly format are supported.
 
 ## Use
 
@@ -50,8 +49,7 @@ Output:
 [id senzing-99990001 details map[1:Bob 2:Mary]]
 ```
 
-For more examples, see
-[main.go](main.go)
+For more examples, see [main.go].
 
 ## References
 
@@ -60,13 +58,11 @@ For more examples, see
 1. [Errors]
 1. [Examples]
 1. [Package reference]
-1. Related artifacts:
-    1. [DockerHub]
-1. [JSON TypeDef](https://jsontypedef.com/)
+1. [JSON TypeDef]
+1. [JSON TypeDef on Github]
 
 [API documentation]: https://pkg.go.dev/github.com/senzing-garage/go-messaging
 [Development]: docs/development.md
-[DockerHub]: https://hub.docker.com/r/senzing/go-messaging
 [Errors]: docs/errors.md
 [Examples]: docs/examples.md
 [Go Reference Badge]: https://pkg.go.dev/badge/github.com/senzing-garage/go-messaging.svg
@@ -80,9 +76,12 @@ For more examples, see
 [go-test-windows.yaml]: https://github.com/senzing-garage/go-messaging/actions/workflows/go-test-windows.yaml
 [golangci-lint.yaml Badge]: https://github.com/senzing-garage/go-messaging/actions/workflows/golangci-lint.yaml/badge.svg
 [golangci-lint.yaml]: https://github.com/senzing-garage/go-messaging/actions/workflows/golangci-lint.yaml
+[JSON TypeDef on Github]: https://github.com/jsontypedef
 [License Badge]: https://img.shields.io/badge/License-Apache2-brightgreen.svg
 [License]: https://github.com/senzing-garage/go-messaging/blob/main/LICENSE
+[main.go]: main.go
 [Package reference]: https://pkg.go.dev/github.com/senzing-garage/go-messaging
 [Senzing Garage]: https://github.com/senzing-garage
 [Senzing Quick Start guides]: https://docs.senzing.com/quickstart/
-[Senzing]: <https://senzing.com/-> [JSON TypeDef on Github](https://github.com/jsontypedef)
+[Senzing]: https://senzing.com/
+[slog]: https://pkg.go.dev/golang.org/x/exp/slog

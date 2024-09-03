@@ -35,3 +35,6 @@ target/
 cover.out
 coverage.html
 coverage.out
+
+__pycache__/
+
