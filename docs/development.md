@@ -51,6 +51,17 @@ These are "one-time tasks" which may already have been completed.
 
     ```
 
+## Generate code
+
+1. Generate code across multiple languages.
+   Example:
+
+    ```console
+    cd ${GIT_REPOSITORY_DIR}
+    make clean-generate-code generate
+
+    ```
+
 ## Lint
 
 1. Run linting.

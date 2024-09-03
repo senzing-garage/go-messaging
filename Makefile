@@ -146,8 +146,8 @@ documentation: documentation-osarch-specific
 # Generate code
 # -----------------------------------------------------------------------------
 
-.PHONY: generate-code
-generate-code: generate-csharp generate-go generate-java generate-python generate-ruby generate-rust generate-typescript
+.PHONY: generate
+generate: generate-csharp generate-go generate-java generate-python generate-ruby generate-rust generate-typescript
 
 
 .PHONY: generate-csharp
@@ -257,13 +257,13 @@ clean-rust:
 clean-typescript:
 	@rm $(MAKEFILE_DIRECTORY)/typescript/* || true
 
+
+.PHONY: clean-generated-code
+clean-generated-code: clean-go clean-java clean-python clean-ruby clean-rust clean-typescript
+
 # -----------------------------------------------------------------------------
 # Utility targets
 # -----------------------------------------------------------------------------
-
-.PHONY: clean-generated code
-clean-generated code: clean-go clean-java clean-python clean-ruby clean-rust clean-typescript
-
 
 .PHONY: help
 help:
