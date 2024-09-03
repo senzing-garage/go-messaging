@@ -435,9 +435,6 @@ func (messenger *BasicMessenger) populateStructure(messageNumber int, details ..
 		}
 	}
 
-	// TODO: Find status in underlying error.
-	// See https://github.com/senzing-garage/go-logging/blob/48487ee9793e94dac4a3e047635ffd40ff9c454e/messagestatus/messagestatus_senzingapi.go#L29-L59
-
 	// Process Options found in details and filter them out of details.
 
 	filteredDetails := []interface{}{}
@@ -466,14 +463,6 @@ func (messenger *BasicMessenger) populateStructure(messageNumber int, details ..
 		case error:
 			errorList = append(errorList, cleanErrorString(typedValue))
 			filteredDetails = append(filteredDetails, typedValue)
-
-			// TODO:
-			// messageSplits := strings.Split(errorMessage, "|")
-			// for key, value := range SenzingApiErrorsMap {
-			// 	if messageSplits[0] == key {
-			// 		errorMessageList = append(errorMessageList, value)
-			// 	}
-			// }
 		case time.Duration:
 			duration = typedValue.Nanoseconds()
 		default:

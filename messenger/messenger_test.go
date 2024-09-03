@@ -253,6 +253,19 @@ var testCasesForMessageDetails = []struct {
 // Test interface methods
 // ----------------------------------------------------------------------------
 
+func Test_XXX(test *testing.T) {
+
+	testObject, err := New(getOptionMessageIDTemplate(9999), getOptionMessageFields(), getOptionIDMessages())
+	require.NoError(test, err)
+
+	err1 := testObject.NewError(1, getMessageStatusValue("a1"))
+	err2 := testObject.NewError(2, getMessageStatusValue("b2"))
+	err3 := testObject.NewError(2, err1, err2)
+	fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n")
+	fmt.Print(err3)
+	fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n")
+}
+
 // -- Test New() method ---------------------------------------------------------
 
 func Test_NewError(test *testing.T) {
@@ -477,6 +490,12 @@ func getMessageReason() MessageReason {
 func getMessageStatus() MessageStatus {
 	return MessageStatus{
 		Value: "TestStatus",
+	}
+}
+
+func getMessageStatusValue(value string) MessageStatus {
+	return MessageStatus{
+		Value: value,
 	}
 }
 
