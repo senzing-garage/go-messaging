@@ -230,32 +230,32 @@ clean-go:
 	@go clean -cache
 	@go clean -testcache
 	@rm -f $(GOPATH)/bin/$(PROGRAM_NAME) || true
-	@rm $(MAKEFILE_DIRECTORY)/go/typedef/typedef.go || true
+	@rm -f $(MAKEFILE_DIRECTORY)/go/typedef/typedef.go || true
 
 
 .PHONY: clean-java
 clean-java:
-	@rm $(MAKEFILE_DIRECTORY)/java/* || true
+	@rm -fr $(MAKEFILE_DIRECTORY)/java/* || true
 
 
 .PHONY: clean-python
 clean-python:
-	@rm $(MAKEFILE_DIRECTORY)/python/typedef/* || true
+	@rm -fr $(MAKEFILE_DIRECTORY)/python/typedef/* || true
 
 
 .PHONY: clean-ruby
 clean-ruby:
-	@rm $(MAKEFILE_DIRECTORY)/ruby/* || true
+	@rm -fr $(MAKEFILE_DIRECTORY)/ruby/* || true
 
 
 .PHONY: clean-rust
 clean-rust:
-	@rm $(MAKEFILE_DIRECTORY)/rust/* || true
+	@rm -fr $(MAKEFILE_DIRECTORY)/rust/* || true
 
 
 .PHONY: clean-typescript
 clean-typescript:
-	@rm $(MAKEFILE_DIRECTORY)/typescript/* || true
+	@rm -fr $(MAKEFILE_DIRECTORY)/typescript/* || true
 
 
 .PHONY: clean-generated-code
