@@ -3,7 +3,6 @@ package messenger
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"slices"
 	"testing"
 	"time"
@@ -247,34 +246,6 @@ var testCasesForMessageDetails = []struct {
 		input:    int64(1),
 		expected: []Detail{{Position: 1, Type: "int64", Value: "1", ValueRaw: int64(1)}},
 	},
-}
-
-// ----------------------------------------------------------------------------
-// Test harness
-// ----------------------------------------------------------------------------
-
-func TestMain(m *testing.M) {
-	err := setup()
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(1)
-	}
-	code := m.Run()
-	err = teardown()
-	if err != nil {
-		fmt.Print(err)
-	}
-	os.Exit(code)
-}
-
-func setup() error {
-	var err error
-	return err
-}
-
-func teardown() error {
-	var err error
-	return err
 }
 
 // ----------------------------------------------------------------------------

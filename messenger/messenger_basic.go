@@ -208,7 +208,7 @@ func messageDetails(details ...interface{}) []Detail {
 
 	for index, value := range details {
 		detail := Detail{}
-		detail.Position = int32(index + 1)
+		detail.Position = int32(index + 1) //nolint:gosec
 		switch typedValue := value.(type) {
 		case nil:
 			detail.Type = "nil"
@@ -245,7 +245,7 @@ func messageDetails(details ...interface{}) []Detail {
 		case map[string]string:
 			for mapIndex, mapValue := range typedValue {
 				detail := Detail{}
-				detail.Position = int32(index + 1)
+				detail.Position = int32(index + 1) //nolint:gosec
 				detail.Key = mapIndex
 				detail.Type = "map[string]string"
 				detail.Value = interfaceAsString(mapValue)
