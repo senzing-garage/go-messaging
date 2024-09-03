@@ -2,6 +2,7 @@ package messenger
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"slices"
 	"testing"
@@ -410,7 +411,7 @@ func Test_messageDetails_errJSON(test *testing.T) {
 	err := json.Unmarshal([]byte(jsonTest), &jsonRawMessage)
 	require.NoError(test, err)
 	expected := []Detail{{Position: 1, Type: "error", Value: jsonTest, ValueRaw: jsonRawMessage}}
-	testErr := fmt.Errorf(jsonTest)
+	testErr := errors.New(jsonTest)
 	actual := messageDetails(testErr)
 	assert.Equal(test, expected, actual)
 }
