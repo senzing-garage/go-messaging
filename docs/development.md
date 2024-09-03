@@ -58,7 +58,7 @@ These are "one-time tasks" which may already have been completed.
 
     ```console
     cd ${GIT_REPOSITORY_DIR}
-    make clean-generate-code generate
+    make clean-generated-code generate
 
     ```
 
