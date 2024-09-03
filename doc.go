@@ -1,5 +1,5 @@
 /*
-go-messaging creates structured messages.
+Module go-messaging creates structured messages.
 
 # Overview
 

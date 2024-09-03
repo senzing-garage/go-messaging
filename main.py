@@ -20,7 +20,7 @@ example_message_dict: Dict[Any, Any] = {
         {"position": 3, "type": "int64", "value": "-1", "valueRaw": -1},
         {
             "position": 4,
-            "type": "g2engine._Ctype_longlong",
+            "type": "szengine._Ctype_longlong",
             "value": "-2",
             "valueRaw": -2,
         },

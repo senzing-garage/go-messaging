@@ -32,5 +32,6 @@ go.work
 target/
 
 .coverage
-python/typedef/__pycache__/
+cover.out
 coverage.html
+coverage.out

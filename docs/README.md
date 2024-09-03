@@ -1,5 +1,8 @@
 # go-messaging
 
-Placeholder for [GitHub pages](https://pages.github.com/).
+Placeholder for [GitHub pages].
 
-See [https://senzing.github.io/go-messaging](https://senzing.github.io/go-messaging).
+See [GitHub page].
+
+[GitHub page]: https://garage.senzing.com/go-messaging
+[GitHub pages]: https://pages.github.com/
