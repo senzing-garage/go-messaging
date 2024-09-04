@@ -1,13 +1,9 @@
 # go-messaging
 
-If you are beginning your journey with
-[Senzing](https://senzing.com/),
-please start with
-[Senzing Quick Start guides](https://docs.senzing.com/quickstart/).
+If you are beginning your journey with [Senzing],
+please start with [Senzing Quick Start guides].
 
-You are in the
-[Senzing Garage](https://github.com/senzing-garage)
-where projects are "tinkered" on.
+You are in the [Senzing Garage] where projects are "tinkered" on.
 Although this GitHub repository may help you understand an approach to using Senzing,
 it's not considered to be "production ready" and is not considered to be part of the Senzing product.
 Heck, it may not even be appropriate for your application of Senzing!
@@ -22,20 +18,19 @@ the recommendation is not to use it yet.
 
 The Senzing `go-messaging` packages are used to create structured messages.
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/senzing-garage/go-messaging.svg)](https://pkg.go.dev/github.com/senzing-garage/go-messaging)
-[![Go Report Card](https://goreportcard.com/badge/github.com/senzing-garage/go-messaging)](https://goreportcard.com/report/github.com/senzing-garage/go-messaging)
-[![License](https://img.shields.io/badge/License-Apache2-brightgreen.svg)](https://github.com/senzing-garage/go-messaging/blob/main/LICENSE)
+[![Go Reference Badge]][Package reference]
+[![Go Report Card Badge]][Go Report Card]
+[![License Badge]][License]
+[![go-test-linux.yaml Badge]][go-test-linux.yaml]
+[![go-test-darwin.yaml Badge]][go-test-darwin.yaml]
+[![go-test-windows.yaml Badge]][go-test-windows.yaml]
 
-[![gosec.yaml](https://github.com/senzing-garage/go-messaging/actions/workflows/gosec.yaml/badge.svg)](https://github.com/senzing-garage/go-messaging/actions/workflows/gosec.yaml)
-[![go-test-linux.yaml](https://github.com/senzing-garage/go-messaging/actions/workflows/go-test-linux.yaml/badge.svg)](https://github.com/senzing-garage/go-messaging/actions/workflows/go-test-linux.yaml)
-[![go-test-darwin.yaml](https://github.com/senzing-garage/go-messaging/actions/workflows/go-test-darwin.yaml/badge.svg)](https://github.com/senzing-garage/go-messaging/actions/workflows/go-test-darwin.yaml)
-[![go-test-windows.yaml](https://github.com/senzing-garage/go-messaging/actions/workflows/go-test-windows.yaml/badge.svg)](https://github.com/senzing-garage/go-messaging/actions/workflows/go-test-windows.yaml)
+[![golangci-lint.yaml Badge]][golangci-lint.yaml]
 
 ## Overview
 
 `go-messaging` generates structured messages in multiple formats.
-Currently, the JSON format and an
-[slog](https://pkg.go.dev/golang.org/x/exp/slog)-friendly format are supported.
+Currently, the JSON format and a [slog]-friendly format are supported.
 
 ## Use
 
@@ -54,15 +49,40 @@ Output:
 [id senzing-99990001 details map[1:Bob 2:Mary]]
 ```
 
-For more examples, see
-[main.go](main.go)
+For more examples, see [main.go].
 
 ## References
 
-- [API documentation](https://pkg.go.dev/github.com/senzing-garage/go-messaging)
-- [Development](docs/development.md)
-- [Errors](docs/errors.md)
-- [Examples](docs/examples.md)
+1. [API documentation]
+1. [Development]
+1. [Errors]
+1. [Examples]
+1. [Package reference]
+1. [JSON TypeDef]
+1. [JSON TypeDef on Github]
 
-- [JSON TypeDef](https://jsontypedef.com/)
-- [JSON TypeDef on Github](https://github.com/jsontypedef)
+[API documentation]: https://pkg.go.dev/github.com/senzing-garage/go-messaging
+[Development]: docs/development.md
+[Errors]: docs/errors.md
+[Examples]: docs/examples.md
+[Go Reference Badge]: https://pkg.go.dev/badge/github.com/senzing-garage/go-messaging.svg
+[Go Report Card Badge]: https://goreportcard.com/badge/github.com/senzing-garage/go-messaging
+[Go Report Card]: https://goreportcard.com/report/github.com/senzing-garage/go-messaging
+[go-test-darwin.yaml Badge]: https://github.com/senzing-garage/go-messaging/actions/workflows/go-test-darwin.yaml/badge.svg
+[go-test-darwin.yaml]: https://github.com/senzing-garage/go-messaging/actions/workflows/go-test-darwin.yaml
+[go-test-linux.yaml Badge]: https://github.com/senzing-garage/go-messaging/actions/workflows/go-test-linux.yaml/badge.svg
+[go-test-linux.yaml]: https://github.com/senzing-garage/go-messaging/actions/workflows/go-test-linux.yaml
+[go-test-windows.yaml Badge]: https://github.com/senzing-garage/go-messaging/actions/workflows/go-test-windows.yaml/badge.svg
+[go-test-windows.yaml]: https://github.com/senzing-garage/go-messaging/actions/workflows/go-test-windows.yaml
+[golangci-lint.yaml Badge]: https://github.com/senzing-garage/go-messaging/actions/workflows/golangci-lint.yaml/badge.svg
+[golangci-lint.yaml]: https://github.com/senzing-garage/go-messaging/actions/workflows/golangci-lint.yaml
+[JSON TypeDef on Github]: https://github.com/jsontypedef
+[JSON TypeDef]: https://jsontypedef.com/
+[License Badge]: https://img.shields.io/badge/License-Apache2-brightgreen.svg
+[License]: https://github.com/senzing-garage/go-messaging/blob/main/LICENSE
+[main.go]: main.go
+[Package reference]: https://pkg.go.dev/github.com/senzing-garage/go-messaging
+[Senzing Garage]: https://github.com/senzing-garage
+[Senzing Quick Start guides]: https://docs.senzing.com/quickstart/
+[Senzing]: https://senzing.com/
+[slog]: https://pkg.go.dev/golang.org/x/exp/slog

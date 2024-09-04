@@ -2,8 +2,8 @@ package messenger
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
-	"os"
 	"slices"
 	"testing"
 	"time"
@@ -250,36 +250,21 @@ var testCasesForMessageDetails = []struct {
 }
 
 // ----------------------------------------------------------------------------
-// Test harness
-// ----------------------------------------------------------------------------
-
-func TestMain(m *testing.M) {
-	err := setup()
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(1)
-	}
-	code := m.Run()
-	err = teardown()
-	if err != nil {
-		fmt.Print(err)
-	}
-	os.Exit(code)
-}
-
-func setup() error {
-	var err error
-	return err
-}
-
-func teardown() error {
-	var err error
-	return err
-}
-
-// ----------------------------------------------------------------------------
 // Test interface methods
 // ----------------------------------------------------------------------------
+
+func Test_XXX(test *testing.T) {
+
+	testObject, err := New(getOptionMessageIDTemplate(9999), getOptionMessageFields(), getOptionIDMessages())
+	require.NoError(test, err)
+
+	err1 := testObject.NewError(1, getMessageStatusValue("a1"))
+	err2 := testObject.NewError(2, getMessageStatusValue("b2"))
+	err3 := testObject.NewError(2, err1, err2)
+	fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n")
+	fmt.Print(err3)
+	fmt.Printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n")
+}
 
 // -- Test New() method ---------------------------------------------------------
 
@@ -439,7 +424,7 @@ func Test_messageDetails_errJSON(test *testing.T) {
 	err := json.Unmarshal([]byte(jsonTest), &jsonRawMessage)
 	require.NoError(test, err)
 	expected := []Detail{{Position: 1, Type: "error", Value: jsonTest, ValueRaw: jsonRawMessage}}
-	testErr := fmt.Errorf(jsonTest)
+	testErr := errors.New(jsonTest)
 	actual := messageDetails(testErr)
 	assert.Equal(test, expected, actual)
 }
@@ -505,6 +490,12 @@ func getMessageReason() MessageReason {
 func getMessageStatus() MessageStatus {
 	return MessageStatus{
 		Value: "TestStatus",
+	}
+}
+
+func getMessageStatusValue(value string) MessageStatus {
+	return MessageStatus{
+		Value: value,
 	}
 }
 

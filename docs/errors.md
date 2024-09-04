@@ -1,1 +1,1 @@
-# Errors
+# go-messaging errors

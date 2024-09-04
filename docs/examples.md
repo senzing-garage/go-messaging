@@ -1,1 +1,1 @@
-# Examples
+# go-messaging examples
