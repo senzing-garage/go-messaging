@@ -385,7 +385,7 @@ func Test_cleanErrorString(test *testing.T) {
 
 func Test_interfaceAsString(test *testing.T) {
 	assert.Equal(test, "<nil>", interfaceAsString(nil))
-	assert.Equal(test, `{"json": "string"}`, interfaceAsString(`{"json": "string"}`))
+	assert.JSONEq(test, `{"json": "string"}`, interfaceAsString(`{"json": "string"}`))
 	assert.Equal(test, "a string", interfaceAsString("a string"))
 	assert.Equal(test, "5", interfaceAsString(5))
 	assert.Equal(test, "0.6", interfaceAsString(0.6))
