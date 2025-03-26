@@ -9,10 +9,6 @@
 # OS specific targets
 # -----------------------------------------------------------------------------
 
-.PHONY: build-osarch-specific
-build-osarch-specific: darwin/amd64
-
-
 .PHONY: clean-osarch-specific
 clean-osarch-specific:
 	@rm -f  $(GOPATH)/bin/$(PROGRAM_NAME) || true
@@ -32,8 +28,8 @@ coverage-osarch-specific:
 
 
 .PHONY: dependencies-for-development-osarch-specific
-dependencies-for-development-osarch-specific: 
-	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.58.1
+dependencies-for-development-osarch-specific:
+	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin latest
 
 
 .PHONY: documentation-osarch-specific
