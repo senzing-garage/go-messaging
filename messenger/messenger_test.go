@@ -672,8 +672,9 @@ func Test_NewSlogLevel(test *testing.T) {
 
 func Test_YYY(test *testing.T) {
 	test.Parallel()
+
 	testObject := &messenger.BasicMessenger{}
-	_, _, _ = testObject.NewSlogLevel(1)
+	testObject.NewSlogLevel(1)
 }
 
 func Test_New_badIdMessages(test *testing.T) {
