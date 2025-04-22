@@ -492,6 +492,34 @@ var testCasesForMessage = []struct {
 		expectedText:      "PANIC: Bob works with Jane",
 		expectedSlogLevel: messenger.LevelPanicSlog,
 	},
+	{
+		name:          "messenger-9001",
+		messageNumber: 9001,
+		comment:       "",
+		options: []interface{}{
+			getOptionMessageIDTemplate(9999),
+			getOptionMessageFields(),
+			getOptionIDMessages(),
+			getOptionCallerSkip(),
+			getOptionIDStatuses(),
+		},
+		details:             []interface{}{123, true, 1.23},
+		expectedMessageJSON: `{"level":"PANIC","id":"SZSDK99999001","details":[{"position":1,"type":"integer","value":"123","valueRaw":123},{"position":2,"type":"boolean","value":"true","valueRaw":true},{"position":3,"type":"float","value":"1.23","valueRaw":1.23}]}`,
+		expectedMessageSlog: []interface{}{
+			"level",
+			"PANIC",
+			"id",
+			"SZSDK99999001",
+			"details",
+			[]messenger.Detail{
+				{Key: "", Position: 1, Type: "integer", Value: "123", ValueRaw: 123},
+				{Key: "", Position: 2, Type: "boolean", Value: "true", ValueRaw: true},
+				{Key: "", Position: 3, Type: "float", Value: "1.23", ValueRaw: 1.23},
+			},
+		},
+		expectedText:      "",
+		expectedSlogLevel: messenger.LevelPanicSlog,
+	},
 }
 
 // var testCasesForMessageDetails = []struct {
@@ -638,6 +666,14 @@ func Test_NewSlogLevel(test *testing.T) {
 			})
 		}
 	}
+}
+
+// -- Test error conditions -----------------------------------------------------
+
+func Test_YYY(test *testing.T) {
+	test.Parallel()
+	testObject := &messenger.BasicMessenger{}
+	_, _, _ = testObject.NewSlogLevel(1)
 }
 
 func Test_New_badIdMessages(test *testing.T) {
