@@ -1,4 +1,4 @@
-package parser
+package parser_test
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/senzing-garage/go-messaging/go/typedef"
+	"github.com/senzing-garage/go-messaging/parser"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -28,7 +29,7 @@ var testCasesForMessage = []struct {
 	{
 		name:          "parser-0001",
 		message:       "",
-		expectedError: "unexpected end of JSON input",
+		expectedError: "parser.Parse error: unexpected end of JSON input",
 	},
 	{
 		name:    "parser-0002",
@@ -37,12 +38,12 @@ var testCasesForMessage = []struct {
 	{
 		name:          "parser-0003",
 		message:       "{Not really JSON}",
-		expectedError: "invalid character 'N' looking for beginning of object key string",
+		expectedError: "parser.Parse error: invalid character 'N' looking for beginning of object key string",
 	},
 	{
 		name:          "parser-0004",
 		message:       `{"text":"Bob works with Jane", But not really JSON}`,
-		expectedError: "invalid character 'B' looking for beginning of object key string",
+		expectedError: "parser.Parse error: invalid character 'B' looking for beginning of object key string",
 	},
 	{
 		name:                  "parser-0010",
@@ -61,17 +62,26 @@ var testCasesForMessage = []struct {
 	},
 }
 
+const (
+	message1 = `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"SZSDK99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
+)
+
 // ----------------------------------------------------------------------------
 // Test interface functions
 // ----------------------------------------------------------------------------
 
 func TestParse(test *testing.T) {
+	test.Parallel()
+
 	for _, testCase := range testCasesForMessage {
 		test.Run(testCase.name, func(test *testing.T) {
-			parsedMessage, err := Parse(testCase.message)
+			test.Parallel()
+
+			parsedMessage, err := parser.Parse(testCase.message)
 			if err != nil {
 				assert.Equal(test, testCase.expectedError, err.Error(), testCase.name+"-ExpectedError")
 			}
+
 			assert.Equal(test, testCase.expectedDetails, parsedMessage.Details, testCase.name+"-Details")
 			assert.Len(test, parsedMessage.Details, testCase.expectedDetailsNumber, testCase.name+"-DetailsNum")
 			assert.Equal(test, testCase.expectedDuration, parsedMessage.Duration, testCase.name+"-Duration")
@@ -93,88 +103,88 @@ func TestParse(test *testing.T) {
 
 func ExampleParse_details() {
 	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/parser/parser_test.go
-	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"SZSDK99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
-	parsedMessage, err := Parse(message)
+	parsedMessage, err := parser.Parse(message1)
 	if err != nil {
 		panic(err)
 	}
+
 	fmt.Println(parsedMessage.Details)
 	//Output: [{ 1  Bob <nil>} { 2  Jane <nil>}]
 }
 
 func ExampleParse_duration() {
 	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/parser/parser_test.go
-	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"SZSDK99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
-	parsedMessage, err := Parse(message)
+	parsedMessage, err := parser.Parse(message1)
 	if err != nil {
 		panic(err)
 	}
+
 	fmt.Println(parsedMessage.Duration)
 	//Output: 1234
 }
 
 func ExampleParse_errors() {
 	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/parser/parser_test.go
-	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"SZSDK99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
-	parsedMessage, err := Parse(message)
+	parsedMessage, err := parser.Parse(message1)
 	if err != nil {
 		panic(err)
 	}
+
 	fmt.Println(parsedMessage.Errors)
 	//Output: [error1 error2]
 }
 
 func ExampleParse_id() {
 	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/parser/parser_test.go
-	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"SZSDK99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
-	parsedMessage, err := Parse(message)
+	parsedMessage, err := parser.Parse(message1)
 	if err != nil {
 		panic(err)
 	}
+
 	fmt.Println(parsedMessage.ID)
 	//Output: SZSDK99990001
 }
 
 func ExampleParse_level() {
 	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/parser/parser_test.go
-	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"SZSDK99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
-	parsedMessage, err := Parse(message)
+	parsedMessage, err := parser.Parse(message1)
 	if err != nil {
 		panic(err)
 	}
+
 	fmt.Println(parsedMessage.Level)
 	//Output: TRACE
 }
 
 func ExampleParse_status() {
 	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/parser/parser_test.go
-	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"SZSDK99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
-	parsedMessage, err := Parse(message)
+	parsedMessage, err := parser.Parse(message1)
 	if err != nil {
 		panic(err)
 	}
+
 	fmt.Println(parsedMessage.Status)
 	//Output: OK
 }
 
 func ExampleParse_text() {
 	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/parser/parser_test.go
-	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"SZSDK99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
-	parsedMessage, err := Parse(message)
+	parsedMessage, err := parser.Parse(message1)
 	if err != nil {
 		panic(err)
 	}
+
 	fmt.Println(parsedMessage.Text)
 	//Output: Bob works with Jane
 }
 
 func ExampleParse_time() {
 	// For more information, visit https://github.com/senzing-garage/go-messaging/blob/main/parser/parser_test.go
-	message := `{"time":"2000-01-01T00:00:00Z","level":"TRACE","id":"SZSDK99990001","text":"Bob works with Jane","status":"OK","duration":1234,"errors":["error1","error2"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Jane"}]}`
-	parsedMessage, err := Parse(message)
+	parsedMessage, err := parser.Parse(message1)
 	if err != nil {
 		panic(err)
 	}
+
 	fmt.Println(parsedMessage.Time.Format(time.RFC3339Nano))
 	//Output: 2000-01-01T00:00:00Z
 }

@@ -215,7 +215,19 @@ var (
 )
 
 // Order is important in AllMessageFields. Should match order in MessageFormat.
-var AllMessageFields = []string{"time", "level", "id", "text", "code", "reason", "status", "duration", "location", "errors", "details"}
+var AllMessageFields = []string{
+	"time",
+	"level",
+	"id",
+	"text",
+	"code",
+	"reason",
+	"status",
+	"duration",
+	"location",
+	"errors",
+	"details",
+}
 
 // ----------------------------------------------------------------------------
 // Public functions
@@ -226,8 +238,8 @@ The New function creates a new instance of MessengerInterface.
 Adding options can be used to modify subcomponents.
 */
 func New(options ...interface{}) (Messenger, error) {
-
 	var err error
+
 	var result Messenger
 
 	// Default values.
@@ -276,5 +288,6 @@ func New(options ...interface{}) (Messenger, error) {
 		messageFields:     messageFields,
 		messageIDTemplate: messageIDTemplate,
 	}
+
 	return result, err
 }
