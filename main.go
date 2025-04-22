@@ -33,9 +33,6 @@ var (
 // ----------------------------------------------------------------------------
 
 func main() {
-
-	// Example Default messages.
-
 	aMessenger, err := messenger.New()
 	testError(err, "Error1: %s\n")
 	displayMessages("Default messages", aMessenger)
@@ -86,15 +83,15 @@ func main() {
 	// Example parsed messages.
 
 	printBanner("Parsed messages")
+
 	message1 := `{"time":"2023-07-11T21:05:51.918625982Z","level":"DEBUG","id":"SZSDK99981001","text":"DEBUG: Bob works with Mary","location":"In main() at main.go:101","errors":["error #1","{\"time\": \"2023-04-10T11:00:20.623748617-04:00\",\"level\": \"TRACE\",\"id\": \"SZSDK99990002\",\"text\": \"A fake error\",\"location\": \"In main() at main.go:36\",\"details\": {\"1\": \"Bob\",\"2\": \"Mary\"}}"],"details":[{"position":1,"value":"Bob"},{"position":2,"value":"Mary"},{"position":3,"value":"error #1"},{"position":4,"value":"\n\t{\n\t\t\"time\": \"2023-04-10T11:00:20.623748617-04:00\",\n\t\t\"level\": \"TRACE\",\n\t\t\"id\": \"SZSDK99990002\",\n\t\t\"text\": \"A fake error\",\n\t\t\"location\": \"In main() at main.go:36\",\"details\": {\"1\": \"Bob\",\"2\": \"Mary\"}}","valueRaw":{"time":"2023-04-10T11:00:20.623748617-04:00","level":"TRACE","id":"SZSDK99990002","text":"A fake error","location":"In main() at main.go:36","details":{"1":"Bob","2":"Mary"}}}]}	`
 	parsedMessage1, err := parser.Parse(message1)
 	testError(err, "Error8: %s\n")
-	fmt.Printf("Parse test 1 - ID: %s; Text: %s\n", parsedMessage1.ID, parsedMessage1.Text)
+	outputf("Parse test 1 - ID: %s; Text: %s\n", parsedMessage1.ID, parsedMessage1.Text)
 
 	// Epilog.
 
 	printBanner("Done")
-
 }
 
 // ----------------------------------------------------------------------------
@@ -102,43 +99,53 @@ func main() {
 // ----------------------------------------------------------------------------
 
 func displayMessages(banner string, aMessenger messenger.Messenger) {
-
 	printBanner(banner)
 
 	printJSONMessage(aMessenger.NewJSON(0001, "Bob", "Mary"))
 	printJSONMessage(aMessenger.NewJSON(2001, "Bob", "Mary"))
 	printJSONMessage(aMessenger.NewJSON(3001, "Bob", "Mary", reason, err1))
 	printJSONMessage(aMessenger.NewJSON(4001, "Bob", "Mary", reason, err1))
-	fmt.Println()
+	outputln()
 
-	fmt.Println(aMessenger.NewSlog(1001, "Bob", "Mary"))
-	fmt.Println(aMessenger.NewSlog(2001, "Bob", "Mary"))
-	fmt.Println(aMessenger.NewSlog(3001, "Bob", "Mary", reason, err1))
-	fmt.Println(aMessenger.NewSlog(4001, "Bob", "Mary", reason, err1))
+	outputln(aMessenger.NewSlog(1001, "Bob", "Mary"))
+	outputln(aMessenger.NewSlog(2001, "Bob", "Mary"))
+	outputln(aMessenger.NewSlog(3001, "Bob", "Mary", reason, err1))
+	outputln(aMessenger.NewSlog(4001, "Bob", "Mary", reason, err1))
+}
+
+func outputf(format string, message ...any) {
+	fmt.Printf(format, message...) //nolint
+}
+
+func outputln(message ...any) {
+	fmt.Println(message...) //nolint
 }
 
 func printBanner(banner string) {
-	fmt.Printf("\n%s\n", strings.Repeat("-", 80))
-	fmt.Printf("-- %s\n", banner)
-	fmt.Printf("%s\n\n", strings.Repeat("-", 80))
+	outputf("\n%s\n", strings.Repeat("-", 80))
+	outputf("-- %s\n", banner)
+	outputf("%s\n\n", strings.Repeat("-", 80))
 }
 
 func printJSONMessage(message string) {
-	fmt.Println(message)
+	outputln(message)
 	parsedMessage, err := parser.Parse(message)
 	testError(err, "Error7: %s\n")
-	fmt.Printf("    - Parsed as ID: %s", parsedMessage.ID)
+	outputf("    - Parsed as ID: %s", parsedMessage.ID)
+
 	if len(parsedMessage.Text) > 0 {
-		fmt.Printf("; Text: %s", parsedMessage.Text)
+		outputf("; Text: %s", parsedMessage.Text)
 	}
+
 	if len(parsedMessage.Reason) > 0 {
-		fmt.Printf("; Reason: %s", parsedMessage.Reason)
+		outputf("; Reason: %s", parsedMessage.Reason)
 	}
-	fmt.Printf("\n")
+
+	outputf("\n")
 }
 
 func testError(err error, stringFormat string) {
 	if err != nil {
-		fmt.Printf(stringFormat, err.Error())
+		outputf(stringFormat, err.Error())
 	}
 }

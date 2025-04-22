@@ -11,35 +11,36 @@ linters:
     - containedctx
     - contextcheck
     - copyloopvar
-    # - cyclop
+    - cyclop
     - decorder
-    # - depguard
+    - depguard
     - dogsled
     - dupl
     - dupword
     - durationcheck
-    # - err113
+    - err113
     - errcheck
     - errchkjson
     - errname
     - errorlint
     - exhaustive
-    # - exhaustruct
+    - exhaustruct
     - exptostd
     - fatcontext
-    # - forbidigo
+    - forbidigo
     - forcetypeassert
-    # - funlen
+    - funcorder
+    - funlen
     - ginkgolinter
     - gocheckcompilerdirectives
-    # - gochecknoglobals
-    # - gochecknoinits
+    - gochecknoglobals
+    - gochecknoinits
     - gochecksumtype
     - gocognit
-    # - goconst
+    - goconst
     - gocritic
-    # - gocyclo
-    # - godot
+    - gocyclo
+    - godot
     - godox
     - goheader
     - gomoddirectives
@@ -55,27 +56,27 @@ linters:
     - ineffassign
     - interfacebloat
     - intrange
-    # - ireturn
-    # - lll
+    - ireturn
+    - lll
     - loggercheck
     - maintidx
     - makezero
     - mirror
     - misspell
-    # - mnd
+    - mnd
     - musttag
     - nakedret
     - nestif
     - nilerr
     - nilnesserr
     - nilnil
-    # - nlreturn
+    - nlreturn
     - noctx
     - nolintlint
     - nonamedreturns
     - nosprintfhostport
-    # - paralleltest
-    # - perfsprint
+    - paralleltest
+    - perfsprint
     - prealloc
     - predeclared
     - promlinter
@@ -92,20 +93,25 @@ linters:
     - tagliatelle
     - testableexamples
     - testifylint
-    # - testpackage
+    - testpackage
     - thelper
     - tparallel
     - unconvert
-    # - unparam
+    - unparam
     - unused
     - usestdlibvars
     - usetesting
-    # - varnamelen
+    - varnamelen
     - wastedassign
-    # - whitespace
-    # - wrapcheck
-    # - wsl
+    - whitespace
+    - wrapcheck
+    - wsl
     - zerologlint
+  disable:
+    - gochecknoglobals
+    - ireturn
+    - lll
+    - mnd
   exclusions:
     generated: lax
     presets:
@@ -117,6 +123,29 @@ linters:
       - third_party$
       - builtin$
       - examples$
+  settings:
+    cyclop:
+      max-complexity: 15
+    depguard:
+      rules:
+        prevent_unmaintained_packages:
+          list-mode: lax # allow unless explicitely denied
+          allow:
+            - github.com/stretchr/testify/*
+          deny:
+            - pkg: io/ioutil
+              desc: "replaced by io and os packages since Go 1.16: https://tip.golang.org/doc/go1.16#ioutil"
+    exhaustruct:
+      exclude:
+        - '.+/messenger\.BasicMessenger$'
+        - '.+/messenger\.Detail$'
+        - '.+/messenger\.MessageFormat$'
+        - '.+/messenger\.OptionIDMessages$'
+        - '.+/messenger\.OptionIDStatuses$'
+        - '.+/messenger\.theFields$'
+        - '.+/parser_test\.<anonymous>$'
+        - '.+/typedef\.Detail$'
+        - '.+/typedef\.SenzingMessage$'
 
 formatters:
   enable:
