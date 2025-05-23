@@ -30,7 +30,7 @@ and this project adheres to [Semantic Versioning].
 
 ### Added in 1.5.0
 
-- Suport for `OptionMessageFields`
+- Support for `OptionMessageFields`
 
 ### Changed in 1.5.0
 
