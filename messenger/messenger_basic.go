@@ -89,6 +89,7 @@ func (messenger *BasicMessenger) NewJSON(messageNumber int, details ...interface
 	// Work-around.
 
 	var resultBytes bytes.Buffer
+
 	enc := json.NewEncoder(&resultBytes)
 	enc.SetEscapeHTML(false)
 
@@ -575,6 +576,7 @@ func messageDetails(details ...interface{}) []Detail {
 
 	for index, value := range details {
 		detailPosition := int32(index + 1) //nolint:gosec
+
 		switch typedValue := value.(type) {
 		case nil:
 			result = append(result, createNilDetail(detailPosition))
