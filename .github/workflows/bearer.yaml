@@ -1,6 +1,8 @@
-name: spellcheck
+name: bearer
 
 on:
+  push:
+    branches-ignore: [main]
   pull_request:
     branches: [main]
 
@@ -8,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  spellcheck:
+  rule_check:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,6 +19,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: streetsidesoftware/cspell-action@v7
+      - name: Bearer
+        uses: bearer/bearer-action@v2
         with:
-          config: .vscode/cspell.json
+          config-file: .github/linters/bearer.yml

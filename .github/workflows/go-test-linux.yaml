@@ -12,6 +12,7 @@ jobs:
       status: ${{ job.status }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         go: ["1.24"]
         os: [ubuntu-latest]
@@ -20,7 +21,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
-          fetch-depth: 0
+          persist-credentials: false
 
       - name: Setup go ${{ matrix.go }}
         uses: actions/setup-go@v6
