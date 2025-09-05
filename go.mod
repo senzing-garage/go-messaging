@@ -1,10 +1,10 @@
 module github.com/senzing-garage/go-messaging
 
-go 1.24
+go 1.24.4
 
 require (
 	github.com/stretchr/testify v1.11.1
-	golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0
+	golang.org/x/exp v0.0.0-20250819193227-8b4c13bb791b
 )
 
 require (
