@@ -544,6 +544,7 @@ func jsonAsInterface(unknownString string) interface{} {
 func interfaceAsString(unknown interface{}) string {
 	// See https://pkg.go.dev/fmt for format strings.
 	var result string
+
 	switch value := unknown.(type) {
 	case nil:
 		result = "<nil>"
