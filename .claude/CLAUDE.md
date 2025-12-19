@@ -60,6 +60,7 @@ make clean
 ### Message Level Convention
 
 Message numbers determine log level automatically:
+
 - 0-999: TRACE
 - 1000-1999: DEBUG
 - 2000-2999: INFO
