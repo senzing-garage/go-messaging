@@ -576,7 +576,9 @@ func messageDetails(details ...interface{}) []Detail {
 	// Process different types of details.
 
 	for index, value := range details {
-		detailPosition := int32(index + 1) //nolint:gosec
+		detailPosition := int32(
+			index + 1,
+		) //nolint:gosec // G115: index is bounded by details slice length, no overflow risk.
 
 		switch typedValue := value.(type) {
 		case nil:
