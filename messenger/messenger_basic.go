@@ -137,7 +137,7 @@ func (messenger *BasicMessenger) NewSlogLevel(
 	messageNumber int,
 	details ...interface{},
 ) (string, slog.Level, []interface{}) {
-	populateDetails := []interface{}{}
+	populateDetails := make([]interface{}, 0, len(details)+1)
 	populateDetails = append(populateDetails, details...)
 	populateDetails = append(populateDetails, OptionMessageField{Value: "level"})
 	messageFormat := messenger.populateStructure(messageNumber, populateDetails...)
@@ -576,7 +576,7 @@ func messageDetails(details ...interface{}) []Detail {
 	// Process different types of details.
 
 	for index, value := range details {
-		detailPosition := int32(index + 1) //nolint:gosec
+		detailPosition := int32(index + 1)
 
 		switch typedValue := value.(type) {
 		case nil:
