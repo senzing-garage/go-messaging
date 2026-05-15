@@ -19,6 +19,18 @@ import (
 // 	jsonTest = `{"Key": "Value"}`
 // )
 
+const (
+	nameBob      = "Bob"
+	nameJane     = "Jane"
+	keyDetails   = "details"
+	keyLevel     = "level"
+	levelPanic   = "PANIC"
+	levelWarn    = "WARN"
+	textWarnBob  = "WARN: Bob works with Jane"
+	typeString   = "string"
+	warnTemplate = "WARN: %s works with %s"
+)
+
 var (
 	durationTest time.Duration = 100000000
 	// err                        = fmt.Errorf("") .
@@ -31,9 +43,9 @@ var idMessages = map[int]string{
 	0001: "TRACE: %s works with %s",
 	1001: "DEBUG: %s works with %s",
 	2001: "INFO: %s works with %s",
-	3001: "WARN: %s works with %s",
-	3002: "WARN: %s works with %s",
-	3003: "WARN: %s works with %s",
+	3001: warnTemplate,
+	3002: warnTemplate,
+	3003: warnTemplate,
 	3004: `{"bob": "%s", "jane": "%s"}`,
 	4001: "ERROR: %s works with %s",
 	5001: "FATAL: %s works with %s",
@@ -72,17 +84,17 @@ var testCasesForMessage = []struct {
 			getOptionMessageFields(),
 			getOptionIDMessages(),
 		},
-		details:             []interface{}{"Bob", "Jane"},
+		details:             []interface{}{nameBob, nameJane},
 		expectedMessageJSON: `{"level":"TRACE","id":"SZSDK99990001","text":"TRACE: Bob works with Jane","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
 		expectedMessageSlog: []interface{}{
-			"level",
+			keyLevel,
 			"TRACE",
 			"id",
 			"SZSDK99990001",
-			"details",
+			keyDetails,
 			[]messenger.Detail{
-				{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)},
-				{Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)},
+				{Key: "", Position: 1, Type: typeString, Value: nameBob, ValueRaw: interface{}(nil)},
+				{Key: "", Position: 2, Type: typeString, Value: nameJane, ValueRaw: interface{}(nil)},
 			},
 		},
 		expectedText: "TRACE: Bob works with Jane", expectedSlogLevel: messenger.LevelTraceSlog,
@@ -96,17 +108,17 @@ var testCasesForMessage = []struct {
 			getOptionMessageFields(),
 			getOptionIDMessages(),
 		},
-		details:             []interface{}{"Bob", "Jane"},
+		details:             []interface{}{nameBob, nameJane},
 		expectedMessageJSON: `{"level":"DEBUG","id":"SZSDK99981001","text":"DEBUG: Bob works with Jane","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
 		expectedMessageSlog: []interface{}{
-			"level",
+			keyLevel,
 			"DEBUG",
 			"id",
 			"SZSDK99981001",
-			"details",
+			keyDetails,
 			[]messenger.Detail{
-				{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)},
-				{Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)},
+				{Key: "", Position: 1, Type: typeString, Value: nameBob, ValueRaw: interface{}(nil)},
+				{Key: "", Position: 2, Type: typeString, Value: nameJane, ValueRaw: interface{}(nil)},
 			},
 		},
 		expectedText:      "DEBUG: Bob works with Jane",
@@ -121,17 +133,17 @@ var testCasesForMessage = []struct {
 			getOptionMessageFields(),
 			getOptionIDMessages(),
 		},
-		details:             []interface{}{"Bob", "Jane"},
+		details:             []interface{}{nameBob, nameJane},
 		expectedMessageJSON: `{"level":"INFO","id":"SZSDK99992001","text":"INFO: Bob works with Jane","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
 		expectedMessageSlog: []interface{}{
-			"level",
+			keyLevel,
 			"INFO",
 			"id",
 			"SZSDK99992001",
-			"details",
+			keyDetails,
 			[]messenger.Detail{
-				{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)},
-				{Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)},
+				{Key: "", Position: 1, Type: typeString, Value: nameBob, ValueRaw: interface{}(nil)},
+				{Key: "", Position: 2, Type: typeString, Value: nameJane, ValueRaw: interface{}(nil)},
 			},
 		},
 		expectedText:      "INFO: Bob works with Jane",
@@ -146,20 +158,20 @@ var testCasesForMessage = []struct {
 			getOptionMessageFields(),
 			getOptionIDMessages(),
 		},
-		details:             []interface{}{"Bob", "Jane"},
+		details:             []interface{}{nameBob, nameJane},
 		expectedMessageJSON: `{"level":"WARN","id":"SZSDK99993001","text":"WARN: Bob works with Jane","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
 		expectedMessageSlog: []interface{}{
-			"level",
-			"WARN",
+			keyLevel,
+			levelWarn,
 			"id",
 			"SZSDK99993001",
-			"details",
+			keyDetails,
 			[]messenger.Detail{
-				{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)},
-				{Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)},
+				{Key: "", Position: 1, Type: typeString, Value: nameBob, ValueRaw: interface{}(nil)},
+				{Key: "", Position: 2, Type: typeString, Value: nameJane, ValueRaw: interface{}(nil)},
 			},
 		},
-		expectedText:      "WARN: Bob works with Jane",
+		expectedText:      textWarnBob,
 		expectedSlogLevel: messenger.LevelWarnSlog,
 	},
 	{
@@ -171,24 +183,24 @@ var testCasesForMessage = []struct {
 			getOptionMessageFields(),
 			getOptionIDMessages(),
 		},
-		details:             []interface{}{"Bob", "Jane", errTest1, errTest2},
+		details:             []interface{}{nameBob, nameJane, errTest1, errTest2},
 		expectedMessageJSON: `{"level":"WARN","id":"SZSDK99993002","text":"WARN: Bob works with Jane","errors":["error 1","error 2"],"details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"},{"position":3,"type":"error","value":"error 1"},{"position":4,"type":"error","value":"error 2"}]}`,
 		expectedMessageSlog: []interface{}{
-			"level",
-			"WARN",
+			keyLevel,
+			levelWarn,
 			"id",
 			"SZSDK99993002",
 			"errors",
 			[]interface{}{"error 1", "error 2"},
-			"details",
+			keyDetails,
 			[]messenger.Detail{
-				{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)},
-				{Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)},
+				{Key: "", Position: 1, Type: typeString, Value: nameBob, ValueRaw: interface{}(nil)},
+				{Key: "", Position: 2, Type: typeString, Value: nameJane, ValueRaw: interface{}(nil)},
 				{Key: "", Position: 3, Type: "error", Value: "error 1", ValueRaw: interface{}(nil)},
 				{Key: "", Position: 4, Type: "error", Value: "error 2", ValueRaw: interface{}(nil)},
 			},
 		},
-		expectedText:      "WARN: Bob works with Jane",
+		expectedText:      textWarnBob,
 		expectedSlogLevel: messenger.LevelWarnSlog,
 	},
 	{
@@ -200,21 +212,21 @@ var testCasesForMessage = []struct {
 			getOptionMessageFields(),
 			getOptionIDMessages(),
 		},
-		details:             []interface{}{"Bob", "Jane", int64(12345)},
+		details:             []interface{}{nameBob, nameJane, int64(12345)},
 		expectedMessageJSON: `{"level":"WARN","id":"SZSDK99993003","text":"WARN: Bob works with Jane","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"},{"position":3,"type":"int64","value":"12345","valueRaw":12345}]}`,
 		expectedMessageSlog: []interface{}{
-			"level",
-			"WARN",
+			keyLevel,
+			levelWarn,
 			"id",
 			"SZSDK99993003",
-			"details",
+			keyDetails,
 			[]messenger.Detail{
-				{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)},
-				{Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)},
+				{Key: "", Position: 1, Type: typeString, Value: nameBob, ValueRaw: interface{}(nil)},
+				{Key: "", Position: 2, Type: typeString, Value: nameJane, ValueRaw: interface{}(nil)},
 				{Key: "", Position: 3, Type: "int64", Value: "12345", ValueRaw: int64(12345)},
 			},
 		},
-		expectedText:      "WARN: Bob works with Jane",
+		expectedText:      textWarnBob,
 		expectedSlogLevel: messenger.LevelWarnSlog,
 	},
 	{
@@ -226,17 +238,17 @@ var testCasesForMessage = []struct {
 			getOptionMessageFields(),
 			getOptionIDMessages(),
 		},
-		details:             []interface{}{"Bob", "Jane"},
+		details:             []interface{}{nameBob, nameJane},
 		expectedMessageJSON: `{"level":"WARN","id":"SZSDK99993004","text":"{\"bob\": \"Bob\", \"jane\": \"Jane\"}","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"},{"key":"text","position":3,"type":"map[string]string","value":"{\"bob\": \"Bob\", \"jane\": \"Jane\"}","valueRaw":{"bob":"Bob","jane":"Jane"}}]}`,
 		expectedMessageSlog: []interface{}{
-			"level",
-			"WARN",
+			keyLevel,
+			levelWarn,
 			"id",
 			"SZSDK99993004",
-			"details",
+			keyDetails,
 			[]messenger.Detail{
-				{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)},
-				{Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)},
+				{Key: "", Position: 1, Type: typeString, Value: nameBob, ValueRaw: interface{}(nil)},
+				{Key: "", Position: 2, Type: typeString, Value: nameJane, ValueRaw: interface{}(nil)},
 				{
 					Key:      "text",
 					Position: 4,
@@ -290,8 +302,8 @@ var testCasesForMessage = []struct {
 			getOptionIDMessages(),
 		},
 		details: []interface{}{
-			"Bob",
-			"Jane",
+			nameBob,
+			nameJane,
 			getMessageDuration(),
 			getMessageID(),
 			getMessageLevel(),
@@ -302,7 +314,7 @@ var testCasesForMessage = []struct {
 		},
 		expectedMessageJSON: `{"level":"TEST_LEVEL","id":"Test-ID-1","text":"Test text","status":"TestStatus","duration":100000000,"details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
 		expectedMessageSlog: []interface{}{
-			"level",
+			keyLevel,
 			"TEST_LEVEL",
 			"id",
 			"Test-ID-1",
@@ -310,10 +322,10 @@ var testCasesForMessage = []struct {
 			"TestStatus",
 			"duration",
 			int64(100000000),
-			"details",
+			keyDetails,
 			[]messenger.Detail{
-				{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)},
-				{Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)},
+				{Key: "", Position: 1, Type: typeString, Value: nameBob, ValueRaw: interface{}(nil)},
+				{Key: "", Position: 2, Type: typeString, Value: nameJane, ValueRaw: interface{}(nil)},
 			},
 		},
 		expectedText:      "Test text",
@@ -328,19 +340,19 @@ var testCasesForMessage = []struct {
 			getOptionMessageFields(),
 			getOptionIDMessages(),
 		},
-		details:             []interface{}{"Bob", "Jane", durationTest},
+		details:             []interface{}{nameBob, nameJane, durationTest},
 		expectedMessageJSON: `{"level":"WARN","id":"SZSDK99993006","duration":100000000,"details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
 		expectedMessageSlog: []interface{}{
-			"level",
-			"WARN",
+			keyLevel,
+			levelWarn,
 			"id",
 			"SZSDK99993006",
 			"duration",
 			int64(100000000),
-			"details",
+			keyDetails,
 			[]messenger.Detail{
-				{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)},
-				{Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)},
+				{Key: "", Position: 1, Type: typeString, Value: nameBob, ValueRaw: interface{}(nil)},
+				{Key: "", Position: 2, Type: typeString, Value: nameJane, ValueRaw: interface{}(nil)},
 			},
 		},
 		expectedText:      "",
@@ -356,8 +368,8 @@ var testCasesForMessage = []struct {
 			getOptionIDMessages(),
 		},
 		details: []interface{}{
-			"Bob",
-			"Jane",
+			nameBob,
+			nameJane,
 			getMessageReason(),
 			getMessageCode(),
 			getMessageLocation(),
@@ -367,8 +379,8 @@ var testCasesForMessage = []struct {
 		expectedMessageSlog: []interface{}{
 			"time",
 			"2000-01-01T00:00:00Z",
-			"level",
-			"WARN",
+			keyLevel,
+			levelWarn,
 			"id",
 			"SZSDK99993007",
 			"code",
@@ -377,10 +389,10 @@ var testCasesForMessage = []struct {
 			"TestMessageReason1",
 			"location",
 			"Test location",
-			"details",
+			keyDetails,
 			[]messenger.Detail{
-				{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)},
-				{Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)},
+				{Key: "", Position: 1, Type: typeString, Value: nameBob, ValueRaw: interface{}(nil)},
+				{Key: "", Position: 2, Type: typeString, Value: nameJane, ValueRaw: interface{}(nil)},
 			},
 		},
 		expectedText:      "",
@@ -395,17 +407,17 @@ var testCasesForMessage = []struct {
 			getOptionMessageFields(),
 			getOptionIDMessages(),
 		},
-		details:             []interface{}{"Bob", "Jane"},
+		details:             []interface{}{nameBob, nameJane},
 		expectedMessageJSON: `{"level":"ERROR","id":"SZSDK99994001","text":"ERROR: Bob works with Jane","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
 		expectedMessageSlog: []interface{}{
-			"level",
+			keyLevel,
 			"ERROR",
 			"id",
 			"SZSDK99994001",
-			"details",
+			keyDetails,
 			[]messenger.Detail{
-				{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)},
-				{Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)},
+				{Key: "", Position: 1, Type: typeString, Value: nameBob, ValueRaw: interface{}(nil)},
+				{Key: "", Position: 2, Type: typeString, Value: nameJane, ValueRaw: interface{}(nil)},
 			},
 		},
 		expectedText:      "ERROR: Bob works with Jane",
@@ -420,17 +432,17 @@ var testCasesForMessage = []struct {
 			getOptionMessageFields(),
 			getOptionIDMessages(),
 		},
-		details:             []interface{}{"Bob", "Jane"},
+		details:             []interface{}{nameBob, nameJane},
 		expectedMessageJSON: `{"level":"FATAL","id":"SZSDK99995001","text":"FATAL: Bob works with Jane","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
 		expectedMessageSlog: []interface{}{
-			"level",
+			keyLevel,
 			"FATAL",
 			"id",
 			"SZSDK99995001",
-			"details",
+			keyDetails,
 			[]messenger.Detail{
-				{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)},
-				{Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)},
+				{Key: "", Position: 1, Type: typeString, Value: nameBob, ValueRaw: interface{}(nil)},
+				{Key: "", Position: 2, Type: typeString, Value: nameJane, ValueRaw: interface{}(nil)},
 			},
 		},
 		expectedText:      "FATAL: Bob works with Jane",
@@ -445,19 +457,19 @@ var testCasesForMessage = []struct {
 			getOptionMessageFieldsWithTime(),
 			getOptionIDMessages(),
 		},
-		details:             []interface{}{"Bob", "Jane", getTimestamp()},
+		details:             []interface{}{nameBob, nameJane, getTimestamp()},
 		expectedMessageJSON: `{"time":"2000-01-01T00:00:00Z","level":"PANIC","id":"SZSDK99996001","text":"PANIC: Bob works with Jane","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
 		expectedMessageSlog: []interface{}{
 			"time",
 			"2000-01-01T00:00:00Z",
-			"level",
-			"PANIC",
+			keyLevel,
+			levelPanic,
 			"id",
 			"SZSDK99996001",
-			"details",
+			keyDetails,
 			[]messenger.Detail{
-				{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)},
-				{Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)},
+				{Key: "", Position: 1, Type: typeString, Value: nameBob, ValueRaw: interface{}(nil)},
+				{Key: "", Position: 2, Type: typeString, Value: nameJane, ValueRaw: interface{}(nil)},
 			},
 		},
 		expectedText:      "PANIC: Bob works with Jane",
@@ -474,19 +486,19 @@ var testCasesForMessage = []struct {
 			getOptionCallerSkip(),
 			getOptionIDStatuses(),
 		},
-		details:             []interface{}{"Bob", "Jane"},
+		details:             []interface{}{nameBob, nameJane},
 		expectedMessageJSON: `{"level":"PANIC","id":"SZSDK99997001","text":"PANIC: Bob works with Jane","status":"status-7001","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}`,
 		expectedMessageSlog: []interface{}{
-			"level",
-			"PANIC",
+			keyLevel,
+			levelPanic,
 			"id",
 			"SZSDK99997001",
 			"status",
 			"status-7001",
-			"details",
+			keyDetails,
 			[]messenger.Detail{
-				{Key: "", Position: 1, Type: "string", Value: "Bob", ValueRaw: interface{}(nil)},
-				{Key: "", Position: 2, Type: "string", Value: "Jane", ValueRaw: interface{}(nil)},
+				{Key: "", Position: 1, Type: typeString, Value: nameBob, ValueRaw: interface{}(nil)},
+				{Key: "", Position: 2, Type: typeString, Value: nameJane, ValueRaw: interface{}(nil)},
 			},
 		},
 		expectedText:      "PANIC: Bob works with Jane",
@@ -506,11 +518,11 @@ var testCasesForMessage = []struct {
 		details:             []interface{}{123, true, 1.23},
 		expectedMessageJSON: `{"level":"PANIC","id":"SZSDK99999001","details":[{"position":1,"type":"integer","value":"123","valueRaw":123},{"position":2,"type":"boolean","value":"true","valueRaw":true},{"position":3,"type":"float","value":"1.23","valueRaw":1.23}]}`,
 		expectedMessageSlog: []interface{}{
-			"level",
-			"PANIC",
+			keyLevel,
+			levelPanic,
 			"id",
 			"SZSDK99999001",
-			"details",
+			keyDetails,
 			[]messenger.Detail{
 				{Key: "", Position: 1, Type: "integer", Value: "123", ValueRaw: 123},
 				{Key: "", Position: 2, Type: "boolean", Value: "true", ValueRaw: true},
@@ -545,7 +557,7 @@ var testCasesForMessage = []struct {
 // 	{
 // 		name:     "string",
 // 		input:    "a string",
-// 		expected: []messenger.Detail{{Position: 1, Type: "string", Value: "a string"}},
+// 		expected: []messenger.Detail{{Position: 1, Type: typeString, Value: "a string"}},
 // 	},
 // 	{
 // 		name:     "bool",
@@ -628,7 +640,7 @@ func Test_NewJSON_envvar(test *testing.T) {
 	test.Setenv("SENZING_MESSAGE_FIELDS", "id, level, text")
 
 	options := []interface{}{getOptionMessageIDTemplate(9999), getOptionMessageFields(), getOptionIDMessages()}
-	details := []interface{}{"Bob", "Jane"}
+	details := []interface{}{nameBob, nameJane}
 	expected := `{"level":"WARN","id":"SZSDK99993003","text":"WARN: Bob works with Jane"}`
 	testObject, err := messenger.New(options...)
 	require.NoError(test, err)
@@ -641,7 +653,7 @@ func Test_NewJSON_envvar_all(test *testing.T) {
 	test.Setenv("SENZING_MESSAGE_FIELDS", "all")
 
 	options := []interface{}{getOptionMessageIDTemplate(9999), getOptionMessageFields(), getOptionIDMessages()}
-	details := []interface{}{"Bob", "Jane"}
+	details := []interface{}{nameBob, nameJane}
 	testObject, err := messenger.New(options...)
 	require.NoError(test, err)
 
@@ -795,7 +807,7 @@ func Test_New_badIdStatuses(test *testing.T) {
 // func Test_messageDetails_stringJSON(test *testing.T) {
 // 	err := json.Unmarshal([]byte(jsonTest), &jsonRawMessage)
 // 	require.NoError(test, err)
-// 	expected := []Detail{{Position: 1, Type: "string", Value: jsonTest, ValueRaw: jsonRawMessage}}
+// 	expected := []Detail{{Position: 1, Type: typeString, Value: jsonTest, ValueRaw: jsonRawMessage}}
 // 	actual := messageDetails(jsonTest)
 // 	assert.Equal(test, expected, actual)
 // }
