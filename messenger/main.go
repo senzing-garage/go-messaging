@@ -160,6 +160,12 @@ const (
 	LevelWarnName  = "WARN"
 )
 
+// Names of fields in the formatted message.
+const (
+	fieldLevel = "level"
+	fieldText  = "text"
+)
+
 // Existing and new log levels used with slog.Level.
 const (
 	LevelDebugSlog = slog.LevelDebug
@@ -217,9 +223,9 @@ var (
 // Order is important in AllMessageFields. Should match order in MessageFormat.
 var AllMessageFields = []string{
 	"time",
-	"level",
+	fieldLevel,
 	"id",
-	"text",
+	fieldText,
 	"code",
 	"reason",
 	"status",
