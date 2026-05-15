@@ -110,7 +110,12 @@
     "usestdlibvars",
     "usetesting",
     "vladopajic",
-    "wrapcheck"
+    "wrapcheck",
+    "zizmor"
   ],
-  "ignorePaths": [".git/**", ".mypy_cache/**", ".github/linters/.golangci.yaml"]
+  "ignorePaths": [
+    ".git/**",
+    ".mypy_cache/**",
+    ".github/linters/.golangci.yaml"
+  ]
 }
