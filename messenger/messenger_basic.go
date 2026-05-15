@@ -139,7 +139,7 @@ func (messenger *BasicMessenger) NewSlogLevel(
 ) (string, slog.Level, []interface{}) {
 	populateDetails := make([]interface{}, 0, len(details)+1)
 	populateDetails = append(populateDetails, details...)
-	populateDetails = append(populateDetails, OptionMessageField{Value: "level"})
+	populateDetails = append(populateDetails, OptionMessageField{Value: fieldLevel})
 	messageFormat := messenger.populateStructure(messageNumber, populateDetails...)
 
 	// Create a text message.
@@ -220,7 +220,7 @@ func (messenger *BasicMessenger) getKeyValuePairs(appMessageFormat *MessageForma
 		"duration": appMessageFormat.Duration,
 		"errors":   appMessageFormat.Errors,
 		"id":       appMessageFormat.ID,
-		"level":    appMessageFormat.Level,
+		fieldLevel: appMessageFormat.Level,
 		"location": appMessageFormat.Location,
 		"reason":   appMessageFormat.Reason,
 		"status":   appMessageFormat.Status,
@@ -283,7 +283,7 @@ func (messenger *BasicMessenger) getSortedIDLevelRanges(idLevelRanges map[int]st
 func (messenger *BasicMessenger) populateMessageFields(senzingMessageFields string) {
 	switch {
 	case len(senzingMessageFields) == 0:
-		messenger.messageFields = []string{"id", "text"}
+		messenger.messageFields = []string{"id", fieldText}
 	case senzingMessageFields == "all":
 		messenger.messageFields = AllMessageFields
 	default:
@@ -477,7 +477,7 @@ func populateMessageFormat(actualFields *theFields, messageFields []string) *Mes
 		result.ID = actualFields.id
 	}
 
-	if slices.Contains(messageFields, "level") {
+	if slices.Contains(messageFields, fieldLevel) {
 		result.Level = actualFields.level
 	}
 
@@ -493,7 +493,7 @@ func populateMessageFormat(actualFields *theFields, messageFields []string) *Mes
 		result.Status = actualFields.status
 	}
 
-	if slices.Contains(messageFields, "text") {
+	if slices.Contains(messageFields, fieldText) {
 		result.Text = actualFields.text
 	}
 
