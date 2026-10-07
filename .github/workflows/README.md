@@ -25,6 +25,18 @@ this action adds the issue to the "Garage" board as "Backlog".
 - [Add to Project Garage GitHub Action]
   - Uses: [senzing-factory/build-resources/.../add-to-project.yaml]
 
+## bearer.yaml
+
+When a Pull Request is made against the `main` branch,
+this action scans the code for security and privacy issues using [bearer].
+
+- [Bearer GitHub Action]
+  - Configuration:
+    - [bearer.yml]
+  - Uses:
+    - [actions/checkout]
+    - [bearer/bearer-action]
+
 ## check-claude-attribution.yaml
 
 When a Pull Request (PR) is opened, updated, or its description is edited,
@@ -146,6 +158,10 @@ this action moves the PR on the "Garage" project board to "Done".
 [Add Labels Standardized GitHub Action]: add-labels-standardized.yaml
 [Add to Project Garage Dependabot GitHub Action]: add-to-project-garage-dependabot.yaml
 [Add to Project Garage GitHub Action]: add-to-project-garage.yaml
+[Bearer GitHub Action]: bearer.yaml
+[bearer.yml]: ../linters/README.md#beareryml
+[bearer/bearer-action]: https://github.com/Bearer/bearer-action
+[bearer]: https://docs.bearer.com/
 [Check Claude Attribution GitHub Action]: check-claude-attribution.yaml
 [Dependabot Approve and Merge GitHub Action]: dependabot-approve-and-merge.yaml
 [Go Proxy Pull GitHub Action]: go-proxy-pull.yaml

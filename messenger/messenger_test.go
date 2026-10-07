@@ -54,14 +54,14 @@ var idMessages = map[int]string{
 }
 
 var idStatuses = map[int]string{
-	0o001: "status-0001",
-	1001:  "status-1001",
-	2001:  "status-2001",
-	3001:  "status-3001",
-	4001:  "status-4001",
-	5001:  "status-5001",
-	6001:  "status-6001",
-	7001:  "status-7001",
+	1:    "status-0001",
+	1001: "status-1001",
+	2001: "status-2001",
+	3001: "status-3001",
+	4001: "status-4001",
+	5001: "status-5001",
+	6001: "status-6001",
+	7001: "status-7001",
 }
 
 var testCasesForMessage = []struct {

@@ -15,6 +15,7 @@ This project adheres to [Semantic Versioning].
 
 - Update to Go 1.27.1
 - Sync repository setup files with [template-go] `v0.5.0`
+- Pin GitHub Actions to commit SHAs and golangci-lint to a fixed version
 - Update dependencies
 
 ## [1.5.4] - 2026-08-12
