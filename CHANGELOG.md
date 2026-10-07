@@ -9,6 +9,14 @@ This project adheres to [Semantic Versioning].
 
 -
 
+## [1.6.0] - 2026-10-07
+
+### Changed in 1.6.0
+
+- Update to Go 1.27.1
+- Sync repository setup files with [template-go] `v0.5.0`
+- Update dependencies
+
 ## [1.5.4] - 2026-08-12
 
 ### Changed in 1.5.4
@@ -136,3 +144,4 @@ This project adheres to [Semantic Versioning].
 [CommonMark]: https://commonmark.org/
 [Keep a Changelog]: https://keepachangelog.com/en/1.1.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
+[template-go]: https://github.com/senzing-garage/template-go/tree/v0.5.0

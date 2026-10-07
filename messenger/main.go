@@ -184,7 +184,7 @@ const (
 // Message ID Low-bound for message levels
 // i.e. a message in range 0 - 999 is a TRACE message.
 var IDLevelRangesAsString = map[int]string{
-	0000: LevelTraceName,
+	0:    LevelTraceName,
 	1000: LevelDebugName,
 	2000: LevelInfoName,
 	3000: LevelWarnName,

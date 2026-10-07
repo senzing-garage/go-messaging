@@ -18,7 +18,7 @@ func ExampleBasicMessenger_NewJSON() {
 	}
 
 	fmt.Print(example.NewJSON(2001, "Bob", "Jane"))
-	//Output: {"level":"INFO","id":"2001","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}
+	// Output: {"level":"INFO","id":"2001","details":[{"position":1,"type":"string","value":"Bob"},{"position":2,"type":"string","value":"Jane"}]}
 }
 
 func ExampleBasicMessenger_NewSlog() {
@@ -29,7 +29,7 @@ func ExampleBasicMessenger_NewSlog() {
 	}
 
 	fmt.Print(example.NewSlog(2001, "Bob", "Jane", getOptionMessageFields()))
-	//Output: [level INFO id 2001 details [{ 1 string Bob <nil>} { 2 string Jane <nil>}]]
+	// Output: [level INFO id 2001 details [{ 1 string Bob <nil>} { 2 string Jane <nil>}]]
 }
 
 func ExampleBasicMessenger_NewSlogLevel() {
@@ -40,5 +40,5 @@ func ExampleBasicMessenger_NewSlogLevel() {
 	}
 
 	fmt.Print(example.NewSlogLevel(2001, "Bob", "Jane", getOptionMessageFields()))
-	//Output: INFO [level INFO id 2001 details [{ 1 string Bob <nil>} { 2 string Jane <nil>}]]
+	// Output: INFO [level INFO id 2001 details [{ 1 string Bob <nil>} { 2 string Jane <nil>}]]
 }

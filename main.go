@@ -101,7 +101,7 @@ func main() {
 func displayMessages(banner string, aMessenger messenger.Messenger) {
 	printBanner(banner)
 
-	printJSONMessage(aMessenger.NewJSON(0001, "Bob", "Mary"))
+	printJSONMessage(aMessenger.NewJSON(1, "Bob", "Mary"))
 	printJSONMessage(aMessenger.NewJSON(2001, "Bob", "Mary"))
 	printJSONMessage(aMessenger.NewJSON(3001, "Bob", "Mary", reason, err1))
 	printJSONMessage(aMessenger.NewJSON(4001, "Bob", "Mary", reason, err1))

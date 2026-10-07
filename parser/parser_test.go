@@ -109,7 +109,7 @@ func ExampleParse_details() {
 	}
 
 	fmt.Println(parsedMessage.Details)
-	//Output: [{ 1  Bob <nil>} { 2  Jane <nil>}]
+	// Output: [{ 1  Bob <nil>} { 2  Jane <nil>}]
 }
 
 func ExampleParse_duration() {
@@ -131,7 +131,7 @@ func ExampleParse_errors() {
 	}
 
 	fmt.Println(parsedMessage.Errors)
-	//Output: [error1 error2]
+	// Output: [error1 error2]
 }
 
 func ExampleParse_id() {
@@ -142,7 +142,7 @@ func ExampleParse_id() {
 	}
 
 	fmt.Println(parsedMessage.ID)
-	//Output: SZSDK99990001
+	// Output: SZSDK99990001
 }
 
 func ExampleParse_level() {
@@ -153,7 +153,7 @@ func ExampleParse_level() {
 	}
 
 	fmt.Println(parsedMessage.Level)
-	//Output: TRACE
+	// Output: TRACE
 }
 
 func ExampleParse_status() {
@@ -164,7 +164,7 @@ func ExampleParse_status() {
 	}
 
 	fmt.Println(parsedMessage.Status)
-	//Output: OK
+	// Output: OK
 }
 
 func ExampleParse_text() {
@@ -175,7 +175,7 @@ func ExampleParse_text() {
 	}
 
 	fmt.Println(parsedMessage.Text)
-	//Output: Bob works with Jane
+	// Output: Bob works with Jane
 }
 
 func ExampleParse_time() {
@@ -186,5 +186,5 @@ func ExampleParse_time() {
 	}
 
 	fmt.Println(parsedMessage.Time.Format(time.RFC3339Nano))
-	//Output: 2000-01-01T00:00:00Z
+	// Output: 2000-01-01T00:00:00Z
 }

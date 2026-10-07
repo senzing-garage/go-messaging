@@ -40,7 +40,7 @@ var (
 )
 
 var idMessages = map[int]string{
-	0001: "TRACE: %s works with %s",
+	1:    "TRACE: %s works with %s",
 	1001: "DEBUG: %s works with %s",
 	2001: "INFO: %s works with %s",
 	3001: warnTemplate,
@@ -54,14 +54,14 @@ var idMessages = map[int]string{
 }
 
 var idStatuses = map[int]string{
-	0001: "status-0001",
-	1001: "status-1001",
-	2001: "status-2001",
-	3001: "status-3001",
-	4001: "status-4001",
-	5001: "status-5001",
-	6001: "status-6001",
-	7001: "status-7001",
+	0o001: "status-0001",
+	1001:  "status-1001",
+	2001:  "status-2001",
+	3001:  "status-3001",
+	4001:  "status-4001",
+	5001:  "status-5001",
+	6001:  "status-6001",
+	7001:  "status-7001",
 }
 
 var testCasesForMessage = []struct {
@@ -97,7 +97,8 @@ var testCasesForMessage = []struct {
 				{Key: "", Position: 2, Type: typeString, Value: nameJane, ValueRaw: interface{}(nil)},
 			},
 		},
-		expectedText: "TRACE: Bob works with Jane", expectedSlogLevel: messenger.LevelTraceSlog,
+		expectedText:      "TRACE: Bob works with Jane",
+		expectedSlogLevel: messenger.LevelTraceSlog,
 	},
 	{
 		name:          "messenger-1001",
